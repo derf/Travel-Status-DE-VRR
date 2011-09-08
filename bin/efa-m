@@ -1,0 +1,139 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use 5.010;
+
+our $VERSION = '0.00';
+
+use Getopt::Long qw(:config no_ignore_case);
+use List::Util qw(max);
+use Travel::Status::DE::VRR;
+
+my ( $date, $time );
+my @output;
+
+binmode( STDOUT, ':encoding(utf-8)' );
+
+GetOptions(
+	'd|date=s'      => \$date,
+	'h|help'        => sub { show_help(0) },
+	't|time=s'      => \$time,
+	'V|version'     => \&show_version,
+
+) or show_help(1);
+
+if (@ARGV != 2) {
+	show_help(1);
+}
+
+my ($place, $station) = @ARGV;
+
+my $status = Travel::Status::DE::VRR->new(
+	date    => $date,
+	place   => $place,
+	name    => $station,
+	time    => $time,
+);
+
+sub show_help {
+	my ($code) = @_;
+
+	print "Usage: efa-m [-d <dd.mm.yyyy>] [-t <hh:mm>] <city> <station>\n"
+	  . "See also: man efa-m\n";
+
+	exit $code;
+}
+
+sub show_version {
+	say "efa-m version ${VERSION}";
+
+	exit 0;
+}
+
+sub display_result {
+	my (@lines) = @_;
+
+	my @line_length;
+
+	if ( not @lines ) {
+		die("Nothing to show\n");
+	}
+
+	for my $i ( 0 .. 3 ) {
+		$line_length[$i] = max map { length( $_->[$i] ) } @lines;
+	}
+
+	for my $line (@lines) {
+		printf(
+			join( q{  }, ( map { "%-${_}s" } @line_length ) ) . "\n",
+			@{$line}[ 0 .. 3 ]
+		);
+	}
+
+	return;
+}
+
+for my $d ( $status->results ) {
+
+	push(
+		@output,
+		[
+			$d->time,
+			$d->platform,
+			$d->line,
+			$d->destination,
+		]
+	);
+}
+
+display_result(@output);
+
+__END__
+
+=head1 NAME
+
+=head1 SYNOPSIS
+
+=head1 VERSION
+
+version 0.00
+
+=head1 DESCRIPTION
+
+=head1 OPTIONS
+
+=over
+
+=item B<-V>, B<--version>
+
+Show version information.
+
+=back
+
+=head1 EXIT STATUS
+
+=head1 CONFIGURATION
+
+None.
+
+=head1 DEPENDENCIES
+
+=over
+
+=item * Class::Accessor(3pm)
+
+=item * XML::LibXML(3pm)
+
+=item * WWW::Mechanize(3pm)
+
+=back
+
+=head1 BUGS AND LIMITATIONS
+
+=head1 AUTHOR
+
+Copyright (C) 2011 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
+
+=head1 LICENSE
+
+This program is licensed under the same terms as Perl itself.

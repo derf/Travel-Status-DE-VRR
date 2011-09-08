@@ -1,0 +1,24 @@
+Travel::Status::DE::VRR - ??
+-----------------------------------------------
+
+* <http://finalrewind.org/projects/Travel-Status-DE-VRR/>
+
+
+Dependencies
+------------
+
+ * perl version 5.10.1 or newer
+ * XML::LibXML
+
+
+Installation
+------------
+
+$ perl Build.PL
+$ ./Build
+$ sudo ./Build install
+
+See also the Module::Build documentation.
+
+You can then run 'man Travel::Status::DE::VRR'.
+This distribution also ships the script 'efa-m', see 'man efa-m'.
