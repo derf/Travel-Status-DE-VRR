@@ -1,4 +1,4 @@
-Travel::Status::DE::VRR - ??
+Travel::Status::DE::VRR - VRR departure monitor
 -----------------------------------------------
 
 * <http://finalrewind.org/projects/Travel-Status-DE-VRR/>
@@ -8,6 +8,8 @@ Dependencies
 ------------
 
  * perl version 5.10.1 or newer
+ * Class::Accessor
+ * WWW::Mechanize
  * XML::LibXML
 
 

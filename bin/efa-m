@@ -92,7 +92,11 @@ __END__
 
 =head1 NAME
 
+efa-m - Inofficcial interface to the efa.vrr.de departure monitor
+
 =head1 SYNOPSIS
+
+B<efa-m> [B<-d> I<date>] [B<-t> I<time>] I<city> I<stop>
 
 =head1 VERSION
 
@@ -100,9 +104,19 @@ version 0.00
 
 =head1 DESCRIPTION
 
+B<efa-m> lists upcoming tram, bus and train departures at I<stop> in I<city>
+
 =head1 OPTIONS
 
 =over
+
+=item B<-d>, B<--date> I<dd.mm.yyyy>
+
+Show departures for I<date> instead of today
+
+=item B<-t>, B<--time> I<hh:mm>
+
+Show departures starting at I<time> instead of now
 
 =item B<-V>, B<--version>
 
@@ -111,6 +125,8 @@ Show version information.
 =back
 
 =head1 EXIT STATUS
+
+Zero.
 
 =head1 CONFIGURATION
 
@@ -129,6 +145,8 @@ None.
 =back
 
 =head1 BUGS AND LIMITATIONS
+
+Unknown.
 
 =head1 AUTHOR
 

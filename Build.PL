@@ -14,7 +14,10 @@ Module::Build->new(
 	license => 'unrestricted',
 	requires => {
 		'perl' => '5.10.1',
+		'Class::Accessor' => 0,
 		'Getopt::Long' => 0,
+		'List::Utel' => 0,
+		'WWW::Mechanize' => 0,
 		'XML::LibXML' => 0,
 	},
 	sign => 1,
