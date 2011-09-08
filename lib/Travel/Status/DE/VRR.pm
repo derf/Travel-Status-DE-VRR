@@ -100,7 +100,6 @@ sub results {
 
 	for my $tr ($self->{tree}->findnodes($xp_element) ) {
 		my ($time, $platform, $line, $dest) = map { ($tr->findnodes($_->[1]))[0]->textContent } @parts;
-		$platform =~ s{ ^ \S+ \s }{}x;
 		push(@results, Travel::Status::DE::VRR::Result->new(
 			time => $time,
 			platform => $platform,
