@@ -15,24 +15,24 @@ my @output;
 binmode( STDOUT, ':encoding(utf-8)' );
 
 GetOptions(
-	'd|date=s'      => \$date,
-	'h|help'        => sub { show_help(0) },
-	't|time=s'      => \$time,
-	'V|version'     => \&show_version,
+	'd|date=s'  => \$date,
+	'h|help'    => sub { show_help(0) },
+	't|time=s'  => \$time,
+	'V|version' => \&show_version,
 
 ) or show_help(1);
 
-if (@ARGV != 2) {
+if ( @ARGV != 2 ) {
 	show_help(1);
 }
 
-my ($place, $station) = @ARGV;
+my ( $place, $station ) = @ARGV;
 
 my $status = Travel::Status::DE::VRR->new(
-	date    => $date,
-	place   => $place,
-	name    => $station,
-	time    => $time,
+	date  => $date,
+	place => $place,
+	name  => $station,
+	time  => $time,
 );
 
 sub show_help {
@@ -75,15 +75,7 @@ sub display_result {
 
 for my $d ( $status->results ) {
 
-	push(
-		@output,
-		[
-			$d->time,
-			$d->platform,
-			$d->line,
-			$d->destination,
-		]
-	);
+	push( @output, [ $d->time, $d->platform, $d->line, $d->destination, ] );
 }
 
 display_result(@output);
