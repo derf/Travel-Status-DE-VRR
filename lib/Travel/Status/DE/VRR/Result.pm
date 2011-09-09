@@ -29,11 +29,23 @@ departure received by Travel::Status::DE::VRR
 
 =head1 SYNOPSIS
 
+    for my $departure ($status->results) {
+        printf(
+            "At %s: %s to %s from platform %s\n",
+            $departure->time, $departure->line, $departure->destination,
+            $departure->platform
+        );
+    }
+
 =head1 VERSION
 
 version 0.00
 
 =head1 DESCRIPTION
+
+Travel::Status::DE::VRR::Result describes a single departure as obtained by
+TRavel::Status::DE::VRR.  It contains information about the time, platform,
+line number and destination.
 
 =head1 METHODS
 
@@ -41,11 +53,47 @@ version 0.00
 
 =over
 
+=item $departure->destination
+
+The tram/bus/train destination.
+
+=item $departure->line
+
+The name/number of the line.
+
+=item $departure->platform
+
+The departure platform.  Note that this is prefixed by either "Bstg." (for
+tram/bus departures) or "Gleis" (for trains).
+
+=item $departure->time
+
+The departure time as string in "HH:MM" format.
+
 =back
 
 =head2 INTERNAL
 
 =over
+
+=item $departure = Travel::Status::DE::VRR::Result->new(I<%data>)
+
+Returns a new Travel::Status::DE::VRR::Result object.  You should not need to
+call this.
+
+Required I<data>:
+
+=over
+
+=item B<destination> => I<string>
+
+=item B<line> => I<string>
+
+=item B<platform> => I<string>
+
+=item B<time> => I<string>
+
+=back
 
 =back
 
@@ -63,7 +111,11 @@ None.
 
 =head1 BUGS AND LIMITATIONS
 
+Unknown.
+
 =head1 SEE ALSO
+
+Travel::Status::DE::VRR(3pm).
 
 =head1 AUTHOR
 
