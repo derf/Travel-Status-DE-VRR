@@ -17,6 +17,13 @@ sub new {
 	my $mech = WWW::Mechanize->new();
 	my @now  = localtime( time() );
 
+	if ( not( $opt{place} and $opt{name} ) ) {
+		confess('You need to specify a place and a name');
+	}
+	if ( $opt{type} and not( $opt{type} ~~ [qw[stop address poi]] ) ) {
+		confess('type must be stop, address or poi');
+	}
+
 	my $self = {
 		post => {
 			command                => q{},
@@ -46,7 +53,7 @@ sub new {
 			sessionID              => '0',
 			submitButton           => 'anfordern',
 			typeInfo_dm            => 'invalid',
-			type_dm                => 'stop',
+			type_dm                => $opt{type} // 'stop',
 			useProxFootSearch      => '0',
 			useRealtime            => '1',
 		},
@@ -170,10 +177,14 @@ Arguments:
 
 Name of the place/city
 
-=item B<name> => I<stop name>
+=item B<type> => B<address>|B<poi>|B<stop>
 
-Name of the stop to list departures for.  In future versions, this may also
-support street or poi ("point of interest") names
+Type of the following I<name>.  B<poi> means "point of interest".  Defaults to
+B<stop> (stop/station name).
+
+=item B<name> => I<name>
+
+address / poi / stop name to list departures for.
 
 =back
 

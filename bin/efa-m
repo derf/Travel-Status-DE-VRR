@@ -9,7 +9,7 @@ use Getopt::Long qw(:config no_ignore_case);
 use List::Util qw(max);
 use Travel::Status::DE::VRR;
 
-my ( $date, $time );
+my ( $date, $time, $input_type );
 my @output;
 
 binmode( STDOUT, ':encoding(utf-8)' );
@@ -26,13 +26,18 @@ if ( @ARGV != 2 ) {
 	show_help(1);
 }
 
-my ( $place, $station ) = @ARGV;
+my ( $place, $input ) = @ARGV;
+
+if ( $input =~ s{ ^ (?<type> address|poi|stop) : }{}x ) {
+	$input_type = $+{type};
+}
 
 my $status = Travel::Status::DE::VRR->new(
 	date  => $date,
 	place => $place,
-	name  => $station,
+	name  => $input,
 	time  => $time,
+	type  => $input_type,
 );
 
 sub show_help {
