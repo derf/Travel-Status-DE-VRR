@@ -64,6 +64,16 @@ sub display_result {
 	}
 
 	for my $line (@lines) {
+
+		if ( length( $line->[4] ) ) {
+			$line->[4] =~ tr{\n\x0d}{ }s;
+			chomp $line->[4];
+			print "\n";
+			for my $info_line ( split( qr{\n}, $line->[4] ) ) {
+				say "# ${info_line}";
+			}
+		}
+
 		printf(
 			join( q{  }, ( map { "%-${_}s" } @line_length ) ) . "\n",
 			@{$line}[ 0 .. 3 ]
@@ -75,7 +85,8 @@ sub display_result {
 
 for my $d ( $status->results ) {
 
-	push( @output, [ $d->time, $d->platform, $d->line, $d->destination, ] );
+	push( @output,
+		[ $d->time, $d->platform, $d->line, $d->destination, $d->info ] );
 }
 
 display_result(@output);

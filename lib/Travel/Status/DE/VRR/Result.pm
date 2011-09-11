@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '0.00';
 
 Travel::Status::DE::VRR::Result->mk_ro_accessors(
-	qw(destination time platform line));
+	qw(destination time platform line info));
 
 sub new {
 	my ( $obj, %conf ) = @_;
@@ -56,6 +56,12 @@ line number and destination.
 =item $departure->destination
 
 The tram/bus/train destination.
+
+=item $departure->info
+
+Additional information related to the departure (string).  If departures for
+an address were requested, this is the stop name, otherwise it may be recent
+news related to the line's schedule.
 
 =item $departure->line
 

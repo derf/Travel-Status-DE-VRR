@@ -94,14 +94,16 @@ sub results {
 		[ 'platform', './td[3]' ],
 		[ 'line',     './td[5]' ],
 		[ 'dest',     './td[7]' ],
+		[ 'info',     './td[9]' ],
 	);
 
 	@parts = map { [ $_->[0], XML::LibXML::XPathExpression->new( $_->[1] ) ] }
 	  @parts;
 
 	for my $tr ( $self->{tree}->findnodes($xp_element) ) {
-		my ( $time, $platform, $line, $dest )
+		my ( $time, $platform, $line, $dest, $info )
 		  = map { ( $tr->findnodes( $_->[1] ) )[0]->textContent } @parts;
+
 		push(
 			@results,
 			Travel::Status::DE::VRR::Result->new(
@@ -109,6 +111,7 @@ sub results {
 				platform    => $platform,
 				line        => $line,
 				destination => $dest,
+				info        => $info,
 			)
 		);
 	}
