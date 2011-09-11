@@ -174,7 +174,7 @@ Travel::Status::DE::VRR is an inofficial interface to the VRR departure
 monitor available at
 L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST?language=de&itdLPxx_transpCompany=vrr&>.
 
-It shows all upcoming tram/bus/train departures at a given stop.
+It reports all upcoming tram/bus/train departures at a given place.
 
 =head1 METHODS
 
@@ -182,7 +182,8 @@ It shows all upcoming tram/bus/train departures at a given stop.
 
 =item my $status = Travel::Status::DE::VRR->new(I<%opt>)
 
-Returns a new Travel::Status::DE::VRR object. Dies if the request failed.
+Requests the departures as specified by I<opts> and returns a new
+Travel::Status::DE::VRR object.  Dies if the wrong I<opts> were passed.
 
 Arguments:
 
