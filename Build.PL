@@ -7,6 +7,7 @@ use Module::Build;
 Module::Build->new(
 
 	build_requires => {
+		'File::Slurp' => 0,
 		'Test::More' => 0,
 		'Test::Pod' => 0,
 	},
@@ -14,6 +15,7 @@ Module::Build->new(
 	license => 'perl',
 	requires => {
 		'perl' => '5.10.1',
+		'Carp' => 0,
 		'Class::Accessor' => 0,
 		'Getopt::Long' => 0,
 		'List::Util' => 0,

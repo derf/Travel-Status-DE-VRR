@@ -6,7 +6,7 @@ use 5.010;
 
 use parent 'Class::Accessor';
 
-our $VERSION = '0.00';
+our $VERSION = '0.01';
 
 Travel::Status::DE::VRR::Result->mk_ro_accessors(
 	qw(destination time platform line info));
@@ -39,7 +39,7 @@ departure received by Travel::Status::DE::VRR
 
 =head1 VERSION
 
-version 0.00
+version 0.01
 
 =head1 DESCRIPTION
 
