@@ -98,6 +98,21 @@ sub new {
 	return $self;
 }
 
+sub new_from_html {
+	my ( $class, %opt ) = @_;
+
+	my $self = { html => $opt{html}, };
+
+	$self->{tree} = XML::LibXML->load_html(
+		string            => $self->{html},
+		recover           => 2,
+		suppress_errors   => 1,
+		suppress_warnings => 1,
+	);
+
+	return bless( $self, $class );
+}
+
 sub errstr {
 	my ($self) = @_;
 
