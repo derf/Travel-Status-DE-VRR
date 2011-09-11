@@ -59,13 +59,21 @@ sub new {
 		},
 	};
 
+	bless( $self, $class );
+
 	$mech->post( 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST', $self->{post} );
 
 	if ( $mech->response->is_error ) {
-		confess( $mech->response->status_line );
+		$self->{errstr} = $mech->response->status_line;
+		return $self;
 	}
 
 	my $form = $mech->form_number(1);
+
+	if ( not $form ) {
+		$self->{errstr} = 'Unable to find the form - no lines returned?';
+		return $self;
+	}
 
 	for my $input ( $form->find_input( 'dmLineSelection', 'option' ) ) {
 		$input->check();
@@ -74,7 +82,8 @@ sub new {
 	$mech->click('submitButton');
 
 	if ( $mech->response->is_error ) {
-		confess( $mech->response->status_line );
+		$self->{errstr} = $mech->response->status_line;
+		return $self;
 	}
 
 	$self->{html} = $mech->response->decoded_content;
@@ -86,7 +95,13 @@ sub new {
 		suppress_warnings => 1,
 	);
 
-	return bless( $self, $class );
+	return $self;
+}
+
+sub errstr {
+	my ($self) = @_;
+
+	return $self->{errstr};
 }
 
 sub results {
@@ -187,6 +202,11 @@ B<stop> (stop/station name).
 address / poi / stop name to list departures for.
 
 =back
+
+=item $status->errstr
+
+In case of an error in the HTTP requests, returns a string describing it.  If
+no error occured, returns undef.
 
 =item $status->results
 
