@@ -109,7 +109,7 @@ efa-m - Inofficial interface to the efa.vrr.de departure monitor
 
 =head1 SYNOPSIS
 
-B<efa-m> [B<-d> I<date>] [B<-t> I<time>] I<city> I<stop>
+B<efa-m> [B<-d> I<date>] [B<-t> I<time>] I<city> [I<type>B<:>]I<name>
 
 =head1 VERSION
 
@@ -117,7 +117,11 @@ version 0.01
 
 =head1 DESCRIPTION
 
-B<efa-m> lists upcoming tram, bus and train departures at I<stop> in I<city>
+B<efa-m> lists upcoming tram, bus and train departures at the location I<name>
+in I<city>.
+
+By default, I<name> refers to a stop, this can be changed by specifying
+I<type>.  Supported types are B<address> and B<poi> (point of interest).
 
 =head1 OPTIONS
 
