@@ -10,21 +10,28 @@ use List::Util qw(max);
 use Travel::Status::DE::VRR;
 
 my ( $date, $time, $input_type );
+my ( @grep_lines, @grep_platforms );
 my @output;
 
 binmode( STDOUT, ':encoding(utf-8)' );
 
 GetOptions(
-	'd|date=s'  => \$date,
-	'h|help'    => sub { show_help(0) },
-	't|time=s'  => \$time,
-	'V|version' => \&show_version,
+	'd|date=s'      => \$date,
+	'h|help'        => sub { show_help(0) },
+	'l|line=s@'     => \@grep_lines,
+	'p|platform=s@' => \@grep_platforms,
+	't|time=s'      => \$time,
+	'V|version'     => \&show_version,
 
 ) or show_help(1);
 
 if ( @ARGV != 2 ) {
 	show_help(1);
 }
+
+# --line=foo,bar support
+@grep_lines     = split( qr{,}, join( q{,}, @grep_lines ) );
+@grep_platforms = split( qr{,}, join( q{,}, @grep_platforms ) );
 
 my ( $place, $input ) = @ARGV;
 
@@ -95,6 +102,15 @@ if ( my $err = $status->errstr ) {
 
 for my $d ( $status->results ) {
 
+	if (
+		( @grep_lines and not( $d->line ~~ \@grep_lines ) )
+		or ( @grep_platforms
+			and not( substr( $d->platform, 6 ) ~~ \@grep_platforms ) )
+	  )
+	{
+		next;
+	}
+
 	push( @output,
 		[ $d->time, $d->platform, $d->line, $d->destination, $d->info ] );
 }
@@ -130,6 +146,16 @@ I<type>.  Supported types are B<address> and B<poi> (point of interest).
 =item B<-d>, B<--date> I<dd.mm.yyyy>
 
 Show departures for I<date> instead of today
+
+=item B<-l>, B<--line> I<lines>
+
+Only show departures of I<lines> (comma-separatad list, option may be
+repeated)
+
+=item B<-p>, B<--platform> I<platforms>
+
+Only show departures at I<platforms> (comma-separated list, option may be
+repeated).  Note that the C<< Bstg. >> / C<< Gleis >> prefix must be omitted.
 
 =item B<-t>, B<--time> I<hh:mm>
 

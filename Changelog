@@ -1,3 +1,7 @@
+git HEAD
+
+    * Add --platform / --line options to filter output
+
 Travel::Status::DE::VRR 0.01 - Sun Sep 11 2011
 
     * Initial release
