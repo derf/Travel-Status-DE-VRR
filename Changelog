@@ -1,6 +1,7 @@
 git HEAD
 
     * Add --platform / --line options to filter output
+    * Align times properly if departure list contains a daychange
 
 Travel::Status::DE::VRR 0.01 - Sun Sep 11 2011
 
