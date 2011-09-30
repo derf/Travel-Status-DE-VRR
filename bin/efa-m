@@ -89,7 +89,7 @@ sub display_result {
 		printf(
 			join( q{  },
 				"%${line_length[0]}s",
-				( map { "%-${_}s" } @line_length[ 1, -1 ] ) )
+				( map { "%-${_}s" } @line_length[ 1 .. $#line_length ] ) )
 			  . "\n",
 			@{$line}[ 0 .. 3 ]
 		);
