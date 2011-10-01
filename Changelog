@@ -1,7 +1,9 @@
 git HEAD
 
+    [efa-m]
     * Add --platform / --line options to filter output
     * Align times properly if departure list contains a daychange
+    * Make --date and --time actually work
 
 Travel::Status::DE::VRR 0.01 - Sun Sep 11 2011
 

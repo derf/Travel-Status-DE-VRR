@@ -17,6 +17,9 @@ sub new {
 	my $mech = WWW::Mechanize->new();
 	my @now  = localtime( time() );
 
+	my @time = @now[ 2, 1 ];
+	my @date = ( $now[3], $now[4] + 1, $now[5] + 1900 );
+
 	if ( not( $opt{place} and $opt{name} ) ) {
 		confess('You need to specify a place and a name');
 	}
@@ -24,22 +27,51 @@ sub new {
 		confess('type must be stop, address or poi');
 	}
 
+	## no critic (RegularExpressions::ProhibitUnusedCapture)
+	## no critic (Variables::ProhibitPunctuationVars)
+
+	if (    $opt{time}
+		and $opt{time} =~ m{ ^ (?<hour> \d\d? ) : (?<minute> \d\d ) $ }x )
+	{
+		@time = @+{qw{hour minute}};
+	}
+	elsif ( $opt{time} ) {
+		confess('Invalid time specified');
+	}
+
+	if (
+		    $opt{date}
+		and $opt{date} =~ m{ ^ (?<day> \d\d? ) [.] (?<month> \d\d? ) [.]
+			(?<year> \d{4} )? $ }x
+	  )
+	{
+		if ( $+{year} ) {
+			@date = @+{qw{day month year}};
+		}
+		else {
+			@date[ 0, 1 ] = @+{qw{day month}};
+		}
+	}
+	elsif ( $opt{date} ) {
+		confess('Invalid date specified');
+	}
+
 	my $self = {
 		post => {
 			command                => q{},
 			deleteAssignedStops_dm => '1',
 			help                   => 'Hilfe',
-			itdDateDay             => $now[3],
-			itdDateMonth           => $now[4] + 1,
-			itdDateYear            => $now[5] + 1900,
+			itdDateDay             => $date[0],
+			itdDateMonth           => $date[1],
+			itdDateYear            => $date[2],
 			itdLPxx_id_dm          => ':dm',
 			itdLPxx_mapState_dm    => q{},
 			itdLPxx_mdvMap2_dm     => q{},
 			itdLPxx_mdvMap_dm      => '3406199:401077:NAV3',
 			itdLPxx_transpCompany  => 'vrr',
 			itdLPxx_view           => q{},
-			itdTimeHour            => $now[2],
-			itdTimeMinute          => $now[1],
+			itdTimeHour            => $time[0],
+			itdTimeMinute          => $time[1],
 			language               => 'de',
 			nameInfo_dm            => 'invalid',
 			nameState_dm           => 'empty',
