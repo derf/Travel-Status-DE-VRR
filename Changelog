@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 0.02 - Sat Oct 01 2011
 
     [efa-m]
     * Add --platform / --line options to filter output
