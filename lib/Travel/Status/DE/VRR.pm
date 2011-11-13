@@ -8,14 +8,14 @@ our $VERSION = '0.02';
 
 use Carp qw(confess);
 use Travel::Status::DE::VRR::Result;
-use WWW::Mechanize;
+use LWP::UserAgent;
 use XML::LibXML;
 
 sub new {
 	my ( $class, %opt ) = @_;
 
-	my $mech = WWW::Mechanize->new();
-	my @now  = localtime( time() );
+	my $ua  = LWP::UserAgent->new(%opt);
+	my @now = localtime( time() );
 
 	my @time = @now[ 2, 1 ];
 	my @date = ( $now[3], $now[4] + 1, $now[5] + 1900 );
@@ -73,9 +73,11 @@ sub new {
 			itdTimeHour            => $time[0],
 			itdTimeMinute          => $time[1],
 			language               => 'de',
+			mode                   => 'direct',
 			nameInfo_dm            => 'invalid',
 			nameState_dm           => 'empty',
 			name_dm                => $opt{name},
+			outputFormat           => 'XML',
 			placeInfo_dm           => 'invalid',
 			placeState_dm          => 'empty',
 			place_dm               => $opt{place},
@@ -93,39 +95,17 @@ sub new {
 
 	bless( $self, $class );
 
-	$mech->post( 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST', $self->{post} );
+	my $response
+	  = $ua->post( 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST', $self->{post} );
 
-	if ( $mech->response->is_error ) {
-		$self->{errstr} = $mech->response->status_line;
+	if ( $response->is_error ) {
+		$self->{errstr} = $response->status_line;
 		return $self;
 	}
 
-	my $form = $mech->form_number(1);
+	$self->{xml} = $response->decoded_content;
 
-	if ( not $form ) {
-		$self->{errstr} = 'Unable to find the form - no lines returned?';
-		return $self;
-	}
-
-	for my $input ( $form->find_input( 'dmLineSelection', 'option' ) ) {
-		$input->check();
-	}
-
-	$mech->click('submitButton');
-
-	if ( $mech->response->is_error ) {
-		$self->{errstr} = $mech->response->status_line;
-		return $self;
-	}
-
-	$self->{html} = $mech->response->decoded_content;
-
-	$self->{tree} = XML::LibXML->load_html(
-		string            => $self->{html},
-		recover           => 2,
-		suppress_errors   => 1,
-		suppress_warnings => 1,
-	);
+	$self->{tree} = XML::LibXML->load_xml( string => $self->{xml}, );
 
 	return $self;
 }
@@ -133,14 +113,9 @@ sub new {
 sub new_from_html {
 	my ( $class, %opt ) = @_;
 
-	my $self = { html => $opt{html}, };
+	my $self = { xml => $opt{xml}, };
 
-	$self->{tree} = XML::LibXML->load_html(
-		string            => $self->{html},
-		recover           => 2,
-		suppress_errors   => 1,
-		suppress_warnings => 1,
-	);
+	$self->{tree} = XML::LibXML->load_xml( string => $self->{xml}, );
 
 	return bless( $self, $class );
 }
@@ -155,27 +130,41 @@ sub results {
 	my ($self) = @_;
 	my @results;
 
-	my $xp_element = XML::LibXML::XPathExpression->new(
-		'//td[@colspan="3"]/table/tr[starts-with(@class,"bgColor")]');
+	my $xp_element = XML::LibXML::XPathExpression->new('//itdDeparture');
 
-	my @parts = (
-		[ 'time',     './td[2]' ],
-		[ 'platform', './td[3]' ],
-		[ 'line',     './td[5]' ],
-		[ 'dest',     './td[7]' ],
-		[ 'info',     './td[9]' ],
-	);
+	my $xp_date  = XML::LibXML::XPathExpression->new('./itdDateTime/itdDate');
+	my $xp_time  = XML::LibXML::XPathExpression->new('./itdDateTime/itdTime');
+	my $xp_line  = XML::LibXML::XPathExpression->new('./itdServingLine');
+	my $xp_extra = XML::LibXML::XPathExpression->new('./motDivaParams');
 
-	@parts = map { [ $_->[0], XML::LibXML::XPathExpression->new( $_->[1] ) ] }
-	  @parts;
+	for my $e ( $self->{tree}->findnodes($xp_element) ) {
 
-	for my $tr ( $self->{tree}->findnodes($xp_element) ) {
-		my ( $time, $platform, $line, $dest, $info )
-		  = map { ( $tr->findnodes( $_->[1] ) )[0]->textContent } @parts;
+		my $e_date = ( $e->findnodes($xp_date) )[0];
+		my $e_time = ( $e->findnodes($xp_time) )[0];
+		my $e_line = ( $e->findnodes($xp_line) )[0];
+
+		if ( not( $e_date and $e_time and $e_line ) ) {
+			next;
+		}
+
+		my $date = sprintf( '%d.%d.%d',
+			$e_date->getAttribute('day'),
+			$e_date->getAttribute('month'),
+			$e_date->getAttribute('year'),
+		);
+		my $time = sprintf( '%02d:%02d',
+			$e_time->getAttribute('hour'),
+			$e_time->getAttribute('minute'),
+		);
+		my $platform = $e->getAttribute('platform');
+		my $line     = $e_line->getAttribute('number');
+		my $dest     = $e_line->getAttribute('direction');
+		my $info     = undef;
 
 		push(
 			@results,
 			Travel::Status::DE::VRR::Result->new(
+				date        => $date,
 				time        => $time,
 				platform    => $platform,
 				line        => $line,
@@ -273,7 +262,7 @@ None.
 
 =item * Class::Accessor(3pm)
 
-=item * WWW::Mechanize(3pm)
+=item * LWP::UserAgent(3pm)
 
 =item * XML::LibXML(3pm)
 

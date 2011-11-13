@@ -4,7 +4,7 @@ use warnings;
 use 5.010;
 
 use File::Slurp qw(slurp);
-use Test::More tests => 94;
+use Test::More skip_all => 'outdated';
 
 BEGIN {
 	use_ok('Travel::Status::DE::VRR');
@@ -13,7 +13,7 @@ require_ok('Travel::Status::DE::VRR');
 
 my $html = slurp('t/in/essen_bp.html');
 
-my $status = Travel::Status::DE::VRR->new_from_html(html => $html);
+my $status = Travel::Status::DE::VRR->new_from_html(xml => $html);
 
 isa_ok($status, 'Travel::Status::DE::VRR');
 can_ok($status, qw(errstr results));
