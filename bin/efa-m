@@ -5,6 +5,8 @@ use 5.010;
 
 our $VERSION = '0.02';
 
+binmode( STDOUT, ':encoding(utf-8)' );
+
 use Getopt::Long qw(:config no_ignore_case);
 use List::Util qw(max);
 use Travel::Status::DE::VRR;
@@ -12,8 +14,6 @@ use Travel::Status::DE::VRR;
 my ( $date, $time, $input_type );
 my ( @grep_lines, @grep_platforms );
 my @output;
-
-binmode( STDOUT, ':encoding(utf-8)' );
 
 GetOptions(
 	'd|date=s'      => \$date,

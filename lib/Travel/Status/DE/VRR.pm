@@ -7,6 +7,7 @@ use 5.010;
 our $VERSION = '0.02';
 
 use Carp qw(confess);
+use Encode qw(encode decode);
 use Travel::Status::DE::VRR::Result;
 use LWP::UserAgent;
 use XML::LibXML;
@@ -126,6 +127,25 @@ sub errstr {
 	return $self->{errstr};
 }
 
+sub sprintf_date {
+	my ($e) = @_;
+
+	return sprintf( '%02d.%02d.%d',
+		$e->getAttribute('day'),
+		$e->getAttribute('month'),
+		$e->getAttribute('year'),
+	);
+}
+
+sub sprintf_time {
+	my ($e) = @_;
+
+	return sprintf( '%02d:%02d',
+		$e->getAttribute('hour'),
+		$e->getAttribute('minute'),
+	);
+}
+
 sub results {
 	my ($self) = @_;
 	my @results;
@@ -134,44 +154,52 @@ sub results {
 
 	my $xp_date  = XML::LibXML::XPathExpression->new('./itdDateTime/itdDate');
 	my $xp_time  = XML::LibXML::XPathExpression->new('./itdDateTime/itdTime');
+	my $xp_rdate = XML::LibXML::XPathExpression->new('./itdRTDateTime/itdDate');
+	my $xp_rtime = XML::LibXML::XPathExpression->new('./itdRTDateTime/itdTime');
 	my $xp_line  = XML::LibXML::XPathExpression->new('./itdServingLine');
-	my $xp_extra = XML::LibXML::XPathExpression->new('./motDivaParams');
+	my $xp_info
+	  = XML::LibXML::XPathExpression->new('./itdServingLine/itdNoTrain');
 
 	for my $e ( $self->{tree}->findnodes($xp_element) ) {
 
 		my $e_date = ( $e->findnodes($xp_date) )[0];
 		my $e_time = ( $e->findnodes($xp_time) )[0];
 		my $e_line = ( $e->findnodes($xp_line) )[0];
+		my $e_info = ( $e->findnodes($xp_info) )[0];
+
+		my $e_rdate = ( $e->findnodes($xp_rdate) )[0];
+		my $e_rtime = ( $e->findnodes($xp_rtime) )[0];
 
 		if ( not( $e_date and $e_time and $e_line ) ) {
 			next;
 		}
 
-		my $date = sprintf( '%d.%d.%d',
-			$e_date->getAttribute('day'),
-			$e_date->getAttribute('month'),
-			$e_date->getAttribute('year'),
-		);
-		my $time = sprintf( '%02d:%02d',
-			$e_time->getAttribute('hour'),
-			$e_time->getAttribute('minute'),
-		);
+		my $date = sprintf_date($e_date);
+		my $time = sprintf_time($e_time);
+
+		my $rdate = $e_rdate ? sprintf_date($e_rdate) : $date;
+		my $rtime = $e_rtime ? sprintf_time($e_rtime) : $time;
+
 		my $platform  = $e->getAttribute('platform');
 		my $line      = $e_line->getAttribute('number');
 		my $dest      = $e_line->getAttribute('direction');
-		my $info      = undef;
+		my $info      = $e_info->textContent;
 		my $countdown = $e->getAttribute('countdown');
+		my $delay     = $e_info->getAttribute('delay') // 0;
 
 		push(
 			@results,
 			Travel::Status::DE::VRR::Result->new(
-				date        => $date,
-				time        => $time,
+				date        => $rdate,
+				time        => $rtime,
 				platform    => $platform,
 				line        => $line,
-				destination => $dest,
+				destination => decode( 'UTF-8', $dest ),
 				countdown   => $countdown,
-				info        => $info,
+				info        => decode( 'UTF-8', $info ),
+				delay       => $delay,
+				sched_date  => $date,
+				sched_time  => $time,
 			)
 		);
 	}

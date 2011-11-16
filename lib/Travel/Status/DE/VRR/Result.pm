@@ -9,8 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '0.02';
 
 Travel::Status::DE::VRR::Result->mk_ro_accessors(
-	qw(destination date time platform line info
-	  countdown type)
+	qw(countdown date delay destination info line platform sched_date sched_time time type)
 );
 
 sub new {
