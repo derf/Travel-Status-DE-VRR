@@ -9,7 +9,9 @@ use parent 'Class::Accessor';
 our $VERSION = '0.02';
 
 Travel::Status::DE::VRR::Result->mk_ro_accessors(
-	qw(destination time platform line info));
+	qw(destination date time platform line info
+	  countdown type)
+);
 
 sub new {
 	my ( $obj, %conf ) = @_;

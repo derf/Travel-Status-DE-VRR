@@ -110,7 +110,7 @@ sub new {
 	return $self;
 }
 
-sub new_from_html {
+sub new_from_xml {
 	my ( $class, %opt ) = @_;
 
 	my $self = { xml => $opt{xml}, };
@@ -156,10 +156,11 @@ sub results {
 			$e_time->getAttribute('hour'),
 			$e_time->getAttribute('minute'),
 		);
-		my $platform = $e->getAttribute('platform');
-		my $line     = $e_line->getAttribute('number');
-		my $dest     = $e_line->getAttribute('direction');
-		my $info     = undef;
+		my $platform  = $e->getAttribute('platform');
+		my $line      = $e_line->getAttribute('number');
+		my $dest      = $e_line->getAttribute('direction');
+		my $info      = undef;
+		my $countdown = $e->getAttribute('countdown');
 
 		push(
 			@results,
@@ -169,6 +170,7 @@ sub results {
 				platform    => $platform,
 				line        => $line,
 				destination => $dest,
+				countdown   => $countdown,
 				info        => $info,
 			)
 		);
