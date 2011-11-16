@@ -204,6 +204,10 @@ sub results {
 		);
 	}
 
+	@results = map { $_->[0] }
+	  sort { $a->[1] <=> $b->[1] }
+	  map { [ $_, $_->countdown ] } @results;
+
 	return @results;
 }
 
