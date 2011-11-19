@@ -105,17 +105,23 @@ if ( my $err = $status->errstr ) {
 
 for my $d ( $status->results ) {
 
+	my $platform = $d->platform;
+
+	if ( $d->platform_db ) {
+		$platform .= ' (DB)';
+	}
+
 	if (
 		( @grep_lines and not( $d->line ~~ \@grep_lines ) )
 		or ( @grep_platforms
-			and not( substr( $d->platform, 6 ) ~~ \@grep_platforms ) )
+			and not( $platform ~~ \@grep_platforms ) )
 	  )
 	{
 		next;
 	}
 
 	push( @output,
-		[ $d->time, $d->platform, $d->line, $d->destination, $d->info ] );
+		[ $d->time, $platform, $d->line, $d->destination, $d->info ] );
 }
 
 display_result(@output);

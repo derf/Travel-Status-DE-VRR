@@ -187,12 +187,19 @@ sub results {
 		my $countdown = $e->getAttribute('countdown');
 		my $delay     = $e_info->getAttribute('delay') // 0;
 
+		my $platform_is_db = 0;
+
+		if ( $platform =~ s{ ^ \# }{}ox ) {
+			$platform_is_db = 1;
+		}
+
 		push(
 			@results,
 			Travel::Status::DE::VRR::Result->new(
 				date        => $rdate,
 				time        => $rtime,
 				platform    => $platform,
+				platform_db => $platform_is_db,
 				line        => $line,
 				destination => decode( 'UTF-8', $dest ),
 				countdown   => $countdown,
