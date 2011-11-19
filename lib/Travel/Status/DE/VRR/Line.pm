@@ -1,4 +1,4 @@
-package Travel::Status::DE::VRR::Result;
+package Travel::Status::DE::VRR::Line;
 
 use strict;
 use warnings;
@@ -8,10 +8,8 @@ use parent 'Class::Accessor';
 
 our $VERSION = '0.02';
 
-Travel::Status::DE::VRR::Result->mk_ro_accessors(
-	qw(countdown date delay destination info line lineref platform
-	  platform_db sched_date sched_time time type)
-);
+Travel::Status::DE::VRR::Line->mk_ro_accessors(
+	qw(direction name operator route type valid));
 
 sub new {
 	my ( $obj, %conf ) = @_;
@@ -26,16 +24,16 @@ __END__
 
 =head1 NAME
 
-Travel::Status::DE::VRR::Result - Information about a single
-departure received by Travel::Status::DE::VRR
+Travel::Status::DE::VRR::Line - Information about a line departing at the
+requested station
 
 =head1 SYNOPSIS
 
-    for my $departure ($status->results) {
+    for my $line ($status->lines) {
         printf(
-            "At %s: %s to %s from platform %s\n",
-            $departure->time, $departure->line, $departure->destination,
-            $departure->platform
+            "line %s -> %s\nRoute: %s\nType %s, operator %s\nValid: %s\n\n",
+            $line->name, $line->direction, $line->route,
+            $line->type, $line->operator, $line->valid
         );
     }
 
@@ -45,9 +43,7 @@ version 0.02
 
 =head1 DESCRIPTION
 
-Travel::Status::DE::VRR::Result describes a single departure as obtained by
-TRavel::Status::DE::VRR.  It contains information about the time, platform,
-line number and destination.
+FIXME
 
 =head1 METHODS
 

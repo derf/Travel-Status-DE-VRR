@@ -6,8 +6,9 @@ use 5.010;
 
 our $VERSION = '0.02';
 
-use Carp qw(confess);
+use Carp qw(confess cluck);
 use Encode qw(encode decode);
+use Travel::Status::DE::VRR::Line;
 use Travel::Status::DE::VRR::Result;
 use LWP::UserAgent;
 use XML::LibXML;
@@ -146,6 +147,59 @@ sub sprintf_time {
 	);
 }
 
+sub lines {
+	my ($self) = @_;
+	my @lines;
+
+	my $xp_element
+	  = XML::LibXML::XPathExpression->new('//itdServingLines/itdServingLine');
+
+	my $xp_info  = XML::LibXML::XPathExpression->new('./itdNoTrain');
+	my $xp_route = XML::LibXML::XPathExpression->new('./itdRouteDescText');
+	my $xp_oper  = XML::LibXML::XPathExpression->new('./itdOperator/name');
+
+	if ( $self->{lines} ) {
+		return @{ $self->{lines} };
+	}
+
+	for my $e ( $self->{tree}->findnodes($xp_element) ) {
+
+		my $e_info  = ( $e->findnodes($xp_info) )[0];
+		my $e_route = ( $e->findnodes($xp_route) )[0];
+		my $e_oper  = ( $e->findnodes($xp_oper) )[0];
+
+		if ( not( $e_info and $e_route and $e_oper ) ) {
+			cluck('node with insufficient data. This should not happen');
+			next;
+		}
+
+		my $line       = $e->getAttribute('number');
+		my $direction  = $e->getAttribute('direction');
+		my $valid      = $e->getAttribute('valid');
+		my $type       = $e_info->getAttribute('name');
+		my $route      = $e_route->textContent;
+		my $operator   = $e_oper->textContent;
+		my $identifier = $e->getAttribute('stateless');
+
+		push(
+			@lines,
+			Travel::Status::DE::VRR::Line->new(
+				name       => $line,
+				direction  => decode( 'UTF-8', $direction ),
+				valid      => $valid,
+				type       => decode( 'UTF-8', $type ),
+				route      => decode( 'UTF-8', $route ),
+				operator   => decode( 'UTF-8', $operator ),
+				identifier => $identifier,
+			)
+		);
+	}
+
+	$self->{lines} = \@lines;
+
+	return @lines;
+}
+
 sub results {
 	my ($self) = @_;
 	my @results;
@@ -160,6 +214,12 @@ sub results {
 	my $xp_info
 	  = XML::LibXML::XPathExpression->new('./itdServingLine/itdNoTrain');
 
+	if ( $self->{results} ) {
+		return @{ $self->{results} };
+	}
+
+	$self->lines;
+
 	for my $e ( $self->{tree}->findnodes($xp_element) ) {
 
 		my $e_date = ( $e->findnodes($xp_date) )[0];
@@ -171,6 +231,7 @@ sub results {
 		my $e_rtime = ( $e->findnodes($xp_rtime) )[0];
 
 		if ( not( $e_date and $e_time and $e_line ) ) {
+			cluck('node with insufficient data. This should not happen');
 			next;
 		}
 
@@ -189,6 +250,10 @@ sub results {
 
 		my $platform_is_db = 0;
 
+		my @line_obj
+		  = grep { $_->{identifier} eq $e_line->getAttribute('stateless') }
+		  @{ $self->{lines} };
+
 		if ( $platform =~ s{ ^ \# }{}ox ) {
 			$platform_is_db = 1;
 		}
@@ -200,6 +265,7 @@ sub results {
 				time        => $rtime,
 				platform    => $platform,
 				platform_db => $platform_is_db,
+				lineref     => $line_obj[0] // undef,
 				line        => $line,
 				destination => decode( 'UTF-8', $dest ),
 				countdown   => $countdown,
@@ -214,6 +280,8 @@ sub results {
 	@results = map { $_->[0] }
 	  sort { $a->[1] <=> $b->[1] }
 	  map { [ $_, $_->countdown ] } @results;
+
+	$self->{results} = \@results;
 
 	return @results;
 }
