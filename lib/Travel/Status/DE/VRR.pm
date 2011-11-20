@@ -174,7 +174,7 @@ sub check_for_ambiguous {
 		$self->{errstr} = sprintf(
 			'Ambiguous place input: %s',
 			join( q{ | },
-				map { $_->textContent }
+				map { decode( 'UTF-8', $_->textContent ) }
 				  @{ $e_place->findnodes($xp_place_elem) } )
 		);
 		return;
@@ -183,7 +183,8 @@ sub check_for_ambiguous {
 		$self->{errstr} = sprintf(
 			'Ambiguous name input: %s',
 			join( q{ | },
-				map { $_->textContent } @{ $e_name->findnodes($xp_name_elem) } )
+				map { decode( 'UTF-8', $_->textContent ) }
+				  @{ $e_name->findnodes($xp_name_elem) } )
 		);
 		return;
 	}
