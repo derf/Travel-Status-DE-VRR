@@ -43,7 +43,10 @@ version 0.02
 
 =head1 DESCRIPTION
 
-FIXME
+Travel::Status::DE::VRR::Line describes a tram/bus/train line departing at the
+stop requested by Travel::Status::DE::VRR. Note that it only covers one
+direction, so in most cases, you get two Travel::Status::DE::VRR::Line objects
+per actual line.
 
 =head1 METHODS
 
@@ -51,28 +54,34 @@ FIXME
 
 =over
 
-=item $departure->destination
+=item $line->direction
 
-The tram/bus/train destination.
+Direction of the line.  Name of either the destination stop or one on the way.
 
-=item $departure->info
+=item $line->name
 
-Additional information related to the departure (string).  If departures for
-an address were requested, this is the stop name, otherwise it may be recent
-news related to the line's schedule.
+Name of the line, e.g. "U11", "SB15", "107".
 
-=item $departure->line
+=item $line->operator
 
-The name/number of the line.
+Operator of the line, as in the local transit company responsible for it.
 
-=item $departure->platform
+=item $line->route
 
-The departure platform.  Note that this is prefixed by either "Bstg." (for
-tram/bus departures) or "Gleis" (for trains).
+Partial route of the line (as string), usually start and destination with two
+stops in between.
 
-=item $departure->time
+Note that start means the actual start of the line, the stop requested by
+Travel::Status::DE::VRR::Line may not even be included in this listing.
 
-The departure time as string in "HH:MM" format.
+=item $line->type
+
+Type of the line.  Observed values so far are "Bus", "NE", "StraE<szlig>enbahn",
+"U-Bahn".
+
+=item $line->valid
+
+When / how long above information is valid.
 
 =back
 
@@ -80,24 +89,10 @@ The departure time as string in "HH:MM" format.
 
 =over
 
-=item $departure = Travel::Status::DE::VRR::Result->new(I<%data>)
+=item $line = Travel::Status::DE::VRR::Line->new(I<%data>)
 
-Returns a new Travel::Status::DE::VRR::Result object.  You should not need to
+Returns a new Travel::Status::DE::VRR::Line object.  You should not need to
 call this.
-
-Required I<data>:
-
-=over
-
-=item B<destination> => I<string>
-
-=item B<line> => I<string>
-
-=item B<platform> => I<string>
-
-=item B<time> => I<string>
-
-=back
 
 =back
 
@@ -115,7 +110,7 @@ None.
 
 =head1 BUGS AND LIMITATIONS
 
-Unknown.
+The B<route> accessor returns a simple string, an array might be better suited.
 
 =head1 SEE ALSO
 

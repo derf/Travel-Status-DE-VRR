@@ -46,7 +46,7 @@ version 0.02
 =head1 DESCRIPTION
 
 Travel::Status::DE::VRR::Result describes a single departure as obtained by
-TRavel::Status::DE::VRR.  It contains information about the time, platform,
+Travel::Status::DE::VRR.  It contains information about the time, platform,
 line number and destination.
 
 =head1 METHODS
