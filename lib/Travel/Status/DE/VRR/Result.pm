@@ -53,11 +53,31 @@ line number and destination.
 
 =head2 ACCESSORS
 
+"Actual" in the description means that the delay (if available) is already
+included in the calculation, "Scheduled" means it isn't.
+
 =over
+
+=item $departure->countdown
+
+Actual time in minutes from now until the tram/bus/train will depart.
+
+If delay information is available, it is already included.
+
+=item $departure->date
+
+Actual departure date (DD.MM.YYYY).
+
+=item $departure->delay
+
+Expected delay from scheduled departure time in minutes.
+
+Note that this is only available for DB trains, in other cases it will always
+return 0.
 
 =item $departure->destination
 
-The tram/bus/train destination.
+Destination name.
 
 =item $departure->info
 
@@ -69,14 +89,39 @@ news related to the line's schedule.
 
 The name/number of the line.
 
+=item $departure->lineref
+
+Travel::Status::DE::VRR::Line(3pm) object describing the departing line in
+detail.
+
 =item $departure->platform
 
-The departure platform.  Note that this is prefixed by either "Bstg." (for
-tram/bus departures) or "Gleis" (for trains).
+Departure platform number.
+
+=item $departure->platform_db
+
+true if the platform number is operated by DB ("Gleis x"), false ("Bstg. x")
+otherwise.
+
+Unfortunately, there is no distinction between tram and bus platforms yet,
+which also may have the same numbers.
+
+=item $departure->sched_date
+
+Scheduled departure date (DD.MM.YYYY).
+
+=item $departure->sched_time
+
+Scheduled departure time (HH:MM).
 
 =item $departure->time
 
-The departure time as string in "HH:MM" format.
+Actual departure time (HH:MM).
+
+=item $departure->type
+
+Type of the departing train, values observed so far are "StraE<szlig>enbahn",
+"Bus", "NE", "S-Bahn" and "U-Bahn".
 
 =back
 
@@ -88,20 +133,6 @@ The departure time as string in "HH:MM" format.
 
 Returns a new Travel::Status::DE::VRR::Result object.  You should not need to
 call this.
-
-Required I<data>:
-
-=over
-
-=item B<destination> => I<string>
-
-=item B<line> => I<string>
-
-=item B<platform> => I<string>
-
-=item B<time> => I<string>
-
-=back
 
 =back
 
@@ -119,7 +150,7 @@ None.
 
 =head1 BUGS AND LIMITATIONS
 
-Unknown.
+Not all possible B<type> values are documented yet.
 
 =head1 SEE ALSO
 
