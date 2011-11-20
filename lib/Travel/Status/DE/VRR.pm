@@ -170,23 +170,30 @@ sub check_for_ambiguous {
 		return;
 	}
 
-	if ( $e_place->getAttribute('state') eq 'list' ) {
+	my $s_place = $e_place->getAttribute('state');
+	my $s_name  = $e_name->getAttribute('state');
+
+	if ( $s_place eq 'list' ) {
 		$self->{errstr} = sprintf(
 			'Ambiguous place input: %s',
 			join( q{ | },
 				map { decode( 'UTF-8', $_->textContent ) }
 				  @{ $e_place->findnodes($xp_place_elem) } )
 		);
-		return;
 	}
-	if ( $e_name->getAttribute('state') eq 'list' ) {
+	if ( $s_name eq 'list' ) {
 		$self->{errstr} = sprintf(
 			'Ambiguous name input: %s',
 			join( q{ | },
 				map { decode( 'UTF-8', $_->textContent ) }
 				  @{ $e_name->findnodes($xp_name_elem) } )
 		);
-		return;
+	}
+	if ( $s_place eq 'notidentified' ) {
+		$self->{errstr} = 'invalid place parameter';
+	}
+	if ( $s_name eq 'notidentified' ) {
+		$self->{errstr} = 'invalid name parameter';
 	}
 
 	return;
