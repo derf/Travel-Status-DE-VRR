@@ -109,6 +109,8 @@ sub new {
 
 	$self->{tree} = XML::LibXML->load_xml( string => $self->{xml}, );
 
+	$self->check_for_ambiguous();
+
 	return $self;
 }
 
@@ -145,6 +147,48 @@ sub sprintf_time {
 		$e->getAttribute('hour'),
 		$e->getAttribute('minute'),
 	);
+}
+
+sub check_for_ambiguous {
+	my ($self) = @_;
+
+	my $xml = $self->{tree};
+
+	my $xp_place = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvPlace');
+	my $xp_name  = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvName');
+
+	my $xp_place_elem = XML::LibXML::XPathExpression->new('./odvPlaceElem');
+	my $xp_name_elem  = XML::LibXML::XPathExpression->new('./odvNameElem');
+
+	my $e_place = ( $xml->findnodes($xp_place) )[0];
+	my $e_name  = ( $xml->findnodes($xp_name) )[0];
+
+	if ( not( $e_place and $e_name ) ) {
+
+		# this should not happen[tm]
+		cluck('skipping ambiguity check- itdOdvPlace/itdOdvName missing');
+		return;
+	}
+
+	if ( $e_place->getAttribute('state') eq 'list' ) {
+		$self->{errstr} = sprintf(
+			'Ambiguous place input: %s',
+			join( q{ | },
+				map { $_->textContent }
+				  @{ $e_place->findnodes($xp_place_elem) } )
+		);
+		return;
+	}
+	if ( $e_name->getAttribute('state') eq 'list' ) {
+		$self->{errstr} = sprintf(
+			'Ambiguous name input: %s',
+			join( q{ | },
+				map { $_->textContent } @{ $e_name->findnodes($xp_name_elem) } )
+		);
+		return;
+	}
+
+	return;
 }
 
 sub lines {
