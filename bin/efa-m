@@ -11,14 +11,14 @@ use Getopt::Long qw(:config no_ignore_case);
 use List::Util qw(max);
 use Travel::Status::DE::VRR;
 
-my ( $date, $time, $input_type );
+my ( $date, $time, $input_type, $list_lines );
 my ( @grep_lines, @grep_platforms );
-my @output;
 
 GetOptions(
 	'd|date=s'      => \$date,
 	'h|help'        => sub { show_help(0) },
 	'l|line=s@'     => \@grep_lines,
+	'L|linelist'    => \$list_lines,
 	'p|platform=s@' => \@grep_platforms,
 	't|time=s'      => \$time,
 	'V|version'     => \&show_version,
@@ -98,33 +98,64 @@ sub display_result {
 	return;
 }
 
+sub show_lines {
+	my @output;
+
+	for my $l ( $status->lines ) {
+
+		if ( @grep_lines and not( $l->name ~~ \@grep_lines ) ) {
+			next;
+		}
+
+		push( @output,
+			[ $l->type, $l->name, $l->direction // q{}, $l->route // q{} ] );
+	}
+
+	display_result(@output);
+
+	return;
+}
+
+sub show_results {
+	my @output;
+
+	for my $d ( $status->results ) {
+
+		my $platform = $d->platform;
+
+		if ( $d->platform_db ) {
+			$platform .= ' (DB)';
+		}
+
+		if (
+			( @grep_lines and not( $d->line ~~ \@grep_lines ) )
+			or ( @grep_platforms
+				and not( $platform ~~ \@grep_platforms ) )
+		  )
+		{
+			next;
+		}
+
+		push( @output,
+			[ $d->time, $platform, $d->line, $d->destination, $d->info ] );
+	}
+
+	display_result(@output);
+
+	return;
+}
+
 if ( my $err = $status->errstr ) {
 	say STDERR "Request error: ${err}";
 	exit 2;
 }
 
-for my $d ( $status->results ) {
-
-	my $platform = $d->platform;
-
-	if ( $d->platform_db ) {
-		$platform .= ' (DB)';
-	}
-
-	if (
-		( @grep_lines and not( $d->line ~~ \@grep_lines ) )
-		or ( @grep_platforms
-			and not( $platform ~~ \@grep_platforms ) )
-	  )
-	{
-		next;
-	}
-
-	push( @output,
-		[ $d->time, $platform, $d->line, $d->destination, $d->info ] );
+if ($list_lines) {
+	show_lines();
 }
-
-display_result(@output);
+else {
+	show_results();
+}
 
 __END__
 
