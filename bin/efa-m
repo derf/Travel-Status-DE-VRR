@@ -87,10 +87,7 @@ sub display_result {
 		}
 
 		printf(
-			join( q{  },
-				"%${line_length[0]}s",
-				( map { "%-${_}s" } @line_length[ 1 .. $#line_length ] ) )
-			  . "\n",
+			join( q{  }, ( map { "%-${_}s" } @line_length ) ) . "\n",
 			@{$line}[ 0 .. 3 ]
 		);
 	}
@@ -122,6 +119,7 @@ sub show_results {
 	for my $d ( $status->results ) {
 
 		my $platform = $d->platform;
+		my $dtime    = $d->time;
 
 		if ( $d->platform_db ) {
 			$platform .= ' (DB)';
@@ -136,8 +134,12 @@ sub show_results {
 			next;
 		}
 
+		if ( $d->delay ) {
+			$dtime .= ' (+' . $d->delay . ')';
+		}
+
 		push( @output,
-			[ $d->time, $platform, $d->line, $d->destination, $d->info ] );
+			[ $dtime, $platform, $d->line, $d->destination, $d->info ] );
 	}
 
 	display_result(@output);
