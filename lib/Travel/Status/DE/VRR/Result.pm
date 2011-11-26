@@ -83,7 +83,8 @@ Destination name.
 
 Additional information related to the departure (string).  If departures for
 an address were requested, this is the stop name, otherwise it may be recent
-news related to the line's schedule.
+news related to the line's schedule.  If no information is available, returns
+an empty string.
 
 =item $departure->line
 
@@ -120,8 +121,8 @@ Actual departure time (HH:MM).
 
 =item $departure->type
 
-Type of the departing train, values observed so far are "StraE<szlig>enbahn",
-"Bus", "NE", "S-Bahn" and "U-Bahn".
+Type of the departure.  Note that efa.vrr.de sometimes puts bogus data in this
+field.  See L</DEPARTURE TYPES>.
 
 =back
 
@@ -133,6 +134,34 @@ Type of the departing train, values observed so far are "StraE<szlig>enbahn",
 
 Returns a new Travel::Status::DE::VRR::Result object.  You should not need to
 call this.
+
+=back
+
+=head1 DEPARTURE TYPES
+
+The following are known so far:
+
+=over
+
+=item * Abellio-Zug
+
+=item * Eurocity
+
+=item * Intercity-Express
+
+=item * NE (NachtExpress / night bus)
+
+=item * Niederflurbus
+
+=item * R-Bahn (RE / RegionalExpress)
+
+=item * S-Bahn
+
+=item * SB (Schnellbus)
+
+=item * Straßenbahn
+
+=item * U-Bahn
 
 =back
 
@@ -150,7 +179,8 @@ None.
 
 =head1 BUGS AND LIMITATIONS
 
-Not all possible B<type> values are documented yet.
+C<< $result->type >> may contain bogus data.  This comes from the efa.vrr.de
+interface.
 
 =head1 SEE ALSO
 

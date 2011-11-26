@@ -300,6 +300,7 @@ sub results {
 		my $info      = $e_info->textContent;
 		my $countdown = $e->getAttribute('countdown');
 		my $delay     = $e_info->getAttribute('delay') // 0;
+		my $type      = $e_info->getAttribute('name');
 
 		my $platform_is_db = 0;
 
@@ -326,6 +327,7 @@ sub results {
 				delay       => $delay,
 				sched_date  => $date,
 				sched_time  => $time,
+				type        => $type,
 			)
 		);
 	}
@@ -404,8 +406,13 @@ address / poi / stop name to list departures for.
 
 =item $status->errstr
 
-In case of an error in the HTTP requests, returns a string describing it.  If
-no error occured, returns undef.
+In case of en HTTP request or EFA error, returns a string describing it. If
+none occured, returns undef.
+
+=item $status->lines
+
+Returns a list of Travel::Status::DE::VRR::Line(3pm) objects, each one
+describing one line servicing the selected station.
 
 =item $status->results
 
