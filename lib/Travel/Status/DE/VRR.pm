@@ -156,12 +156,15 @@ sub check_for_ambiguous {
 
 	my $xp_place = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvPlace');
 	my $xp_name  = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvName');
+	my $xp_mesg
+	  = XML::LibXML::XPathExpression->new('//itdMessage[@type="error"]');
 
 	my $xp_place_elem = XML::LibXML::XPathExpression->new('./odvPlaceElem');
 	my $xp_name_elem  = XML::LibXML::XPathExpression->new('./odvNameElem');
 
 	my $e_place = ( $xml->findnodes($xp_place) )[0];
 	my $e_name  = ( $xml->findnodes($xp_name) )[0];
+	my @e_mesg  = $xml->findnodes($xp_mesg);
 
 	if ( not( $e_place and $e_name ) ) {
 
@@ -180,6 +183,7 @@ sub check_for_ambiguous {
 				map { decode( 'UTF-8', $_->textContent ) }
 				  @{ $e_place->findnodes($xp_place_elem) } )
 		);
+		return;
 	}
 	if ( $s_name eq 'list' ) {
 		$self->{errstr} = sprintf(
@@ -188,12 +192,19 @@ sub check_for_ambiguous {
 				map { decode( 'UTF-8', $_->textContent ) }
 				  @{ $e_name->findnodes($xp_name_elem) } )
 		);
+		return;
 	}
 	if ( $s_place eq 'notidentified' ) {
 		$self->{errstr} = 'invalid place parameter';
+		return;
 	}
 	if ( $s_name eq 'notidentified' ) {
 		$self->{errstr} = 'invalid name parameter';
+		return;
+	}
+	if (@e_mesg) {
+		$self->{errstr} = join( q{; }, map { $_->textContent } @e_mesg );
+		return;
 	}
 
 	return;
