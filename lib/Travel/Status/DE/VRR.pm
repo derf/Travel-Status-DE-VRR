@@ -358,7 +358,7 @@ __END__
 
 =head1 NAME
 
-Travel::Status::DE::VRR - inofficial VRR departure monitor
+Travel::Status::DE::VRR - unofficial VRR departure monitor
 
 =head1 SYNOPSIS
 
@@ -370,7 +370,7 @@ Travel::Status::DE::VRR - inofficial VRR departure monitor
 
     for my $d ($status->results) {
         printf(
-            "%s %-8s %-5s %s\n",
+            "%s %d %-5s %s\n",
             $d->time, $d->platform, $d->line, $d->destination
         );
     }
@@ -381,7 +381,7 @@ version 0.02
 
 =head1 DESCRIPTION
 
-Travel::Status::DE::VRR is an inofficial interface to the VRR departure
+Travel::Status::DE::VRR is an unofficial interface to the VRR departure
 monitor available at
 L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST?language=de&itdLPxx_transpCompany=vrr&>.
 
