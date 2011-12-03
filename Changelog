@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 1.00 - Sat Dec 03 2011
 
     * switch to efa.vrr.de XML interface
     * properly decode UTF-8 strings

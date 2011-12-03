@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.010;
 
-our $VERSION = '0.02';
+our $VERSION = '1.00';
 
 use Carp qw(confess cluck);
 use Encode qw(encode decode);
@@ -377,7 +377,7 @@ Travel::Status::DE::VRR - unofficial VRR departure monitor
 
 =head1 VERSION
 
-version 0.02
+version 1.00
 
 =head1 DESCRIPTION
 

@@ -6,7 +6,7 @@ use 5.010;
 
 use parent 'Class::Accessor';
 
-our $VERSION = '0.02';
+our $VERSION = '1.00';
 
 Travel::Status::DE::VRR::Result->mk_ro_accessors(
 	qw(countdown date delay destination info line lineref platform
@@ -41,7 +41,7 @@ departure received by Travel::Status::DE::VRR
 
 =head1 VERSION
 
-version 0.02
+version 1.00
 
 =head1 DESCRIPTION
 
