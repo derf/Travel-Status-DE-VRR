@@ -1,3 +1,18 @@
+git HEAD
+
+    * switch to efa.vrr.de XML interface
+    * properly decode UTF-8 strings
+    * Switch from WWW::Mechanize to LWP::UserAgent
+    * Add ->lines and Travel::Status::DE::VRR::Line describing all lines
+      serving the given stop
+
+    [Travel::Status::DE::VRR::Result]
+    * Add countdown, date, delay, lineref, platform_db, sched_date, sched_time
+      and type accessors
+
+    [efa-m]
+    * Add -L / --linelist option
+
 Travel::Status::DE::VRR 0.02 - Sat Oct 01 2011
 
     [efa-m]
