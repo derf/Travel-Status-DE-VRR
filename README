@@ -9,7 +9,7 @@ Dependencies
 
  * perl version 5.10.1 or newer
  * Class::Accessor
- * WWW::Mechanize
+ * LWP::UserAgent
  * XML::LibXML
 
 

@@ -19,7 +19,7 @@ Module::Build->new(
 		'Class::Accessor' => 0,
 		'Getopt::Long' => 0,
 		'List::Util' => 0,
-		'WWW::Mechanize' => 0,
+		'LWP::UserAgent' => 0,
 		'XML::LibXML' => 0,
 	},
 	sign => 1,
