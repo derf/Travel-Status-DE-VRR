@@ -159,7 +159,7 @@ The following are known so far:
 
 =item * SB (Schnellbus)
 
-=item * Straßenbahn
+=item * StraE<szlig>enbahn
 
 =item * U-Bahn
 
