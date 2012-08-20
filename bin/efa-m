@@ -135,7 +135,12 @@ sub show_results {
 		}
 
 		if ( $d->delay ) {
-			$dtime .= ' (+' . $d->delay . ')';
+			if ($d->delay eq '-9999') {
+				$dtime .= ' CANCELED';
+			}
+			else {
+				$dtime .= ' (+' . $d->delay . ')';
+			}
 		}
 
 		push( @output,
