@@ -97,6 +97,8 @@ sub new {
 
 	bless( $self, $class );
 
+	$ua->env_proxy;
+
 	my $response
 	  = $ua->post( 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST', $self->{post} );
 
