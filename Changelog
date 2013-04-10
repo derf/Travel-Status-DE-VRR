@@ -1,3 +1,7 @@
+Travel::Status::DE::VRR 1.02 - Wed Apr 10 2013
+
+    * Patch by Roland Hieber: respect proxy environment variables
+
 Travel::Status::DE::VRR 1.01 - Mon Nov 26 2012
 
     * Properly parse "tram canceled" information (EVAG, maybe also VRR)
