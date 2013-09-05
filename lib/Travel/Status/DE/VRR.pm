@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use 5.010;
 
+no if $] >= 5.018, warnings => "experimental::smartmatch";
+
 our $VERSION = '1.02';
 
 use Carp qw(confess cluck);
