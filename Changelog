@@ -1,4 +1,4 @@
-Travel::Status::DE::VRR 1.03 - Wed Apr 10 2013
+Travel::Status::DE::VRR 1.03 - Tue Sep 17 2013
 
     * Disable smartmatch warnings on perl >= 5.018
 
