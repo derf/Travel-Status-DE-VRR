@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '1.03';
 
 Travel::Status::DE::VRR::Result->mk_ro_accessors(
-	qw(countdown date delay destination info line lineref platform
+	qw(countdown date delay destination info key line lineref platform
 	  platform_db sched_date sched_time time type)
 );
 
@@ -20,6 +20,13 @@ sub new {
 
 	return bless( $ref, $obj );
 }
+
+sub TO_JSON {
+	my ($self) = @_;
+
+	return { %{$self} };
+}
+
 1;
 
 __END__
@@ -85,6 +92,11 @@ Additional information related to the departure (string).  If departures for
 an address were requested, this is the stop name, otherwise it may be recent
 news related to the line's schedule.  If no information is available, returns
 an empty string.
+
+=item $departure->key
+
+Unknown.  Appears to be the UUID for this departure (unique over all
+lines, reused daily).
 
 =item $departure->line
 

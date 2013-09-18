@@ -18,6 +18,13 @@ sub new {
 
 	return bless( $ref, $obj );
 }
+
+sub TO_JSON {
+	my ($self) = @_;
+
+	return { %{$self} };
+}
+
 1;
 
 __END__
