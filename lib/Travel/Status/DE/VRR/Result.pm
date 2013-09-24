@@ -95,8 +95,10 @@ an empty string.
 
 =item $departure->key
 
-Unknown.  Appears to be the UUID for this departure (unique over all
-lines, reused daily).
+Unknown.  Unlike the name may suggest, this is not a unique key / UUID for a
+departure: On the same day, different lines departing at the same station
+may have the same key.  It might, however, be unique when combined with the
+B<line> information.
 
 =item $departure->line
 
