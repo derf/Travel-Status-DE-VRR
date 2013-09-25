@@ -1,8 +1,13 @@
+git HEAD
+
+    * Add ->key accessor to Travel::Status::DE::VRR::Line
+      (meaning is unknown)
+    * Allow Travel::Status::DE::VRR::Line and TraveL::Status::DE::VRR::Result
+      to be serialized to JSON (via TO_JSON method)
+
 Travel::Status::DE::VRR 1.03 - Tue Sep 17 2013
 
     * Disable smartmatch warnings on perl >= 5.018
-    * Allow Travel::Status::DE::VRR::Line and TraveL::Status::DE::VRR::Result
-      to be serialized to JSON (via TO_JSON method)
 
 Travel::Status::DE::VRR 1.02 - Wed Apr 10 2013
 
