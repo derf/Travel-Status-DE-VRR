@@ -149,6 +149,10 @@ field.  See L</DEPARTURE TYPES>.
 Returns a new Travel::Status::DE::VRR::Result object.  You should not need to
 call this.
 
+=item $departure->TO_JSON
+
+Allows the object data to be serialized to JSON.
+
 =back
 
 =head1 DEPARTURE TYPES

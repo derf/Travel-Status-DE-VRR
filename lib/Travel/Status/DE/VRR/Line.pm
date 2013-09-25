@@ -101,6 +101,10 @@ When / how long above information is valid.
 Returns a new Travel::Status::DE::VRR::Line object.  You should not need to
 call this.
 
+=item $line->TO_JSON
+
+Allows the object data to be serialized to JSON.
+
 =back
 
 =head1 DIAGNOSTICS
