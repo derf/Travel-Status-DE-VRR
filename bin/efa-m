@@ -136,13 +136,11 @@ sub show_results {
 			next;
 		}
 
+		if ( $d->is_cancelled ) {
+			$dtime .= ' CANCELED';
+		}
 		if ( $d->delay ) {
-			if ($d->delay eq '-9999') {
-				$dtime .= ' CANCELED';
-			}
-			else {
-				$dtime .= ' (+' . $d->delay . ')';
-			}
+			$dtime .= ' (+' . $d->delay . ')';
 		}
 
 		push( @output,

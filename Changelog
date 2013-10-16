@@ -2,6 +2,9 @@ git HEAD
 
     * Add ->key accessor to Travel::Status::DE::VRR::Line
       (meaning is unknown)
+    * Add ->is_cancelled accessor to Travel::Status::DE::VRR::Result
+    * Travel::Status::DE::VRR::Result->delay will no longer return '-9999'
+      for cancelled departures, check ->is_cancelled instead
     * Allow Travel::Status::DE::VRR::Line and TraveL::Status::DE::VRR::Result
       to be serialized to JSON (via TO_JSON method)
 
