@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 1.04 - Wed Oct 16 2013
 
     * Add ->key accessor to Travel::Status::DE::VRR::Line
       (meaning is unknown)

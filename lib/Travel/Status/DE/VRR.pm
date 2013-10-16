@@ -6,7 +6,7 @@ use 5.010;
 
 no if $] >= 5.018, warnings => "experimental::smartmatch";
 
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 use Carp qw(confess cluck);
 use Encode qw(encode decode);
@@ -385,7 +385,7 @@ Travel::Status::DE::VRR - unofficial VRR departure monitor
 
 =head1 VERSION
 
-version 1.03
+version 1.04
 
 =head1 DESCRIPTION
 
