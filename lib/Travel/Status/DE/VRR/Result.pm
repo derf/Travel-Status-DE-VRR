@@ -173,6 +173,8 @@ The following are known so far:
 
 =item * Abellio-Zug
 
+=item * Bus
+
 =item * Eurocity
 
 =item * Intercity-Express
