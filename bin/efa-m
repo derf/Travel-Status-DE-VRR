@@ -150,14 +150,8 @@ sub show_results {
 			$dtime .= ' (+' . $d->delay . ')';
 		}
 
-		if ($relative_times) {
-			push( @output,
-				[ $platform, $d->line, $d->destination, $dtime, $d->info ] );
-		}
-		else {
-			push( @output,
-				[ $dtime, $platform, $d->line, $d->destination, $d->info ] );
-		}
+		push( @output,
+			[ $dtime, $platform, $d->line, $d->destination, $d->info ] );
 	}
 
 	display_result(@output);
