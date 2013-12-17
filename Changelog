@@ -1,6 +1,7 @@
 git HEAD
 
     * Add -r, --relative option to use relative times
+    * Support lines without Operator field (e.g. Aachen / ASEAG)
 
 Travel::Status::DE::VRR 1.04 - Wed Oct 16 2013
 

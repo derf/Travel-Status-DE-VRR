@@ -72,11 +72,12 @@ Name of the line, e.g. "U11", "SB15", "107".
 =item $line->operator
 
 Operator of the line, as in the local transit company responsible for it.
+May be undefined.
 
 =item $line->route
 
 Partial route of the line (as string), usually start and destination with two
-stops in between.
+stops in between. May be undefined.
 
 Note that start means the actual start of the line, the stop requested by
 Travel::Status::DE::VRR::Line may not even be included in this listing.

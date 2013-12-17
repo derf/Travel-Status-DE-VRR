@@ -237,7 +237,7 @@ sub lines {
 		my $e_route = ( $e->findnodes($xp_route) )[0];
 		my $e_oper  = ( $e->findnodes($xp_oper) )[0];
 
-		if ( not( $e_info and $e_oper ) ) {
+		if ( not($e_info) ) {
 			cluck( 'node with insufficient data. This should not happen. '
 				  . $e->getAttribute('number') );
 			next;
@@ -248,7 +248,7 @@ sub lines {
 		my $valid      = $e->getAttribute('valid');
 		my $type       = $e_info->getAttribute('name');
 		my $route      = ( $e_route ? $e_route->textContent : undef );
-		my $operator   = $e_oper->textContent;
+		my $operator   = ( $e_oper ? $e_oper->textContent : undef );
 		my $identifier = $e->getAttribute('stateless');
 
 		push(
