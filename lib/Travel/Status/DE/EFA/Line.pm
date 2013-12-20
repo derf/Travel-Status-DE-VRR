@@ -1,4 +1,4 @@
-package Travel::Status::DE::VRR::Line;
+package Travel::Status::DE::EFA::Line;
 
 use strict;
 use warnings;
@@ -8,7 +8,7 @@ use parent 'Class::Accessor';
 
 our $VERSION = '1.05';
 
-Travel::Status::DE::VRR::Line->mk_ro_accessors(
+Travel::Status::DE::EFA::Line->mk_ro_accessors(
 	qw(direction name operator route type valid));
 
 sub new {
@@ -31,7 +31,7 @@ __END__
 
 =head1 NAME
 
-Travel::Status::DE::VRR::Line - Information about a line departing at the
+Travel::Status::DE::EFA::Line - Information about a line departing at the
 requested station
 
 =head1 SYNOPSIS
@@ -50,9 +50,9 @@ version 1.05
 
 =head1 DESCRIPTION
 
-Travel::Status::DE::VRR::Line describes a tram/bus/train line departing at the
-stop requested by Travel::Status::DE::VRR. Note that it only covers one
-direction, so in most cases, you get two Travel::Status::DE::VRR::Line objects
+Travel::Status::DE::EFA::Line describes a tram/bus/train line departing at the
+stop requested by Travel::Status::DE::EFA. Note that it only covers one
+direction, so in most cases, you get two Travel::Status::DE::EFA::Line objects
 per actual line.
 
 =head1 METHODS
@@ -80,7 +80,7 @@ Partial route of the line (as string), usually start and destination with two
 stops in between. May be undefined.
 
 Note that start means the actual start of the line, the stop requested by
-Travel::Status::DE::VRR::Line may not even be included in this listing.
+Travel::Status::DE::EFA::Line may not even be included in this listing.
 
 =item $line->type
 
@@ -97,9 +97,9 @@ When / how long above information is valid.
 
 =over
 
-=item $line = Travel::Status::DE::VRR::Line->new(I<%data>)
+=item $line = Travel::Status::DE::EFA::Line->new(I<%data>)
 
-Returns a new Travel::Status::DE::VRR::Line object.  You should not need to
+Returns a new Travel::Status::DE::EFA::Line object.  You should not need to
 call this.
 
 =item $line->TO_JSON
@@ -126,7 +126,7 @@ The B<route> accessor returns a simple string, an array might be better suited.
 
 =head1 SEE ALSO
 
-Travel::Status::DE::VRR(3pm).
+Travel::Status::DE::EFA(3pm).
 
 =head1 AUTHOR
 

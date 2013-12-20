@@ -17,13 +17,13 @@ my $xml = slurp('t/in/essen_hb.xml');
 
 my $status = Travel::Status::DE::VRR->new_from_xml(xml => $xml);
 
-isa_ok($status, 'Travel::Status::DE::VRR');
+isa_ok($status, 'Travel::Status::DE::EFA');
 can_ok($status, qw(errstr results));
 
 my @results = $status->results;
 
 for my $result (@results) {
-	isa_ok($result, 'Travel::Status::DE::VRR::Result');
+	isa_ok($result, 'Travel::Status::DE::EFA::Result');
 	can_ok($result, qw(date destination info line time type platform));
 }
 
