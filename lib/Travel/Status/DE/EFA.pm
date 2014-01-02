@@ -411,6 +411,20 @@ Arguments:
 
 =over
 
+=item B<efa_url> => I<url>
+
+URL to the EFA service. Known URLs are:
+
+=over
+
+=item * L<http://212.114.197.7/vgnExt_oeffi/XML_DM_REQUEST> (Verkehrsverbund GroE<szlig>raum NE<uuml>rnberg)
+
+=item * L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST> (Verkehrsverbund Rhein-Ruhr)
+
+=item * L<http://www2.vvs.de/vvs/XSLT_DM_REQUEST> (Verkehrsverbund Stuttgart)
+
+=back
+
 =item B<place> => I<place>
 
 Name of the place/city
