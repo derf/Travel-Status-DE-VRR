@@ -1,3 +1,11 @@
+Travel::Status::DE::VRR 1.06 - Thu Jan 02 2014
+
+    * Add Travel::Status::DE::EFA module, move ::Result and ::Line to
+      Travel::Status::DE::EFA. Travel::Status::DE::VRR now inherits from
+      ::EFA, no API changes were made.
+    * Travel::Status::DE::EFA has a mandatory efa_url parameter to set the
+      entry point to an EFA service
+
 Travel::Status::DE::VRR 1.05 - Wed Dec 18 2013
 
     * Add -r, --relative option to use relative times

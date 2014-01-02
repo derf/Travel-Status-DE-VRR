@@ -6,7 +6,7 @@ use 5.010;
 
 no if $] >= 5.018, warnings => "experimental::smartmatch";
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 use Carp qw(confess cluck);
 use Encode qw(encode decode);
@@ -389,7 +389,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
 
 =head1 VERSION
 
-version 1.05
+version 1.06
 
 =head1 DESCRIPTION
 
@@ -424,6 +424,9 @@ URL to the EFA service. Known URLs are:
 =item * L<http://www2.vvs.de/vvs/XSLT_DM_REQUEST> (Verkehrsverbund Stuttgart)
 
 =back
+
+If you found a URL not listed here, please send it to
+E<lt>derf@finalrewind.orgE<gt>.
 
 =item B<place> => I<place>
 
@@ -483,7 +486,7 @@ efa-m(1), Travel::Status::DE::EFA::Result(3pm).
 
 =head1 AUTHOR
 
-Copyright (C) 2011 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2011-2014 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 

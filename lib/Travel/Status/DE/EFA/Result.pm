@@ -6,7 +6,7 @@ use 5.010;
 
 use parent 'Class::Accessor';
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 Travel::Status::DE::EFA::Result->mk_ro_accessors(
 	qw(countdown date delay destination is_cancelled info key line lineref platform
@@ -18,8 +18,8 @@ sub new {
 
 	my $ref = \%conf;
 
-	if ($ref->{delay} eq '-9999') {
-		$ref->{delay} = 0;
+	if ( $ref->{delay} eq '-9999' ) {
+		$ref->{delay}        = 0;
 		$ref->{is_cancelled} = 1;
 	}
 	else {
@@ -56,7 +56,7 @@ departure received by Travel::Status::DE::EFA
 
 =head1 VERSION
 
-version 1.05
+version 1.06
 
 =head1 DESCRIPTION
 
@@ -218,7 +218,7 @@ Travel::Status::DE::EFA(3pm).
 
 =head1 AUTHOR
 
-Copyright (C) 2011 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2011-2014 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 

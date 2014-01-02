@@ -6,7 +6,7 @@ use 5.010;
 
 no if $] >= 5.018, warnings => "experimental::smartmatch";
 
-our $VERSION = '0.00';
+our $VERSION = '1.06';
 
 use parent 'Travel::Status::DE::EFA';
 
@@ -44,7 +44,7 @@ Travel::Status::DE::VRR - unofficial VRR departure monitor.
 
 =head1 VERSION
 
-version 0.00
+version 1.06
 
 =head1 DESCRIPTION
 
@@ -92,11 +92,11 @@ Many.
 
 =head1 SEE ALSO
 
-aseag-m(1), Travel::Status::DE::EFA(3pm).
+efa-m(1), Travel::Status::DE::EFA(3pm).
 
 =head1 AUTHOR
 
-Copyright (C) 2013 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2013-2014 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 

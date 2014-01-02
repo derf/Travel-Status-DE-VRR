@@ -5,14 +5,15 @@ use 5.010;
 
 no if $] >= 5.018, warnings => "experimental::smartmatch";
 
-our $VERSION = '1.05';
+our $VERSION = '1.06';
 
 binmode( STDOUT, ':encoding(utf-8)' );
 
 use Getopt::Long qw(:config no_ignore_case);
 use List::Util qw(max);
-use Travel::Status::DE::VRR;
+use Travel::Status::DE::EFA;
 
+my $efa_url = 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST';
 my ( $date, $time, $input_type, $list_lines, $relative_times );
 my ( @grep_lines, @grep_platforms );
 
@@ -24,6 +25,7 @@ GetOptions(
 	'p|platform=s@' => \@grep_platforms,
 	'r|relative'    => \$relative_times,
 	't|time=s'      => \$time,
+	'u|efa-url=s'   => \$efa_url,
 	'V|version'     => \&show_version,
 
 ) or show_help(1);
@@ -42,12 +44,13 @@ if ( $input =~ s{ ^ (?<type> address|poi|stop) : }{}x ) {
 	$input_type = $+{type};
 }
 
-my $status = Travel::Status::DE::VRR->new(
-	date  => $date,
-	place => $place,
-	name  => $input,
-	time  => $time,
-	type  => $input_type,
+my $status = Travel::Status::DE::EFA->new(
+	date    => $date,
+	efa_url => $efa_url,
+	place   => $place,
+	name    => $input,
+	time    => $time,
+	type    => $input_type,
 );
 
 sub show_help {
@@ -183,7 +186,7 @@ B<efa-m> [B<-d> I<date>] [B<-t> I<time>] I<city> [I<type>B<:>]I<name>
 
 =head1 VERSION
 
-version 1.05
+version 1.06
 
 =head1 DESCRIPTION
 
@@ -219,6 +222,12 @@ Use relative departure times.
 
 Show departures starting at I<time> instead of now.
 
+=item B<-u>, B<--efa-url> I<url>
+
+URL to the EFA entry point, defaults to L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST>.
+Depending on your location, some I<url>s may contain more specific data
+than others.  See Travel::Status::DE::EFA(3pm) for alternatives.
+
 =item B<-V>, B<--version>
 
 Show version information.
@@ -251,7 +260,7 @@ Unknown.
 
 =head1 AUTHOR
 
-Copyright (C) 2011 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2011-2014 by Daniel Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 
