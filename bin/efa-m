@@ -182,7 +182,9 @@ efa-m - Unofficial interface to the efa.vrr.de departure monitor
 
 =head1 SYNOPSIS
 
-B<efa-m> [B<-d> I<date>] [B<-t> I<time>] I<city> [I<type>B<:>]I<name>
+B<efa-m> [B<-Lr>] [B<-d> I<dd.mm.yyyy>] [B<-t> I<hh:mm>]
+[B<-l> I<lines>] [B<-p> I<platforms>] [B<-u> I<url>]
+I<city> [I<type>B<:>]I<name>
 
 =head1 VERSION
 
@@ -202,7 +204,15 @@ I<type>.  Supported types are B<address> and B<poi> (point of interest).
 
 =item B<-d>, B<--date> I<dd.mm.yyyy>
 
-Show departures for I<date> instead of today
+Show departures for I<date> instead of today.
+May also be specified as I<dd.mm.>
+
+=item B<-L>, B<--linelist>
+
+Do not show departures. Instead, list all lines serving the specified place.
+Note that this information may be incomplete -- only lines which are in
+service either at the time of the B<efa-m> call or at the time specifed
+using B<--date> and B<--time> are guaranteed to be included.
 
 =item B<-l>, B<--line> I<lines>
 
@@ -236,7 +246,8 @@ Show version information.
 
 =head1 EXIT STATUS
 
-Zero.
+Normally zero. B<1> means B<efa-m> was called with invalid options,
+B<2> indicates a request error from Travel::Status::DE::EFA(3pm).
 
 =head1 CONFIGURATION
 
@@ -250,13 +261,19 @@ None.
 
 =item * LWP::UserAgent(3pm)
 
+=item * Travel::Status::DE::EFA(3pm)
+
 =item * XML::LibXML(3pm)
 
 =back
 
 =head1 BUGS AND LIMITATIONS
 
-Unknown.
+B<efa-m> uses the VRR EFA service by default, which seems to contain the
+greatest available set of information. However, some cities (e.g. Berlin
+or parts of Hamburg) are incomplete. B<efa-m> is not yet able to choose the
+appropriate EFA URL for these by itself, it needs to be done manually with
+the B<-u>, B<--efa-url> option.
 
 =head1 AUTHOR
 
