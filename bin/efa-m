@@ -9,6 +9,7 @@ our $VERSION = '1.06';
 
 binmode( STDOUT, ':encoding(utf-8)' );
 
+use Encode qw(decode);
 use Getopt::Long qw(:config no_ignore_case);
 use List::Util qw(max);
 use Travel::Status::DE::EFA;
@@ -39,6 +40,9 @@ if ( @ARGV != 2 ) {
 @grep_platforms = split( qr{,}, join( q{,}, @grep_platforms ) );
 
 my ( $place, $input ) = @ARGV;
+
+$place = decode( 'UTF-8', $place );
+$input = decode( 'UTF-8', $input );
 
 if ( $input =~ s{ ^ (?<type> address|poi|stop) : }{}x ) {
 	$input_type = $+{type};

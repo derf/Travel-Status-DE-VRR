@@ -1,3 +1,8 @@
+git HEAD
+
+    * efa-m: Handle UTF8 in place/stop input
+    * Travel::Status::DE::EFA: Handle decoded input with umlauts
+
 Travel::Status::DE::VRR 1.06 - Thu Jan 02 2014
 
     * Add Travel::Status::DE::EFA module, move ::Result and ::Line to
