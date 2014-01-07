@@ -18,6 +18,8 @@ my $efa_url = 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST';
 my ( $date, $time, $input_type, $list_lines, $relative_times );
 my ( @grep_lines, @grep_platforms );
 
+@ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
+
 GetOptions(
 	'd|date=s'      => \$date,
 	'h|help'        => sub { show_help(0) },
@@ -40,9 +42,6 @@ if ( @ARGV != 2 ) {
 @grep_platforms = split( qr{,}, join( q{,}, @grep_platforms ) );
 
 my ( $place, $input ) = @ARGV;
-
-$place = decode( 'UTF-8', $place );
-$input = decode( 'UTF-8', $input );
 
 if ( $input =~ s{ ^ (?<type> address|poi|stop) : }{}x ) {
 	$input_type = $+{type};
