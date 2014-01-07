@@ -5,7 +5,7 @@ use 5.010;
 
 no if $] >= 5.018, warnings => "experimental::smartmatch";
 
-our $VERSION = '1.06';
+our $VERSION = '1.07';
 
 binmode( STDOUT, ':encoding(utf-8)' );
 
@@ -191,7 +191,7 @@ I<city> [I<type>B<:>]I<name>
 
 =head1 VERSION
 
-version 1.06
+version 1.07
 
 =head1 DESCRIPTION
 
