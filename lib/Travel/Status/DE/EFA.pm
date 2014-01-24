@@ -445,7 +445,7 @@ address / poi / stop name to list departures for.
 
 =item $status->errstr
 
-In case of en HTTP request or EFA error, returns a string describing it. If
+In case of an HTTP request or EFA error, returns a string describing it. If
 none occured, returns undef.
 
 =item $status->lines
