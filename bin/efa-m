@@ -15,7 +15,7 @@ use List::Util qw(max);
 use Travel::Status::DE::EFA;
 
 my $efa_url = 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST';
-my ( $date, $time, $input_type, $list_lines, $relative_times );
+my ( $date, $time, $input_type, $list_lines, $offset, $relative_times );
 my ( @grep_lines, @grep_platforms );
 
 @ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
@@ -25,6 +25,7 @@ GetOptions(
 	'h|help'        => sub { show_help(0) },
 	'l|line=s@'     => \@grep_lines,
 	'L|linelist'    => \$list_lines,
+	'o|offset=i'    => \$offset,
 	'p|platform=s@' => \@grep_platforms,
 	'r|relative'    => \$relative_times,
 	't|time=s'      => \$time,
@@ -139,6 +140,7 @@ sub show_results {
 			( @grep_lines and not( $d->line ~~ \@grep_lines ) )
 			or ( @grep_platforms
 				and not( $platform ~~ \@grep_platforms ) )
+			or ( $offset and $d->countdown < $offset )
 		  )
 		{
 			next;
@@ -221,6 +223,10 @@ using B<--date> and B<--time> are guaranteed to be included.
 
 Only show departures of I<lines> (comma-separatad list, option may be
 repeated)
+
+=item B<-o>, B<--offset> I<minutes>
+
+Ignore departures which are less than I<minutes> from now.
 
 =item B<-p>, B<--platform> I<platforms>
 
