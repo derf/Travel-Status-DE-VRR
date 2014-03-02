@@ -314,7 +314,7 @@ sub results {
 		my $rdate = $e_rdate ? sprintf_date($e_rdate) : $date;
 		my $rtime = $e_rtime ? sprintf_time($e_rtime) : $time;
 
-		my $platform;    # 'platform' attribute is unreliable
+		my $platform      = $e->getAttribute('platform');
 		my $platform_name = $e->getAttribute('platformName');
 		my $line          = $e_line->getAttribute('number');
 		my $dest          = $e_line->getAttribute('direction');
@@ -330,12 +330,26 @@ sub results {
 		  = grep { $_->{identifier} eq $e_line->getAttribute('stateless') }
 		  @{ $self->{lines} };
 
-		if ( $platform_name =~ m{ ^ Gleis }ox ) {
+		# platform / platformName are inconsistent. The following cases are
+		# known:
+		#
+		# * platform="int", platformName="" : non-DB platform
+		# * platform="int", platformName="Bstg. int" : non-DB platform
+		# * platform="#int", platformName="Gleis int" : non-DB platform
+		# * platform="#int", platformName="Gleis int" : DB platform?
+		# * platform="", platformName="Gleis int" : DB platform
+		# * platform="DB", platformName="Gleis int" : DB platform
+		# * platform="gibberish", platformName="Gleis int" : DB platform
+
+		if ( ( $platform_name and $platform_name =~ m{ ^ Gleis }ox )
+			and not( $platform and $platform =~ s{ ^ \# }{}ox ) )
+		{
 			$platform_is_db = 1;
 		}
 
-		# Gleis x / Bstg. x -> take x
-		$platform = ( split( / /, $platform_name ) )[1];
+		if ($platform_name) {
+			$platform = ( split( / /, $platform_name ) )[1];
+		}
 
 		push(
 			@results,
