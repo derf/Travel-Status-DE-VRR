@@ -116,7 +116,7 @@ sub new {
 
 	$self->{tree} = XML::LibXML->load_xml( string => $self->{xml}, );
 
-	say $self->{tree}->toString(1);
+	#say $self->{tree}->toString(1);
 
 	$self->check_for_ambiguous();
 
