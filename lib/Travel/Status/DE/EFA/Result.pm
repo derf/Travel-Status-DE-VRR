@@ -9,8 +9,8 @@ use parent 'Class::Accessor';
 our $VERSION = '1.07';
 
 Travel::Status::DE::EFA::Result->mk_ro_accessors(
-	qw(countdown date delay destination is_cancelled info key line lineref platform
-	  platform_db sched_date sched_time time type)
+	qw(countdown date delay destination is_cancelled info key line lineref
+	  platform platform_db platform_name sched_date sched_time time type)
 );
 
 sub new {
@@ -48,7 +48,7 @@ departure received by Travel::Status::DE::EFA
 
     for my $departure ($status->results) {
         printf(
-            "At %s: %s to %s from platform %s\n",
+            "At %s: %s to %s from platform %d\n",
             $departure->time, $departure->line, $departure->destination,
             $departure->platform
         );
@@ -121,7 +121,7 @@ detail.
 
 =item $departure->platform
 
-Departure platform number.
+Departure platform number (may not be a number).
 
 =item $departure->platform_db
 

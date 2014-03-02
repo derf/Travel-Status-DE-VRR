@@ -116,7 +116,7 @@ sub new {
 
 	$self->{tree} = XML::LibXML->load_xml( string => $self->{xml}, );
 
-	#	say $self->{tree}->toString(1);
+	say $self->{tree}->toString(1);
 
 	$self->check_for_ambiguous();
 
@@ -314,14 +314,15 @@ sub results {
 		my $rdate = $e_rdate ? sprintf_date($e_rdate) : $date;
 		my $rtime = $e_rtime ? sprintf_time($e_rtime) : $time;
 
-		my $platform  = $e->getAttribute('platform');
-		my $line      = $e_line->getAttribute('number');
-		my $dest      = $e_line->getAttribute('direction');
-		my $info      = $e_info->textContent;
-		my $key       = $e_line->getAttribute('key');
-		my $countdown = $e->getAttribute('countdown');
-		my $delay     = $e_info->getAttribute('delay') // 0;
-		my $type      = $e_info->getAttribute('name');
+		my $platform;    # 'platform' attribute is unreliable
+		my $platform_name = $e->getAttribute('platformName');
+		my $line          = $e_line->getAttribute('number');
+		my $dest          = $e_line->getAttribute('direction');
+		my $info          = $e_info->textContent;
+		my $key           = $e_line->getAttribute('key');
+		my $countdown     = $e->getAttribute('countdown');
+		my $delay         = $e_info->getAttribute('delay') // 0;
+		my $type          = $e_info->getAttribute('name');
 
 		my $platform_is_db = 0;
 
@@ -329,27 +330,31 @@ sub results {
 		  = grep { $_->{identifier} eq $e_line->getAttribute('stateless') }
 		  @{ $self->{lines} };
 
-		if ( $platform =~ s{ ^ \# }{}ox ) {
+		if ( $platform_name =~ m{ ^ Gleis }ox ) {
 			$platform_is_db = 1;
 		}
+
+		# Gleis x / Bstg. x -> take x
+		$platform = ( split( / /, $platform_name ) )[1];
 
 		push(
 			@results,
 			Travel::Status::DE::EFA::Result->new(
-				date        => $rdate,
-				time        => $rtime,
-				platform    => $platform,
-				platform_db => $platform_is_db,
-				key         => $key,
-				lineref     => $line_obj[0] // undef,
-				line        => $line,
-				destination => decode( 'UTF-8', $dest ),
-				countdown   => $countdown,
-				info        => decode( 'UTF-8', $info ),
-				delay       => $delay,
-				sched_date  => $date,
-				sched_time  => $time,
-				type        => $type,
+				date          => $rdate,
+				time          => $rtime,
+				platform      => $platform,
+				platform_db   => $platform_is_db,
+				platform_name => $platform_name,
+				key           => $key,
+				lineref       => $line_obj[0] // undef,
+				line          => $line,
+				destination   => decode( 'UTF-8', $dest ),
+				countdown     => $countdown,
+				info          => decode( 'UTF-8', $info ),
+				delay         => $delay,
+				sched_date    => $date,
+				sched_time    => $time,
+				type          => $type,
 			)
 		);
 	}
@@ -382,8 +387,8 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
 
     for my $d ($status->results) {
         printf(
-            "%s %d %-5s %s\n",
-            $d->time, $d->platform, $d->line, $d->destination
+            "%s %-8s %-5s %s\n",
+            $d->time, $d->platform_name, $d->line, $d->destination
         );
     }
 
