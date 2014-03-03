@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 1.08 - Mon Mar 03 2014
 
     * efa-m: Add -o, --offset option
     * Fix ->platform and ->platform_db accessors (the EFA API was changed)
