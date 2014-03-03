@@ -347,8 +347,11 @@ sub results {
 			$platform_is_db = 1;
 		}
 
-		if ($platform_name) {
+		if ( $platform_name and $platform_name =~ m{ ^ (Gleis | Bstg\.)}ox ) {
 			$platform = ( split( / /, $platform_name ) )[1];
+		}
+		elsif ( $platform_name and not $platform ) {
+			$platform = $platform_name;
 		}
 
 		push(
