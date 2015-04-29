@@ -114,7 +114,9 @@ sub new {
 
 	$self->{xml} = $response->decoded_content;
 
-	$self->{tree} = XML::LibXML->load_xml( string => $self->{xml}, );
+	$self->{tree} = XML::LibXML->load_xml(
+		string => $self->{xml},
+	);
 
 	#say $self->{tree}->toString(1);
 
@@ -126,9 +128,13 @@ sub new {
 sub new_from_xml {
 	my ( $class, %opt ) = @_;
 
-	my $self = { xml => $opt{xml}, };
+	my $self = {
+		xml => $opt{xml},
+	};
 
-	$self->{tree} = XML::LibXML->load_xml( string => $self->{xml}, );
+	$self->{tree} = XML::LibXML->load_xml(
+		string => $self->{xml},
+	);
 
 	return bless( $self, $class );
 }
@@ -276,6 +282,10 @@ sub lines {
 sub results {
 	my ($self) = @_;
 	my @results;
+
+	if ( not $self->{tree} ) {
+		return;
+	}
 
 	my $xp_element = XML::LibXML::XPathExpression->new('//itdDeparture');
 

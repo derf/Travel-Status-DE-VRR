@@ -16,6 +16,7 @@ use Travel::Status::DE::EFA;
 
 my $efa_url = 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST';
 my ( $date, $time, $input_type, $list_lines, $offset, $relative_times );
+my ($timeout);
 my ( @grep_lines, @grep_platforms );
 
 @ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
@@ -29,6 +30,7 @@ GetOptions(
 	'p|platform=s@' => \@grep_platforms,
 	'r|relative'    => \$relative_times,
 	't|time=s'      => \$time,
+	'timeout=i'     => \$timeout,
 	'u|efa-url=s'   => \$efa_url,
 	'V|version'     => \&show_version,
 
@@ -55,6 +57,7 @@ my $status = Travel::Status::DE::EFA->new(
 	name    => $input,
 	time    => $time,
 	type    => $input_type,
+	timeout => $timeout // 10,
 );
 
 sub show_help {
