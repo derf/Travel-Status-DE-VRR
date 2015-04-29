@@ -250,6 +250,10 @@ URL to the EFA entry point, defaults to L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST>
 Depending on your location, some I<url>s may contain more specific data
 than others.  See Travel::Status::DE::EFA(3pm) for alternatives.
 
+=item B<--timeout> I<seconds>
+
+Set timeout for HTTP requests. Default: 10 seconds.
+
 =item B<-V>, B<--version>
 
 Show version information.

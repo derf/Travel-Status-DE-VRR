@@ -1,3 +1,8 @@
+git HEAD
+
+    * EFA: Fix crash when ->results is called after a network error occured
+    * efa-m: Add --timeeout option
+
 Travel::Status::DE::VRR 1.08 - Mon Mar 03 2014
 
     * efa-m: Add -o, --offset option
