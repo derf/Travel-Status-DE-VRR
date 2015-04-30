@@ -18,6 +18,11 @@ use XML::LibXML;
 sub new {
 	my ( $class, %opt ) = @_;
 
+	$opt{timeout} //= 10;
+	if ( $opt{timeout} <= 0 ) {
+		delete $opt{timeout};
+	}
+
 	my $ua  = LWP::UserAgent->new(%opt);
 	my @now = localtime( time() );
 
@@ -472,6 +477,11 @@ B<stop> (stop/station name).
 =item B<name> => I<name>
 
 address / poi / stop name to list departures for.
+
+=item B<timeout> => I<seconds>
+
+Request timeout, the argument is passed on to LWP::UserAgent(3pm).
+Default: 10 seconds. Set to 0 or a negative value to disable it.
 
 =back
 

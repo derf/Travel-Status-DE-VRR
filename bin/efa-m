@@ -57,7 +57,7 @@ my $status = Travel::Status::DE::EFA->new(
 	name    => $input,
 	time    => $time,
 	type    => $input_type,
-	timeout => $timeout // 10,
+	timeout => $timeout,
 );
 
 sub show_help {
@@ -252,7 +252,8 @@ than others.  See Travel::Status::DE::EFA(3pm) for alternatives.
 
 =item B<--timeout> I<seconds>
 
-Set timeout for HTTP requests. Default: 10 seconds.
+Set timeout for HTTP requests. Default: 10 seconds. Set to 0 or a negative
+value to disable it.
 
 =item B<-V>, B<--version>
 

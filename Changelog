@@ -1,6 +1,7 @@
 git HEAD
 
     * EFA: Fix crash when ->results is called after a network error occured
+    * EFA: Add timeout parameter to constructor (default: 10 seconds)
     * efa-m: Add --timeeout option
 
 Travel::Status::DE::VRR 1.08 - Mon Mar 03 2014
