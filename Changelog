@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 1.09 - Thu Apr 30 2015
 
     * EFA: Fix crash when ->results is called after a network error occured
     * EFA: Add timeout parameter to constructor (default: 10 seconds)
