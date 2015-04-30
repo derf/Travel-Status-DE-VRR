@@ -12,6 +12,7 @@ Dependencies
  * LWP::UserAgent
  * XML::LibXML
 
+For testing, File::Slurp is also required.
 
 Installation
 ------------
