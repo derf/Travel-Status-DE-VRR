@@ -336,7 +336,7 @@ sub results {
 		my $info          = $e_info->textContent;
 		my $key           = $e_line->getAttribute('key');
 		my $countdown     = $e->getAttribute('countdown');
-		my $delay         = $e_info->getAttribute('delay') // 0;
+		my $delay         = $e_info->getAttribute('delay');
 		my $type          = $e_info->getAttribute('name');
 
 		my $platform_is_db = 0;

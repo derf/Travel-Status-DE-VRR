@@ -43,7 +43,7 @@ is($results[3]->info, decode('UTF-8', 'Ab (H) Heißen Kirche, Umstieg in den SEV
 is($results[3]->line, '18', 'fourth result: line ok');
 is($results[3]->date, '16.11.2011', 'fourth result: real date ok');
 is($results[3]->time, '09:39', 'fourth result: real time ok');
-is($results[3]->delay, 0, 'fourth result: delay 0');
+is($results[3]->delay, undef, 'fourth result: delay undef');
 is($results[3]->sched_date, '16.11.2011', 'fourth result: scheduled date ok');
 is($results[3]->sched_time, '09:39', 'fourth result: scheduled time ok');
 #is($results[3]->platform, '2', 'fourth result: platform ok');

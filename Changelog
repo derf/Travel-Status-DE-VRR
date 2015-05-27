@@ -1,3 +1,9 @@
+git HEAD
+
+    * Result->delay: return undef when no data is available. This allows to
+      distinguish between on-time departures (delay 0) and departures without
+      realtime data (delay undef)
+
 Travel::Status::DE::VRR 1.09 - Thu Apr 30 2015
 
     * EFA: Fix crash when ->results is called after a network error occured

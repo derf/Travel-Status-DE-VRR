@@ -18,7 +18,7 @@ sub new {
 
 	my $ref = \%conf;
 
-	if ( $ref->{delay} eq '-9999' ) {
+	if ( defined $ref->{delay} and $ref->{delay} eq '-9999' ) {
 		$ref->{delay}        = 0;
 		$ref->{is_cancelled} = 1;
 	}
@@ -86,7 +86,7 @@ Actual departure date (DD.MM.YYYY).
 =item $departure->delay
 
 Expected delay from scheduled departure time in minutes. A delay of 0
-indicates either departure on time or that no delay information is available.
+indicates departure on time. undef when no realtime information is available.
 
 =item $departure->destination
 
