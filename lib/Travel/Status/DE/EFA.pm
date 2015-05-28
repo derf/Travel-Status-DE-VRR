@@ -104,6 +104,7 @@ sub new {
 			useProxFootSearch      => '0',
 			useRealtime            => '1',
 		},
+		developer_mode => $opt{developer_mode},
 	};
 
 	bless( $self, $class );
@@ -123,7 +124,9 @@ sub new {
 		string => $self->{xml},
 	);
 
-	#say $self->{tree}->toString(1);
+	if ( $self->{developer_mode} ) {
+		say $self->{tree}->toString(1);
+	}
 
 	$self->check_for_ambiguous();
 
