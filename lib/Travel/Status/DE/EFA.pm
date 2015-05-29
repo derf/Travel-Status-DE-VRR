@@ -107,6 +107,11 @@ sub new {
 		developer_mode => $opt{developer_mode},
 	};
 
+	if ( $opt{full_routes} ) {
+		$self->{post}->{depType}                = 'stopEvents';
+		$self->{post}->{includeCompleteStopSeq} = 1;
+	}
+
 	bless( $self, $class );
 
 	$ua->env_proxy;
