@@ -110,6 +110,7 @@ sub new {
 	if ( $opt{full_routes} ) {
 		$self->{post}->{depType}                = 'stopEvents';
 		$self->{post}->{includeCompleteStopSeq} = 1;
+		$self->{want_full_routes}               = 1;
 	}
 
 	bless( $self, $class );
@@ -292,6 +293,35 @@ sub lines {
 	return @lines;
 }
 
+sub parse_route {
+	my ( $self, @nodes ) = @_;
+	my $xp_routepoint_date
+	  = XML::LibXML::XPathExpression->new('./itdDateTime/itdDate');
+	my $xp_routepoint_time
+	  = XML::LibXML::XPathExpression->new('./itdDateTime/itdTime');
+
+	my @ret;
+
+	for my $e (@nodes) {
+		my @dates = $e->findnodes($xp_routepoint_date);
+		my @times = $e->findnodes($xp_routepoint_time);
+
+		push(
+			@ret,
+			{
+				arr_date => sprintf_date( $dates[0] ),
+				arr_time => sprintf_time( $times[0] ),
+				dep_date => sprintf_date( $dates[-1] ),
+				dep_time => sprintf_time( $times[-1] ),
+				stop     => decode( 'UTF-8', $e->getAttribute('name') ),
+				platform => $e->getAttribute('platformName'),
+			}
+		);
+	}
+
+	return @ret;
+}
+
 sub results {
 	my ($self) = @_;
 	my @results;
@@ -309,6 +339,10 @@ sub results {
 	my $xp_line  = XML::LibXML::XPathExpression->new('./itdServingLine');
 	my $xp_info
 	  = XML::LibXML::XPathExpression->new('./itdServingLine/itdNoTrain');
+	my $xp_prev_route
+	  = XML::LibXML::XPathExpression->new('./itdPrevStopSeq/itdPoint');
+	my $xp_next_route
+	  = XML::LibXML::XPathExpression->new('./itdOnwardStopSeq/itdPoint');
 
 	if ( $self->{results} ) {
 		return @{ $self->{results} };
@@ -348,6 +382,16 @@ sub results {
 		my $type          = $e_info->getAttribute('name');
 
 		my $platform_is_db = 0;
+
+		my @prev_route;
+		my @next_route;
+
+		if ( $self->{want_full_routes} ) {
+			@prev_route
+			  = $self->parse_route( @{ [ $e->findnodes($xp_prev_route) ] } );
+			@next_route
+			  = $self->parse_route( @{ [ $e->findnodes($xp_next_route) ] } );
+		}
 
 		my @line_obj
 		  = grep { $_->{identifier} eq $e_line->getAttribute('stateless') }
@@ -395,6 +439,8 @@ sub results {
 				sched_date    => $date,
 				sched_time    => $time,
 				type          => $type,
+				prev_route    => \@prev_route,
+				next_route    => \@next_route,
 			)
 		);
 	}

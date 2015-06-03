@@ -29,6 +29,18 @@ sub new {
 	return bless( $ref, $obj );
 }
 
+sub route_pre {
+	my ($self) = @_;
+
+	return @{ $self->{prev_route} };
+}
+
+sub route_post {
+	my ($self) = @_;
+
+	return @{ $self->{next_route} };
+}
+
 sub TO_JSON {
 	my ($self) = @_;
 

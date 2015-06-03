@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use 5.010;
+use utf8;
 
 no if $] >= 5.018, warnings => "experimental::smartmatch";
 
@@ -80,6 +81,31 @@ sub show_version {
 	exit 0;
 }
 
+sub format_route {
+	my (@route) = @_;
+
+	my $output = q{};
+
+	for my $stop (@route) {
+		if ( not $stop ) {
+			say "BUG";
+			next;
+		}
+		if ( $stop->{arr_time} eq $stop->{dep_time} ) {
+			$output .= sprintf( "        %5s  %40s %s\n",
+				$stop->{dep_time}, $stop->{stop}, $stop->{platform}, );
+		}
+		else {
+			$output .= sprintf(
+				"%5s → %5s  %40s %s\n",
+				$stop->{arr_time}, $stop->{dep_time},
+				$stop->{stop},     $stop->{platform},
+			);
+		}
+	}
+	return $output;
+}
+
 sub display_result {
 	my (@lines) = @_;
 
@@ -108,6 +134,10 @@ sub display_result {
 			join( q{  }, ( map { "%-${_}s" } @line_length ) ) . "\n",
 			@{$line}[ 0 .. 3 ]
 		);
+
+		if ( $line->[5] and $full_routes ) {
+			say $line->[5];
+		}
 	}
 
 	return;
@@ -136,6 +166,7 @@ sub show_results {
 
 	for my $d ( $status->results ) {
 
+		my @output_line;
 		my $platform = $d->platform;
 		my $dtime    = (
 			$relative_times ? sprintf( '%2d min', $d->countdown ) : $d->time );
@@ -166,8 +197,14 @@ sub show_results {
 			$dtime .= ' (+' . $d->delay . ')';
 		}
 
-		push( @output,
-			[ $dtime, $platform, $d->line, $d->destination, $d->info ] );
+		@output_line
+		  = ( $dtime, $platform, $d->line, $d->destination, $d->info );
+
+		if ($full_routes) {
+			$output_line[5] = format_route( $d->route_post );
+		}
+
+		push( @output, \@output_line );
 	}
 
 	display_result(@output);
