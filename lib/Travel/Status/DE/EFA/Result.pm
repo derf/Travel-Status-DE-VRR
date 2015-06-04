@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use 5.010;
 
+no if $] >= 5.018, warnings => 'experimental::smartmatch';
+
 use parent 'Class::Accessor';
 
 our $VERSION = '1.09';
@@ -39,6 +41,54 @@ sub route_post {
 	my ($self) = @_;
 
 	return @{ $self->{next_route} };
+}
+
+sub route_interesting {
+	my ( $self, $max_parts ) = @_;
+
+	my @via = $self->route_post;
+	my ( @via_main, @via_show, $last_stop );
+	$max_parts //= 3;
+
+	for my $stop (@via) {
+		if ( $stop =~ m{ Bf | Hbf | Flughafen | S $ }ox ) {
+			push( @via_main, $stop );
+		}
+	}
+	$last_stop = pop(@via);
+
+	if ( @via_main and $via_main[-1] eq $last_stop ) {
+		pop(@via_main);
+	}
+	if ( @via and $via[-1] eq $last_stop ) {
+		pop(@via);
+	}
+
+	if ( @via_main and @via and $via[0] eq $via_main[0] ) {
+		shift(@via_main);
+	}
+
+	if ( @via < $max_parts ) {
+		@via_show = @via;
+	}
+	else {
+		if ( @via_main >= $max_parts ) {
+			@via_show = ( $via[0] );
+		}
+		else {
+			@via_show = splice( @via, 0, $max_parts - @via_main );
+		}
+
+		while ( @via_show < $max_parts and @via_main ) {
+			my $stop = shift(@via_main);
+			if ( $stop ~~ \@via_show or $stop eq $last_stop ) {
+				next;
+			}
+			push( @via_show, $stop );
+		}
+	}
+
+	return @via_show;
 }
 
 sub TO_JSON {

@@ -162,7 +162,7 @@ sub errstr {
 sub sprintf_date {
 	my ($e) = @_;
 
-	if ($e->getAttribute('day') == -1) {
+	if ( $e->getAttribute('day') == -1 ) {
 		return undef;
 	}
 
@@ -176,7 +176,7 @@ sub sprintf_date {
 sub sprintf_time {
 	my ($e) = @_;
 
-	if ($e->getAttribute('minute') == -1) {
+	if ( $e->getAttribute('minute') == -1 ) {
 		return undef;
 	}
 
@@ -322,6 +322,7 @@ sub parse_route {
 				dep_date => sprintf_date( $dates[-1] ),
 				dep_time => sprintf_time( $times[-1] ),
 				stop     => decode( 'UTF-8', $e->getAttribute('name') ),
+				stop_suf => decode( 'UTF-8', $e->getAttribute('nameWO') ),
 				platform => $e->getAttribute('platformName'),
 			}
 		);
