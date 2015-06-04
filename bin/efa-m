@@ -91,8 +91,16 @@ sub format_route {
 			say "BUG";
 			next;
 		}
-		if ( $stop->{arr_time} eq $stop->{dep_time} ) {
+		if ( not defined $stop->{arr_time} ) {
 			$output .= sprintf( "        %5s  %40s %s\n",
+				$stop->{dep_time}, $stop->{stop}, $stop->{platform}, );
+		}
+		elsif (not defined $stop->{dep_time}) {
+			$output .= sprintf( "%5s          %40s %s\n",
+				$stop->{arr_time}, $stop->{stop}, $stop->{platform}, );
+		}
+		elsif ( $stop->{arr_time} eq $stop->{dep_time} ) {
+			$output .= sprintf( "    %5s      %40s %s\n",
 				$stop->{dep_time}, $stop->{stop}, $stop->{platform}, );
 		}
 		else {

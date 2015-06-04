@@ -162,6 +162,10 @@ sub errstr {
 sub sprintf_date {
 	my ($e) = @_;
 
+	if ($e->getAttribute('day') == -1) {
+		return undef;
+	}
+
 	return sprintf( '%02d.%02d.%d',
 		$e->getAttribute('day'),
 		$e->getAttribute('month'),
@@ -171,6 +175,10 @@ sub sprintf_date {
 
 sub sprintf_time {
 	my ($e) = @_;
+
+	if ($e->getAttribute('minute') == -1) {
+		return undef;
+	}
 
 	return sprintf( '%02d:%02d',
 		$e->getAttribute('hour'),
