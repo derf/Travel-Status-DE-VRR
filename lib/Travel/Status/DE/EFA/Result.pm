@@ -51,20 +51,24 @@ sub route_interesting {
 	$max_parts //= 3;
 
 	for my $stop (@via) {
-		if ( $stop =~ m{ Bf | Hbf | Flughafen | S $ }ox ) {
+		if (
+			$stop->{stop_suf} =~ m{ Bf | Hbf | Flughafen | Hauptbahnhof
+				| Krankenhaus | Klinik | (?: S $ ) }ox
+		  )
+		{
 			push( @via_main, $stop );
 		}
 	}
 	$last_stop = pop(@via);
 
-	if ( @via_main and $via_main[-1] eq $last_stop ) {
+	if ( @via_main and $via_main[-1] == $last_stop ) {
 		pop(@via_main);
 	}
-	if ( @via and $via[-1] eq $last_stop ) {
+	if ( @via and $via[-1] == $last_stop ) {
 		pop(@via);
 	}
 
-	if ( @via_main and @via and $via[0] eq $via_main[0] ) {
+	if ( @via_main and @via and $via[0] == $via_main[0] ) {
 		shift(@via_main);
 	}
 
@@ -81,7 +85,7 @@ sub route_interesting {
 
 		while ( @via_show < $max_parts and @via_main ) {
 			my $stop = shift(@via_main);
-			if ( $stop ~~ \@via_show or $stop eq $last_stop ) {
+			if ( $stop ~~ \@via_show or $stop == $last_stop ) {
 				next;
 			}
 			push( @via_show, $stop );
