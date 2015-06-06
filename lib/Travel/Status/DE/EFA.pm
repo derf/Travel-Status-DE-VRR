@@ -247,6 +247,20 @@ sub check_for_ambiguous {
 	return;
 }
 
+sub identified_data {
+	my ($self) = @_;
+
+	my $xp_place
+	  = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvPlace/odvPlaceElem');
+	my $xp_name
+	  = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvName/odvNameElem');
+
+	my $e_place = ( $self->{tree}->findnodes($xp_place) )[0];
+	my $e_name  = ( $self->{tree}->findnodes($xp_name) )[0];
+
+	return ( $e_place->textContent, $e_name->textContent );
+}
+
 sub lines {
 	my ($self) = @_;
 	my @lines;
