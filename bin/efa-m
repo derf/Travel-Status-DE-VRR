@@ -265,6 +265,11 @@ I<type>.  Supported types are B<address> and B<poi> (point of interest).
 Show departures for I<date> instead of today.
 May also be specified as I<dd.mm.>
 
+=item B<-f>, B<--full-route>
+
+Show all stops between I<city> I<name> (the requested stop) and a departure's
+destination. Arrival and departure time at each stop are displayed as well.
+
 =item B<-L>, B<--linelist>
 
 Do not show departures. Instead, list all lines serving the specified place.
