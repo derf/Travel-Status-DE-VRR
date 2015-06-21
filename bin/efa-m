@@ -20,6 +20,7 @@ my ( $date, $time, $input_type, $list_lines, $offset, $relative_times );
 my ($full_routes);
 my ( $timeout,    $developer_mode );
 my ( @grep_lines, @grep_platforms );
+my ( %edata,      @edata_pre );
 
 @ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
 
@@ -28,8 +29,8 @@ GetOptions(
 	'h|help'        => sub { show_help(0) },
 	'l|line=s@'     => \@grep_lines,
 	'L|linelist'    => \$list_lines,
-	'f|full-route'  => \$full_routes,
 	'o|offset=i'    => \$offset,
+	'O|output=s@'   => \@edata_pre,
 	'p|platform=s@' => \@grep_platforms,
 	'r|relative'    => \$relative_times,
 	't|time=s'      => \$time,
@@ -45,6 +46,7 @@ if ( @ARGV != 2 ) {
 }
 
 # --line=foo,bar support
+@edata_pre      = split( qr{,}, join( q{,}, @edata_pre ) );
 @grep_lines     = split( qr{,}, join( q{,}, @grep_lines ) );
 @grep_platforms = split( qr{,}, join( q{,}, @grep_platforms ) );
 
@@ -52,6 +54,14 @@ my ( $place, $input ) = @ARGV;
 
 if ( $input =~ s{ ^ (?<type> address|poi|stop) : }{}x ) {
 	$input_type = $+{type};
+}
+
+for my $efield (@edata_pre) {
+	given ($efield) {
+		when ('f') { $edata{fullroute} = 1; $full_routes = 1 }
+		when ('r') { $edata{route}     = 1; $full_routes = 1 }
+		default    { $edata{$efield}   = 1 }
+	}
 }
 
 my $status = Travel::Status::DE::EFA->new(
@@ -95,7 +105,7 @@ sub format_route {
 			$output .= sprintf( "        %5s  %40s %s\n",
 				$stop->{dep_time}, $stop->{stop}, $stop->{platform}, );
 		}
-		elsif (not defined $stop->{dep_time}) {
+		elsif ( not defined $stop->{dep_time} ) {
 			$output .= sprintf( "%5s          %40s %s\n",
 				$stop->{arr_time}, $stop->{stop}, $stop->{platform}, );
 		}
@@ -123,28 +133,28 @@ sub display_result {
 		die("Nothing to show\n");
 	}
 
-	for my $i ( 0 .. 3 ) {
+	for my $i ( 0 .. 4 ) {
 		$line_length[$i] = max map { length( $_->[$i] ) } @lines;
 	}
 
 	for my $line (@lines) {
 
-		if ( length( $line->[4] ) ) {
-			$line->[4] =~ tr{\n\x0d}{ }s;
-			chomp $line->[4];
+		if ( length( $line->[5] ) ) {
+			$line->[5] =~ tr{\n\x0d}{ }s;
+			chomp $line->[5];
 			print "\n";
-			for my $info_line ( split( qr{\n}, $line->[4] ) ) {
+			for my $info_line ( split( qr{\n}, $line->[5] ) ) {
 				say "# ${info_line}";
 			}
 		}
 
 		printf(
 			join( q{  }, ( map { "%-${_}s" } @line_length ) ) . "\n",
-			@{$line}[ 0 .. 3 ]
+			@{$line}[ 0 .. 4 ]
 		);
 
-		if ( $line->[5] and $full_routes ) {
-			say $line->[5];
+		if ( $line->[6] and $edata{fullroute} ) {
+			say $line->[6];
 		}
 	}
 
@@ -206,10 +216,15 @@ sub show_results {
 		}
 
 		@output_line
-		  = ( $dtime, $platform, $d->line, $d->destination, $d->info );
+		  = ( $dtime, $platform, $d->line, q{}, $d->destination, $d->info );
 
-		if ($full_routes) {
-			$output_line[5] = format_route( $d->route_post );
+		if ( $edata{route} ) {
+			$output_line[3]
+			  = join( q{  }, map { $_->{stop_suf} } $d->route_interesting );
+		}
+
+		if ( $edata{fullroute} ) {
+			$output_line[6] = format_route( $d->route_post );
 		}
 
 		push( @output, \@output_line );
