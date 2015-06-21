@@ -197,6 +197,22 @@ otherwise.
 Unfortunately, there is no distinction between tram and bus platforms yet,
 which also may have the same numbers.
 
+=item $departure->route_interesting
+
+List of up to three "interesting" stations served by this departure. Is a
+subset of B<route_post>. Each station is a hash reference, see ROUTE STATIONS
+for details.
+
+=item $departure->route_pre
+
+List of stations the train passed (or will have passed) befoe this stop.
+Each station is a hash reference, see ROUTE STATIONS for details.
+
+=item $departure->route_post
+
+List of stations the train will pass after this stop.
+Each station is a hash reference, see ROUTE STATIONS for details.
+
 =item $departure->sched_date
 
 Scheduled departure date (DD.MM.YYYY).
@@ -260,6 +276,49 @@ The following are known so far:
 =item * U-Bahn
 
 =back
+
+=head1 ROUTE STATIONS
+
+The B<route> accessors return hashrefs, each of which corresponds to a single
+station. Note that the route is solely based on the schedule, delays or
+changed platforms are not taken into account.
+
+For a station I<$stop>,
+the following keys are available:
+
+=over
+
+=item $stop->{arr_date}
+
+arrival date (DD.MM.YYYY). undef if this is the first scheduled stop.
+
+=item $stop->{arr_time}
+
+arrival time (HH:MM). undef if this is the first scheduled stop.
+
+=item $stop->{dep_date}
+
+departure date (DD.MM.YYYY). undef if this is the final scehduled stop.
+
+=item $stop->{dep_time}
+
+departure time (HH:MM). undef if this is the final scehduled stop.
+
+=item $stop->{stop}
+
+stop name with city prefix ("I<City> I<Stop>", for instance
+"Essen RE<uuml>ttenscheider Stern").
+
+=item $stop->{stop_suf}
+
+stop name without city prefix, for instance "RE<uuml>ttenscheider Stern".
+
+=item $stop->{platform}
+
+Platform name/number if available, empty string otherwise.
+
+=back
+
 
 =head1 DIAGNOSTICS
 

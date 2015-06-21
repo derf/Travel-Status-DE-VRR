@@ -328,6 +328,10 @@ sub parse_route {
 		my @dates = $e->findnodes($xp_routepoint_date);
 		my @times = $e->findnodes($xp_routepoint_time);
 
+		# note that the first stop has an arrival node with an invalid
+		# timestamp and the terminal stop has a departure node with an
+		# invalid timestamp.  sprintf_{date,time} return undef in these
+		# cases.
 		push(
 			@ret,
 			{
@@ -554,6 +558,12 @@ B<stop> (stop/station name).
 =item B<name> => I<name>
 
 address / poi / stop name to list departures for.
+
+=item B<full_routes> => B<0>|B<1>
+
+If true: Request full routes for all departures from the backend. This
+enables the B<route_pre>, B<route_post> and B<route_interesting> accessors in
+Travel::Status::DE::EFA::Result(3pm).
 
 =item B<timeout> => I<seconds>
 
