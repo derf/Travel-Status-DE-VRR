@@ -12,12 +12,13 @@ binmode( STDOUT, ':encoding(utf-8)' );
 
 use Encode qw(decode);
 use Getopt::Long qw(:config no_ignore_case);
-use List::Util qw(max);
+use List::Util qw(first max);
 use Travel::Status::DE::EFA;
 
 my $efa_url = 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST';
 my ( $date, $time, $input_type, $list_lines, $offset, $relative_times );
 my ($full_routes);
+my ($filter_via);
 my ( $timeout,    $developer_mode );
 my ( @grep_lines, @grep_platforms );
 my ( %edata,      @edata_pre );
@@ -36,6 +37,7 @@ GetOptions(
 	't|time=s'      => \$time,
 	'timeout=i'     => \$timeout,
 	'u|efa-url=s'   => \$efa_url,
+	'v|via=s'       => \$filter_via,
 	'V|version'     => \&show_version,
 	'devmode'       => \$developer_mode,
 
@@ -62,6 +64,9 @@ for my $efield (@edata_pre) {
 		when ('r') { $edata{route}     = 1; $full_routes = 1 }
 		default    { $edata{$efield}   = 1 }
 	}
+}
+if ($filter_via) {
+	$full_routes = 1;
 }
 
 my $status = Travel::Status::DE::EFA->new(
@@ -198,6 +203,9 @@ sub show_results {
 			or ( @grep_platforms
 				and not( $platform ~~ \@grep_platforms ) )
 			or ( $offset and $d->countdown < $offset )
+			or ( $filter_via
+				and
+				not( first { $_->{stop} =~ m{$filter_via}io } $d->route_post ) )
 		  )
 		{
 			next;
@@ -324,6 +332,12 @@ than others.  See Travel::Status::DE::EFA(3pm) for alternatives.
 
 Set timeout for HTTP requests. Default: 10 seconds. Set to 0 or a negative
 value to disable it.
+
+=item B<-v>, B<--via> I<station>
+
+Only show trains serving I<station> after the requseted I<stop>. I<station>
+is matched against the "I<city> I<stop>" fields in each line's route.
+Regular expressions are also supported.
 
 =item B<-V>, B<--version>
 

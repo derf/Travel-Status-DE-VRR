@@ -7,6 +7,7 @@ git HEAD
     * EFA: Add identified_data accessor
     * Result: Add route_pre, route_post and route_interesting accessors
     * efa-m: Add -f / --full-route option
+    * efa-m: Add -v / --via option
 
 Travel::Status::DE::VRR 1.09 - Thu Apr 30 2015
 
