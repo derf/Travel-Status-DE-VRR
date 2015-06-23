@@ -106,23 +106,23 @@ sub format_route {
 			say "BUG";
 			next;
 		}
-		if ( not defined $stop->{arr_time} ) {
+		if ( not defined $stop->arr_time ) {
 			$output .= sprintf( "        %5s  %40s %s\n",
-				$stop->{dep_time}, $stop->{stop}, $stop->{platform}, );
+				$stop->dep_time, $stop->name, $stop->platform, );
 		}
-		elsif ( not defined $stop->{dep_time} ) {
+		elsif ( not defined $stop->dep_time ) {
 			$output .= sprintf( "%5s          %40s %s\n",
-				$stop->{arr_time}, $stop->{stop}, $stop->{platform}, );
+				$stop->arr_time, $stop->name, $stop->platform, );
 		}
-		elsif ( $stop->{arr_time} eq $stop->{dep_time} ) {
+		elsif ( $stop->arr_time eq $stop->dep_time ) {
 			$output .= sprintf( "    %5s      %40s %s\n",
-				$stop->{dep_time}, $stop->{stop}, $stop->{platform}, );
+				$stop->dep_time, $stop->name, $stop->platform, );
 		}
 		else {
 			$output .= sprintf(
 				"%5s → %5s  %40s %s\n",
-				$stop->{arr_time}, $stop->{dep_time},
-				$stop->{stop},     $stop->{platform},
+				$stop->arr_time, $stop->dep_time,
+				$stop->name,     $stop->platform,
 			);
 		}
 	}

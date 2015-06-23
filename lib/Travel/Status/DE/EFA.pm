@@ -12,6 +12,7 @@ use Carp qw(confess cluck);
 use Encode qw(encode decode);
 use Travel::Status::DE::EFA::Line;
 use Travel::Status::DE::EFA::Result;
+use Travel::Status::DE::EFA::Stop;
 use LWP::UserAgent;
 use XML::LibXML;
 
@@ -334,15 +335,15 @@ sub parse_route {
 		# cases.
 		push(
 			@ret,
-			{
+			Travel::Status::DE::EFA::Stop->new(
 				arr_date => sprintf_date( $dates[0] ),
 				arr_time => sprintf_time( $times[0] ),
 				dep_date => sprintf_date( $dates[-1] ),
 				dep_time => sprintf_time( $times[-1] ),
-				stop     => decode( 'UTF-8', $e->getAttribute('name') ),
-				stop_suf => decode( 'UTF-8', $e->getAttribute('nameWO') ),
+				name     => decode( 'UTF-8', $e->getAttribute('name') ),
+				name_suf => decode( 'UTF-8', $e->getAttribute('nameWO') ),
 				platform => $e->getAttribute('platformName'),
-			}
+			)
 		);
 	}
 
