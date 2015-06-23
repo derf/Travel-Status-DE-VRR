@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use 5.010;
 
-no if $] >= 5.018, warnings => "experimental::smartmatch";
+no if $] >= 5.018, warnings => 'experimental::smartmatch';
 
 our $VERSION = '1.09';
 
@@ -163,7 +163,7 @@ sub sprintf_date {
 	my ($e) = @_;
 
 	if ( $e->getAttribute('day') == -1 ) {
-		return undef;
+		return;
 	}
 
 	return sprintf( '%02d.%02d.%d',
@@ -177,7 +177,7 @@ sub sprintf_time {
 	my ($e) = @_;
 
 	if ( $e->getAttribute('minute') == -1 ) {
-		return undef;
+		return;
 	}
 
 	return sprintf( '%02d:%02d',
@@ -441,7 +441,7 @@ sub results {
 			$platform_is_db = 1;
 		}
 
-		if ( $platform_name and $platform_name =~ m{ ^ (Gleis | Bstg\.)}ox ) {
+		if ( $platform_name and $platform_name =~ m{ ^ (Gleis | Bstg[.])}ox ) {
 			$platform = ( split( / /, $platform_name ) )[1];
 		}
 		elsif ( $platform_name and not $platform ) {
