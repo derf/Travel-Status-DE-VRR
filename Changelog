@@ -6,8 +6,8 @@ git HEAD
     * EFA->new: Add full_routes config option
     * EFA: Add identified_data accessor
     * Result: Add route_pre, route_post and route_interesting accessors
-    * efa-m: Add -v / --via option
     * Add Travel::Routing::DE::EFA::Stop module
+    * efa-m: Add -v / --via option
 
 Travel::Status::DE::VRR 1.09 - Thu Apr 30 2015
 

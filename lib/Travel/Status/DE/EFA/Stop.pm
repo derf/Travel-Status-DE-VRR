@@ -52,29 +52,45 @@ version 1.09
 
 =head1 DESCRIPTION
 
-Travel::Status::DE::EFA::stop describes a TODO.
+Travel::Status::DE::EFA::Stop describes a single stop of a departure's
+route. It is solely based on the respective departure's schedule.
 
 =head1 METHODS
 
 =head2 ACCESSORS
 
-TODO
+All accessors return schedule data. Realtime data is not available.
 
 =over
 
 =item $stop->arr_date
 
+arrival date (DD.MM.YYYY). undef if this is the first scheduled stop.
+
 =item $stop->arr_time
+
+arrival time (HH:MM). undef if this is the first scheduled stop.
 
 =item $stop->dep_date
 
+departure date (DD.MM.YYYY). undef if this is the final scehduled stop.
+
 =item $stop->dep_time
+
+departure time (HH:MM). undef if this is the final scehduled stop.
 
 =item $stop->name
 
+stop name with city prefix ("I<City> I<Stop>", for instance
+"Essen RE<uuml>ttenscheider Stern").
+
 =item $stop->name_suf
 
+stop name without city prefix, for instance "RE<uuml>ttenscheider Stern".
+
 =item $stop->platform
+
+Platform name/number if available, empty string otherwise.
 
 =back
 

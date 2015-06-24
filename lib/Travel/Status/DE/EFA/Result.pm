@@ -200,18 +200,18 @@ which also may have the same numbers.
 =item $departure->route_interesting
 
 List of up to three "interesting" stations served by this departure. Is a
-subset of B<route_post>. Each station is a hash reference, see ROUTE STATIONS
-for details.
+subset of B<route_post>. Each station is a Travel::Status::DE::EFA::Stop(3pm)
+object.
 
 =item $departure->route_pre
 
 List of stations the train passed (or will have passed) befoe this stop.
-Each station is a hash reference, see ROUTE STATIONS for details.
+Each station is a Travel::Status::DE::EFA::Stop(3pm) object.
 
 =item $departure->route_post
 
 List of stations the train will pass after this stop.
-Each station is a hash reference, see ROUTE STATIONS for details.
+Each station is a Travel::Status::DE::EFA::Stop(3pm) object.
 
 =item $departure->sched_date
 
