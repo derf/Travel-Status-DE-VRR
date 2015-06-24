@@ -277,49 +277,6 @@ The following are known so far:
 
 =back
 
-=head1 ROUTE STATIONS
-
-The B<route> accessors return hashrefs, each of which corresponds to a single
-station. Note that the route is solely based on the schedule, delays or
-changed platforms are not taken into account.
-
-For a station I<$stop>,
-the following keys are available:
-
-=over
-
-=item $stop->{arr_date}
-
-arrival date (DD.MM.YYYY). undef if this is the first scheduled stop.
-
-=item $stop->{arr_time}
-
-arrival time (HH:MM). undef if this is the first scheduled stop.
-
-=item $stop->{dep_date}
-
-departure date (DD.MM.YYYY). undef if this is the final scehduled stop.
-
-=item $stop->{dep_time}
-
-departure time (HH:MM). undef if this is the final scehduled stop.
-
-=item $stop->{stop}
-
-stop name with city prefix ("I<City> I<Stop>", for instance
-"Essen RE<uuml>ttenscheider Stern").
-
-=item $stop->{stop_suf}
-
-stop name without city prefix, for instance "RE<uuml>ttenscheider Stern".
-
-=item $stop->{platform}
-
-Platform name/number if available, empty string otherwise.
-
-=back
-
-
 =head1 DIAGNOSTICS
 
 None.

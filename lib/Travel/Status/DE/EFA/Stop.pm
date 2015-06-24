@@ -53,13 +53,12 @@ version 1.09
 =head1 DESCRIPTION
 
 Travel::Status::DE::EFA::Stop describes a single stop of a departure's
-route. It is solely based on the respective departure's schedule.
+route. It is solely based on the respective departure's schedule,
+delays or changed platforms are not taken into account.
 
 =head1 METHODS
 
 =head2 ACCESSORS
-
-All accessors return schedule data. Realtime data is not available.
 
 =over
 
