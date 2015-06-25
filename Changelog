@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 1.10 - Thu Jun 25 2015
 
     * Result->delay: return undef when no data is available. This allows to
       distinguish between on-time departures (delay 0) and departures without
@@ -6,7 +6,7 @@ git HEAD
     * EFA->new: Add full_routes config option
     * EFA: Add identified_data accessor
     * Result: Add route_pre, route_post and route_interesting accessors
-    * Add Travel::Routing::DE::EFA::Stop module
+    * Add Travel::Status::DE::EFA::Stop module
     * efa-m: Add -v / --via option
 
 Travel::Status::DE::VRR 1.09 - Thu Apr 30 2015

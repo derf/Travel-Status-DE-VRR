@@ -8,7 +8,7 @@ no if $] >= 5.018, warnings => 'experimental::smartmatch';
 
 use parent 'Class::Accessor';
 
-our $VERSION = '1.09';
+our $VERSION = '1.10';
 
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
 	qw(arr_date arr_time dep_date dep_time name name_suf platform));
@@ -48,12 +48,12 @@ in a Travel::Status::DE::EFA::Result's route
 
 =head1 VERSION
 
-version 1.09
+version 1.10
 
 =head1 DESCRIPTION
 
 Travel::Status::DE::EFA::Stop describes a single stop of a departure's
-route. It is solely based on the respective departure's schedule,
+route. It is solely based on the respective departure's schedule;
 delays or changed platforms are not taken into account.
 
 =head1 METHODS
