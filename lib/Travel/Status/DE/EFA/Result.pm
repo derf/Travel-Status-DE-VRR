@@ -52,7 +52,7 @@ sub route_interesting {
 
 	for my $stop (@via) {
 		if (
-			$stop->{stop_suf} =~ m{ Bf | Hbf | Flughafen | Hauptbahnhof
+			$stop->name_suf =~ m{ Bf | Hbf | Flughafen | Hauptbahnhof
 				| Krankenhaus | Klinik | (?: S $ ) }ox
 		  )
 		{
@@ -85,9 +85,10 @@ sub route_interesting {
 
 		while ( @via_show < $max_parts and @via_main ) {
 			my $stop = shift(@via_main);
-			if ( $stop ~~ \@via_show or $stop == $last_stop ) {
-				next;
-			}
+			# FIXME cannot smartmatch $stop since it became an object
+#			if ( $stop ~~ \@via_show or $stop == $last_stop ) {
+#				next;
+#			}
 			push( @via_show, $stop );
 		}
 	}
