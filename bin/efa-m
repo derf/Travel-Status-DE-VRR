@@ -205,7 +205,7 @@ sub show_results {
 			or ( $offset and $d->countdown < $offset )
 			or ( $filter_via
 				and
-				not( first { $_->{stop} =~ m{$filter_via}io } $d->route_post ) )
+				not( first { $_->name =~ m{$filter_via}io } $d->route_post ) )
 		  )
 		{
 			next;
