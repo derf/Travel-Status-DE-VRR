@@ -11,7 +11,7 @@ our $VERSION = '1.10';
 binmode( STDOUT, ':encoding(utf-8)' );
 
 use Encode qw(decode);
-use Getopt::Long qw(:config no_ignore_case);
+use Getopt::Long qw(:config no_ignore_case bundling);
 use List::Util qw(first max);
 use Travel::Status::DE::EFA;
 
@@ -61,9 +61,11 @@ if ( $input =~ s{ ^ (?<type> address|poi|stop) : }{}x ) {
 
 for my $efield (@edata_pre) {
 	given ($efield) {
-		when ('f') { $edata{fullroute} = 1; $full_routes = 1 }
-		when ('r') { $edata{route}     = 1; $full_routes = 1 }
-		default    { $edata{$efield}   = 1 }
+		when ('a') { $edata{route_after}  = 1; $full_routes = 1 }
+		when ('b') { $edata{route_before} = 1; $full_routes = 1 }
+		when ('f') { $edata{fullroute}    = 1; $full_routes = 1 }
+		when ('r') { $edata{route}        = 1; $full_routes = 1 }
+		default    { $edata{$efield}      = 1 }
 	}
 }
 if ($filter_via) {
@@ -159,7 +161,7 @@ sub display_result {
 			@{$line}[ 0 .. 4 ]
 		);
 
-		if ( $line->[6] and $edata{fullroute} ) {
+		if ( $line->[6] ) {
 			say $line->[6];
 		}
 	}
@@ -237,7 +239,16 @@ sub show_results {
 		}
 
 		if ( $edata{fullroute} ) {
+			$output_line[6]
+			  = format_route( $d->route_pre )
+			  . ' -' x 30 . "\n"
+			  . format_route( $d->route_post );
+		}
+		elsif ( $edata{route_after} ) {
 			$output_line[6] = format_route( $d->route_post );
+		}
+		elsif ( $edata{route_before} ) {
+			$output_line[6] = format_route( reverse $d->route_pre );
 		}
 
 		push( @output, \@output_line );
