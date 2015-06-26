@@ -235,7 +235,7 @@ sub show_results {
 
 		if ( $edata{route} ) {
 			$output_line[3]
-			  = join( q{  }, map { $_->{stop_suf} } $d->route_interesting );
+			  = join( q{  }, map { $_->name_suf } $d->route_interesting );
 		}
 
 		if ( $edata{fullroute} ) {
