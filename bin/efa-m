@@ -18,7 +18,7 @@ use Travel::Status::DE::EFA;
 my $efa_url = 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST';
 my ( $date, $time, $input_type, $list_lines, $offset, $relative_times );
 my ($full_routes);
-my ($filter_via);
+my ( $filter_via, $track_via );
 my ( $timeout,    $developer_mode );
 my ( @grep_lines, @grep_platforms );
 my ( %edata,      @edata_pre );
@@ -38,7 +38,8 @@ GetOptions(
 	'timeout=i'     => \$timeout,
 	'u|efa-url=s'   => \$efa_url,
 	'v|via=s'       => \$filter_via,
-	'V|version'     => \&show_version,
+	'V|track-via=s' => sub { $filter_via = $track_via = $_[1] },
+	'version'       => \&show_version,
 	'devmode'       => \$developer_mode,
 
 ) or show_help(1);
@@ -219,6 +220,10 @@ sub show_results {
 				$dtime .= ' CANCELED';
 			}
 		}
+		elsif ($track_via) {
+			my $via = first { $_->name =~ m{$filter_via}io } $d->route_post;
+			$dtime .= ' → ' . $via->arr_time;
+		}
 		if ( $d->delay ) {
 			$dtime .= ' (+' . $d->delay . ')';
 		}
@@ -334,7 +339,13 @@ Only show trains serving I<station> after the requseted stop. I<station>
 is matched against the "I<city> I<stop>" fields in each line's route.
 Regular expressions are also supported.
 
-=item B<-V>, B<--version>
+=item B<-V>, B<--track-via> I<station>
+
+Lik B<--via>: Only show trains serving I<station> after the requseted stop.
+Also, show the arrival time at I<station> after the departure time at the
+current stop.
+
+=item B<--version>
 
 Show version information.
 
