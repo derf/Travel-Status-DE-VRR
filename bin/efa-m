@@ -320,6 +320,40 @@ repeated)
 
 Ignore departures which are less than I<minutes> from now.
 
+=item B<-O>, B<--output> I<outputtypes>
+
+For each result, show additional information as specified by I<outputtypes>.
+I<outputtypes> is a comma-separated list, the B<-O>/B<--output> option may
+also be repeated. Each output type has both a short and long form, for instance
+both "-Or" and "--output=route" are valid.
+
+The following output types are supported:
+
+=over
+
+=item a / route_after
+
+Show each departure's full route (timestamps and stop names) after the
+requested station.
+
+=item b / route_before
+
+Show each departure's full route (timestamps and stop names) before the
+requested station.
+
+=item f / fullroute
+
+Show each departure's full route (timestamps and stop names) before and
+after the requested station.
+
+=item r / route
+
+Show up to three stops between the requested station and the departure's
+destination. B<efa-m> tries to display the three most important stops,
+however these are heuristically determined and may not be optimal.
+
+=back
+
 =item B<-p>, B<--platform> I<platforms>
 
 Only show departures at I<platforms> (comma-separated list, option may be
