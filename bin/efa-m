@@ -195,7 +195,7 @@ sub show_results {
 		my @output_line;
 		my $platform = $d->platform;
 		my $dtime    = (
-			$relative_times ? sprintf( '%2d min', $d->countdown ) : $d->time );
+			$relative_times ? sprintf( '%2d min', $d->countdown ) : $d->sched_time );
 
 		if ( $d->platform_db ) {
 			$platform .= ' (DB)';
@@ -227,7 +227,12 @@ sub show_results {
 			$dtime .= ' → ' . $via->arr_time;
 		}
 		if ( $d->delay ) {
-			$dtime .= ' (+' . $d->delay . ')';
+			if ($relative_times) {
+				$dtime .= ' (+' . $d->delay . ')';
+			}
+			else {
+				$dtime .= ' +' . $d->delay;
+			}
 		}
 
 		@output_line
@@ -289,8 +294,9 @@ version 1.10
 
 =head1 DESCRIPTION
 
-B<efa-m> lists upcoming tram, bus and train departures at the location I<name>
-in I<city>.
+B<efa-m> lists scheduled tram, bus and train departures at the location I<name>
+in I<city>.  Realtime data (i.e. delays) is included if available, it's
+visible in the output as a "+x" remark (meaning a delay of x minutes).
 
 By default, I<name> refers to a stop, this can be changed by specifying
 I<type>.  Supported types are B<address> and B<poi> (point of interest).
@@ -361,7 +367,9 @@ repeated).  Note that the C<< Bstg. >> / C<< Gleis >> prefix must be omitted.
 
 =item B<-r>, B<--relative>
 
-Use relative departure times.
+Show relative departure times in minutes (i.e. the time difference between
+the departure and the time of the request).  In this case, realtime data is
+already included.
 
 =item B<-t>, B<--time> I<hh:mm>
 

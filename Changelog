@@ -3,6 +3,8 @@ git HEAD
     * efa-m: Add -V / --track-via option
     * efa-m: Add -O / --output option with outputtypes
       route_after, route_before, fullroute and route
+    * efa-m: Always output schedule data when absolute times are requested.
+      As before, delays are indicated by a +xyz mark next to the time
 
 Travel::Status::DE::VRR 1.10 - Thu Jun 25 2015
 
