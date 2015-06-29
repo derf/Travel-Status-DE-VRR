@@ -1,6 +1,8 @@
 git HEAD
 
     * efa-m: Add -V / --track-via option
+    * efa-m: Add -O / --output option with outputtypes
+      route_after, route_before, fullroute and route
 
 Travel::Status::DE::VRR 1.10 - Thu Jun 25 2015
 
