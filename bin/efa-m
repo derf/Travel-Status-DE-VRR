@@ -179,7 +179,7 @@ sub show_lines {
 		}
 
 		push( @output,
-			[ $l->type, $l->name, $l->direction // q{}, $l->route // q{} ] );
+			[ $l->type, $l->name, $l->direction // q{}, q{}, $l->route // q{} ] );
 	}
 
 	display_result(@output);
