@@ -1,5 +1,6 @@
-git HEAD
+Travel::Status::DE::VRR 1.11 - Tue Jun 30 2015
 
+    * efa-m: Remove -V alias for --version
     * efa-m: Add -V / --track-via option
     * efa-m: Add -O / --output option with outputtypes
       route_after, route_before, fullroute and route

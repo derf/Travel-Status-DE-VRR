@@ -6,7 +6,7 @@ use utf8;
 
 no if $] >= 5.018, warnings => "experimental::smartmatch";
 
-our $VERSION = '1.10';
+our $VERSION = '1.11';
 
 binmode( STDOUT, ':encoding(utf-8)' );
 
@@ -179,7 +179,8 @@ sub show_lines {
 		}
 
 		push( @output,
-			[ $l->type, $l->name, $l->direction // q{}, q{}, $l->route // q{} ] );
+			[ $l->type, $l->name, $l->direction // q{}, q{}, $l->route // q{} ]
+		);
 	}
 
 	display_result(@output);
@@ -195,7 +196,10 @@ sub show_results {
 		my @output_line;
 		my $platform = $d->platform;
 		my $dtime    = (
-			$relative_times ? sprintf( '%2d min', $d->countdown ) : $d->sched_time );
+			$relative_times
+			? sprintf( '%2d min', $d->countdown )
+			: $d->sched_time
+		);
 
 		if ( $d->platform_db ) {
 			$platform .= ' (DB)';
@@ -290,7 +294,7 @@ I<city> [I<type>B<:>]I<name>
 
 =head1 VERSION
 
-version 1.10
+version 1.11
 
 =head1 DESCRIPTION
 
