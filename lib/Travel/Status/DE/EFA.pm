@@ -293,6 +293,7 @@ sub lines {
 		my $direction  = $e->getAttribute('direction');
 		my $valid      = $e->getAttribute('valid');
 		my $type       = $e_info->getAttribute('name');
+		my $mot        = $e->getAttribute('motType');
 		my $route      = ( $e_route ? $e_route->textContent : undef );
 		my $operator   = ( $e_oper ? $e_oper->textContent : undef );
 		my $identifier = $e->getAttribute('stateless');
@@ -304,6 +305,7 @@ sub lines {
 				direction  => decode( 'UTF-8', $direction ),
 				valid      => $valid,
 				type       => decode( 'UTF-8', $type ),
+				mot        => $mot,
 				route      => decode( 'UTF-8', $route ),
 				operator   => decode( 'UTF-8', $operator ),
 				identifier => $identifier,
@@ -408,6 +410,7 @@ sub results {
 		my $countdown     = $e->getAttribute('countdown');
 		my $delay         = $e_info->getAttribute('delay');
 		my $type          = $e_info->getAttribute('name');
+		my $mot           = $e_line->getAttribute('motType');
 
 		my $platform_is_db = 0;
 
@@ -467,6 +470,7 @@ sub results {
 				sched_date    => $date,
 				sched_time    => $time,
 				type          => $type,
+				mot           => $mot,
 				prev_route    => \@prev_route,
 				next_route    => \@next_route,
 			)

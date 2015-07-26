@@ -9,7 +9,12 @@ use parent 'Class::Accessor';
 our $VERSION = '1.11';
 
 Travel::Status::DE::EFA::Line->mk_ro_accessors(
-	qw(direction name operator route type valid));
+	qw(direction mot name operator route type valid));
+
+my @mot_mapping = qw{
+  zug s-bahn u-bahn stadtbahn tram stadtbus regionalbus
+  schnellbus seilbahn schiff ast sonstige
+};
 
 sub new {
 	my ( $obj, %conf ) = @_;
@@ -17,6 +22,12 @@ sub new {
 	my $ref = \%conf;
 
 	return bless( $ref, $obj );
+}
+
+sub mot_name {
+	my ($self) = @_;
+
+	return $mot_mapping[ $self->{mot} ] // 'sonstige';
 }
 
 sub TO_JSON {

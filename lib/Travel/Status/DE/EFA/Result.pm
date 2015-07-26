@@ -12,8 +12,13 @@ our $VERSION = '1.11';
 
 Travel::Status::DE::EFA::Result->mk_ro_accessors(
 	qw(countdown date delay destination is_cancelled info key line lineref
-	  platform platform_db platform_name sched_date sched_time time type)
+	  mot platform platform_db platform_name sched_date sched_time time type)
 );
+
+my @mot_mapping = qw{
+  zug s-bahn u-bahn stadtbahn tram stadtbus regionalbus
+  schnellbus seilbahn schiff ast sonstige
+};
 
 sub new {
 	my ( $obj, %conf ) = @_;
@@ -29,6 +34,12 @@ sub new {
 	}
 
 	return bless( $ref, $obj );
+}
+
+sub mot_name {
+	my ($self) = @_;
+
+	return $mot_mapping[ $self->{mot} ] // 'sonstige';
 }
 
 sub route_pre {

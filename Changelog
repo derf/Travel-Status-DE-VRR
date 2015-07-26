@@ -1,3 +1,9 @@
+git HEAD
+
+    * Line: Add mot and mot_name accessors
+    * Result: Add mot and mot_name accessors
+    * efa-m: Add -m / --mot option
+
 Travel::Status::DE::VRR 1.11 - Tue Jun 30 2015
 
     * efa-m: Remove -V alias for --version

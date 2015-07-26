@@ -20,7 +20,7 @@ my ( $date, $time, $input_type, $list_lines, $offset, $relative_times );
 my ($full_routes);
 my ( $filter_via, $track_via );
 my ( $timeout,    $developer_mode );
-my ( @grep_lines, @grep_platforms );
+my ( @grep_lines, @grep_platforms, @grep_mots );
 my ( %edata,      @edata_pre );
 
 @ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
@@ -30,6 +30,7 @@ GetOptions(
 	'h|help'        => sub { show_help(0) },
 	'l|line=s@'     => \@grep_lines,
 	'L|linelist'    => \$list_lines,
+	'm|mot=s@'      => \@grep_mots,
 	'o|offset=i'    => \$offset,
 	'O|output=s@'   => \@edata_pre,
 	'p|platform=s@' => \@grep_platforms,
@@ -51,6 +52,7 @@ if ( @ARGV != 2 ) {
 # --line=foo,bar support
 @edata_pre      = split( qr{,}, join( q{,}, @edata_pre ) );
 @grep_lines     = split( qr{,}, join( q{,}, @grep_lines ) );
+@grep_mots      = split( qr{,}, join( q{,}, @grep_mots ) );
 @grep_platforms = split( qr{,}, join( q{,}, @grep_platforms ) );
 
 my ( $place, $input ) = @ARGV;
@@ -174,7 +176,13 @@ sub show_lines {
 
 	for my $l ( $status->lines ) {
 
-		if ( @grep_lines and not( $l->name ~~ \@grep_lines ) ) {
+		if (   ( @grep_lines and not( $l->name ~~ \@grep_lines ) )
+			or ( @grep_mots and not( $l->mot_name ~~ \@grep_mots ) ) )
+		{
+			next;
+		}
+
+		if ( @grep_mots and not( $l->mot_name ~~ \@grep_mots ) ) {
 			next;
 		}
 
@@ -206,7 +214,8 @@ sub show_results {
 		}
 
 		if (
-			( @grep_lines and not( $d->line ~~ \@grep_lines ) )
+			   ( @grep_lines and not( $d->line ~~ \@grep_lines ) )
+			or ( @grep_mots and not( $d->mot_name ~~ \@grep_mots ) )
 			or ( @grep_platforms
 				and not( $platform ~~ \@grep_platforms ) )
 			or ( $offset and $d->countdown < $offset )
@@ -325,6 +334,15 @@ using B<--date> and B<--time> are guaranteed to be included.
 
 Only show departures of I<lines> (comma-separatad list, option may be
 repeated)
+
+=item B<-m>, B<--mot> I<motlist>
+
+Only show departures whose type appears in I<motlist> (comma-separated list,
+this option may be repeated).
+
+The following departure types ("modes of transport") are supported:
+zug, s-bahn, u-bahn, stadtbahn, tram, stadtbus, regionalbus, schnellbus,
+seilbahn, schiff, ast, sonstige
 
 =item B<-o>, B<--offset> I<minutes>
 
