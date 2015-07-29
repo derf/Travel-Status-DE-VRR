@@ -18,10 +18,11 @@ use Travel::Status::DE::EFA;
 my $efa_url = 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST';
 my ( $date, $time, $input_type, $list_lines, $offset, $relative_times );
 my ($full_routes);
-my ( $filter_via, $track_via );
-my ( $timeout,    $developer_mode );
-my ( @grep_lines, @grep_platforms, @grep_mots );
-my ( %edata,      @edata_pre );
+my ( $filter_via,    $track_via );
+my ( $timeout,       $developer_mode );
+my ( @grep_lines,    @grep_platforms, @grep_mots );
+my ( %edata,         @edata_pre );
+my ( $list_services, $service );
 
 @ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
 
@@ -30,11 +31,13 @@ GetOptions(
 	'h|help'        => sub { show_help(0) },
 	'l|line=s@'     => \@grep_lines,
 	'L|linelist'    => \$list_lines,
+	'list'          => \$list_services,
 	'm|mot=s@'      => \@grep_mots,
 	'o|offset=i'    => \$offset,
 	'O|output=s@'   => \@edata_pre,
 	'p|platform=s@' => \@grep_platforms,
 	'r|relative'    => \$relative_times,
+	's|service=s'   => \$service,
 	't|time=s'      => \$time,
 	'timeout=i'     => \$timeout,
 	'u|efa-url=s'   => \$efa_url,
@@ -44,6 +47,10 @@ GetOptions(
 	'devmode'       => \$developer_mode,
 
 ) or show_help(1);
+
+if ($list_services) {
+	show_services();
+}
 
 if ( @ARGV != 2 ) {
 	show_help(1);
@@ -74,6 +81,20 @@ if ($filter_via) {
 	$full_routes = 1;
 }
 
+if ($service) {
+	my $service_ref = first { lc( $_->{shortname} ) eq lc($service) }
+	Travel::Status::DE::EFA::get_efa_urls();
+	if ( not $service_ref ) {
+		printf STDERR (
+			"Error: Unknown service '%s'. See 'efa-m --list' for a "
+			  . "list of supported service names\n",
+			$service
+		);
+		exit 1;
+	}
+	$efa_url = $service_ref->{url};
+}
+
 my $status = Travel::Status::DE::EFA->new(
 	date           => $date,
 	developer_mode => $developer_mode,
@@ -93,6 +114,15 @@ sub show_help {
 	  . "See also: man efa-m\n";
 
 	exit $code;
+}
+
+sub show_services {
+	printf( "%-40s %-14s %s\n\n", 'service', 'abbr. (-s)', 'url (-u)' );
+	for my $service ( Travel::Status::DE::EFA::get_efa_urls() ) {
+		printf( "%-40s %-14s %s\n", @{$service}{qw(name shortname url)} );
+	}
+
+	exit 0;
 }
 
 sub show_version {

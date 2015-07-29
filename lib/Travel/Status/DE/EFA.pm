@@ -486,6 +486,67 @@ sub results {
 	return @results;
 }
 
+# static
+sub get_efa_urls {
+	return (
+		{
+			url       => 'http://www.ding.eu/ding3/XSLT_DM_REQUEST',
+			name      => 'Donau-Iller Nahverkehrsverbund',
+			shortname => 'DING',
+		},
+		{
+			url       => 'http://efa.ivb.at/ivb/XSLT_DM_REQUEST',
+			name      => 'Innsbrucker Verkehrsbetriebe',
+			shortname => 'IVB',
+		},
+		{
+			url       => 'http://efa.svv-info.at/sbs/XSLT_DM_REQUEST',
+			name      => 'Salzburger Verkehrsverbund',
+			shortname => 'SVV',
+		},
+		{
+			url       => 'http://efa.vor.at/wvb/XSLT_DM_REQUEST',
+			name      => 'Verkehrsverbund Ost-Region',
+			shortname => 'VOR',
+		},
+		{
+			url       => 'http://efaneu.vmobil.at/vvv/XSLT_DM_REQUEST',
+			name      => 'Vorarlberger Verkehrsverbund',
+			shortname => 'VVV',
+		},
+		{
+			url       => 'http://fahrplan.verbundlinie.at/stv/XSLT_DM_REQUEST',
+			name      => 'Verkehrsverbund Steiermark',
+			shortname => 'Verbundlinie',
+		},
+		{
+			url       => 'http://www.linzag.at/static/XSLT_DM_REQUEST',
+			name      => 'Linz AG',
+			shortname => 'LinzAG',
+		},
+		{
+			url       => 'http://212.114.197.7/vgnExt_oeffi/XML_DM_REQUEST',
+			name      => 'Verkehrsverbund Grossraum Nuernberg',
+			shortname => 'VGN',
+		},
+		{
+			url       => 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST',
+			name      => 'Verkehrsverbund Rhein-Ruhr',
+			shortname => 'VRR',
+		},
+		{
+			url       => 'http://app.vrr.de/standard/XML_DM_REQUEST',
+			name      => 'Verkehrsverbund Rhein-Ruhr (alternative)',
+			shortname => 'VRR2',
+		},
+		{
+			url       => 'http://www2.vvs.de/vvs/XSLT_DM_REQUEST',
+			name      => 'Verkehrsverbund Stuttgart',
+			shortname => 'VVS',
+		},
+	);
+}
+
 1;
 
 __END__
@@ -597,6 +658,21 @@ describing one line servicing the selected station.
 
 Returns a list of Travel::Status::DE::EFA::Result(3pm) objects, each one describing
 one departure.
+
+=item Travel::Status::DE::EFA::get_efa_urls()
+
+Returns a list of known EFA entry points. Each list element is a hashref with
+the following elements.
+
+=over
+
+=item B<url>: service URL as passed to B<efa_url>
+
+=item B<name>: Name of the entity operating this service
+
+=item B<shortname>: Short name of the entity
+
+=back
 
 =back
 
