@@ -127,6 +127,13 @@ sub new {
 
 	$self->{xml} = $response->decoded_content;
 
+	if ( not $self->{xml} ) {
+
+		# LibXML doesn't like empty documents
+		$self->{errstr} = 'Server returned nothing (empty result)';
+		return $self;
+	}
+
 	$self->{tree} = XML::LibXML->load_xml(
 		string => $self->{xml},
 	);
