@@ -22,30 +22,32 @@ my ( $filter_via,    $track_via );
 my ( $timeout,       $developer_mode );
 my ( @grep_lines,    @grep_platforms, @grep_mots );
 my ( %edata,         @edata_pre );
-my ( $list_services, $service );
+my ( $list_services, $service, $discover_and_print, $discover );
 my $efa;
 
 @ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
 
 GetOptions(
-	'd|date=s'      => \$date,
-	'h|help'        => sub { show_help(0) },
-	'l|line=s@'     => \@grep_lines,
-	'L|linelist'    => \$list_lines,
-	'list'          => \$list_services,
-	'm|mot=s@'      => \@grep_mots,
-	'o|offset=i'    => \$offset,
-	'O|output=s@'   => \@edata_pre,
-	'p|platform=s@' => \@grep_platforms,
-	'r|relative'    => \$relative_times,
-	's|service=s'   => \$service,
-	't|time=s'      => \$time,
-	'timeout=i'     => \$timeout,
-	'u|efa-url=s'   => \$efa_url,
-	'v|via=s'       => \$filter_via,
-	'V|track-via=s' => sub { $filter_via = $track_via = $_[1] },
-	'version'       => \&show_version,
-	'devmode'       => \$developer_mode,
+	'A|auto-url|discover-and-print' => \$discover_and_print,
+	'd|date=s'                      => \$date,
+	'D|discover'                    => \$discover,
+	'h|help'                        => sub { show_help(0) },
+	'l|line=s@'                     => \@grep_lines,
+	'L|linelist'                    => \$list_lines,
+	'list'                          => \$list_services,
+	'm|mot=s@'                      => \@grep_mots,
+	'o|offset=i'                    => \$offset,
+	'O|output=s@'                   => \@edata_pre,
+	'p|platform=s@'                 => \@grep_platforms,
+	'r|relative'                    => \$relative_times,
+	's|service=s'                   => \$service,
+	't|time=s'                      => \$time,
+	'timeout=i'                     => \$timeout,
+	'u|efa-url=s'                   => \$efa_url,
+	'v|via=s'                       => \$filter_via,
+	'V|track-via=s'                 => sub { $filter_via = $track_via = $_[1] },
+	'version'                       => \&show_version,
+	'devmode'                       => \$developer_mode,
 
 ) or show_help(1);
 
@@ -311,6 +313,25 @@ sub show_results {
 	display_result(@output);
 
 	return;
+}
+
+if ( $discover or $discover_and_print ) {
+	for my $service_ref ( Travel::Status::DE::EFA::get_efa_urls() ) {
+		$efa = new_efa_by_url( $service_ref->{url} );
+		if ( $efa and not $efa->errstr ) {
+			if ($discover_and_print) {
+				last;
+			}
+			printf(
+				"%s / %s (%s)\n   ->  efa-m -s %s %s\n\n",
+				@{$service_ref}{qw(name shortname url shortname)},
+				join( q{ }, map { "'$_'" } @ARGV ),
+			);
+		}
+	}
+	if ($discover) {
+		exit 0;
+	}
 }
 
 $efa = new_efa_by_url($efa_url);
