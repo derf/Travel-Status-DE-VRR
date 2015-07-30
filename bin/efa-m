@@ -4,7 +4,7 @@ use warnings;
 use 5.010;
 use utf8;
 
-no if $] >= 5.018, warnings => "experimental::smartmatch";
+no if $] >= 5.018, warnings => 'experimental::smartmatch';
 
 our $VERSION = '1.11';
 
@@ -23,6 +23,7 @@ my ( $timeout,       $developer_mode );
 my ( @grep_lines,    @grep_platforms, @grep_mots );
 my ( %edata,         @edata_pre );
 my ( $list_services, $service );
+my $efa;
 
 @ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
 
@@ -95,17 +96,22 @@ if ($service) {
 	$efa_url = $service_ref->{url};
 }
 
-my $status = Travel::Status::DE::EFA->new(
-	date           => $date,
-	developer_mode => $developer_mode,
-	efa_url        => $efa_url,
-	full_routes    => $full_routes,
-	place          => $place,
-	name           => $input,
-	time           => $time,
-	type           => $input_type,
-	timeout        => $timeout,
-);
+sub new_efa_by_url {
+	my ($url) = @_;
+	my $res = Travel::Status::DE::EFA->new(
+		date           => $date,
+		developer_mode => $developer_mode,
+		efa_url        => $url,
+		full_routes    => $full_routes,
+		place          => $place,
+		name           => $input,
+		time           => $time,
+		type           => $input_type,
+		timeout        => $timeout,
+	);
+
+	return $res;
+}
 
 sub show_help {
 	my ($code) = @_;
@@ -138,7 +144,7 @@ sub format_route {
 
 	for my $stop (@route) {
 		if ( not $stop ) {
-			say "BUG";
+			say 'BUG';
 			next;
 		}
 		if ( not defined $stop->arr_time ) {
@@ -204,7 +210,7 @@ sub display_result {
 sub show_lines {
 	my @output;
 
-	for my $l ( $status->lines ) {
+	for my $l ( $efa->lines ) {
 
 		if (   ( @grep_lines and not( $l->name ~~ \@grep_lines ) )
 			or ( @grep_mots and not( $l->mot_name ~~ \@grep_mots ) ) )
@@ -229,7 +235,7 @@ sub show_lines {
 sub show_results {
 	my @output;
 
-	for my $d ( $status->results ) {
+	for my $d ( $efa->results ) {
 
 		my @output_line;
 		my $platform = $d->platform;
@@ -307,7 +313,9 @@ sub show_results {
 	return;
 }
 
-if ( my $err = $status->errstr ) {
+$efa = new_efa_by_url($efa_url);
+
+if ( my $err = $efa->errstr ) {
 	say STDERR "Request error: ${err}";
 	exit 2;
 }
