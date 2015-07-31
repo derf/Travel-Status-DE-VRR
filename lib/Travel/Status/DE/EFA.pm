@@ -521,11 +521,13 @@ sub get_efa_urls {
 			name      => 'Vorarlberger Verkehrsverbund',
 			shortname => 'VVV',
 		},
-		{
-			url       => 'http://fahrplan.verbundlinie.at/stv/XSLT_DM_REQUEST',
-			name      => 'Verkehrsverbund Steiermark',
-			shortname => 'Verbundlinie',
-		},
+
+		# Returns broken Unicode which makes Encode::decode die()
+		#{
+		#	url       => 'http://fahrplan.verbundlinie.at/stv/XSLT_DM_REQUEST',
+		#	name      => 'Verkehrsverbund Steiermark',
+		#	shortname => 'Verbundlinie',
+		#},
 		{
 			url       => 'http://www.linzag.at/static/XSLT_DM_REQUEST',
 			name      => 'Linz AG',
