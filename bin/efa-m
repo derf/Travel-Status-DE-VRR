@@ -377,10 +377,24 @@ I<type>.  Supported types are B<address> and B<poi> (point of interest).
 
 =over
 
+=item B<-A>, B<--auto-url>, B<--discover-and-print>
+
+Probe all known EFA entry points for the specified stop. Print the first
+result which was not an error.
+
+Note that this may take a while and will not necessarily return the best
+result.  Also, using thi option by default is not recommended, as it puts EFA
+services under considerable additional load.
+
 =item B<-d>, B<--date> I<dd.mm.yyyy>
 
 Show departures for I<date> instead of today.
 May also be specified as I<dd.mm.>
+
+=item B<-D>, B<--discover>
+
+Probe all known EFA entry points for the specified stop. Print the URLs and
+names of all entry points which did not return an error.
 
 =item B<-L>, B<--linelist>
 
@@ -393,6 +407,11 @@ using B<--date> and B<--time> are guaranteed to be included.
 
 Only show departures of I<lines> (comma-separatad list, option may be
 repeated)
+
+=item B<--list>
+
+List supported EFA services wit their URLs (see B<-u>) and abbreviations (see
+B<-s>).
 
 =item B<-m>, B<--mot> I<motlist>
 
@@ -452,15 +471,21 @@ Show relative departure times in minutes (i.e. the time difference between
 the departure and the time of the request).  In this case, realtime data is
 already included.
 
+=item B<-s>, B<--service> I<name>
+
+Short name of the EFA entry point. See Travel::Status::DE::EFA(3pm) and the
+B<-l> option for a list of services.
+
 =item B<-t>, B<--time> I<hh:mm>
 
 Show departures starting at I<time> instead of now.
 
 =item B<-u>, B<--efa-url> I<url>
 
-URL to the EFA entry point, defaults to L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST>.
-Depending on your location, some I<url>s may contain more specific data
-than others.  See Travel::Status::DE::EFA(3pm) for alternatives.
+URL to the EFA entry point, defaults to
+L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST>.  Depending on your location, some
+I<url>s may contain more specific data than others.  See
+Travel::Status::DE::EFA(3pm) and the B<-l> option for alternatives.
 
 =item B<--timeout> I<seconds>
 
