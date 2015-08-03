@@ -536,10 +536,11 @@ None.
 =head1 BUGS AND LIMITATIONS
 
 B<efa-m> uses the VRR EFA service by default, which seems to contain the
-greatest available set of information. However, some cities (e.g. Berlin
-or parts of Hamburg) are incomplete. B<efa-m> is not yet able to choose the
-appropriate EFA URL for these by itself, it needs to be done manually with
-the B<-u>, B<--efa-url> option.
+greatest available set of information. However, some cities (e.g. Berlin or
+parts of Hamburg) are not supported there, and B<efa-m> is not yet able to
+choose the appropriate EFA URL for these by itself. In these cases, you should
+find an appropriate EFA service using the B<-D>/B<--discover> option and then
+use B<-s> I<service> when making requests.
 
 =head1 AUTHOR
 
