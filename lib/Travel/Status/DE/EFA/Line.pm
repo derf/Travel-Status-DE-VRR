@@ -76,6 +76,16 @@ per actual line.
 
 Direction of the line.  Name of either the destination stop or one on the way.
 
+=item $line->mot
+
+Returns the "mode of transport" number for this line. This is usually an
+integer between 0 and 11.
+
+=item $line->mot_name
+
+Returns the "mode of transport" for this line, for instance "zug", "s-bahn",
+"tram" or "sonstige".
+
 =item $line->name
 
 Name of the line, e.g. "U11", "SB15", "107".

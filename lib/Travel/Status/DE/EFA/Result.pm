@@ -198,6 +198,16 @@ The name/number of the line.
 Travel::Status::DE::EFA::Line(3pm) object describing the departing line in
 detail.
 
+=item $departure->mot
+
+Returns the "mode of transport" number. This is usually an integer between 0
+and 11.
+
+=item $departure->mot_name
+
+Returns the "mode of transport", for instance "zug", "s-bahn", "tram" or
+"sonstige".
+
 =item $departure->platform
 
 Departure platform number (may not be a number).
