@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 1.12 - Tue Aug 04 2015
 
     * EFA: Add static method get_efa_urls
     * Line: Add mot and mot_name accessors
