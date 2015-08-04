@@ -1,8 +1,13 @@
 git HEAD
 
+    * EFA: Add static method get_efa_urls
     * Line: Add mot and mot_name accessors
     * Result: Add mot and mot_name accessors
+    * efa-m: Add -A / --auto-url / --discover-and-print option
+    * efa-m: Add -D / --discover option
+    * efa-m: Add --list option
     * efa-m: Add -m / --mot option
+    * efa-m: Add -s / --service option
 
 Travel::Status::DE::VRR 1.11 - Tue Jun 30 2015
 
