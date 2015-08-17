@@ -578,6 +578,21 @@ sub get_efa_urls {
 			name      => 'Verkehrsgesellschaft Mecklenburg-Vorpommern',
 			shortname => 'VMV',
 		},
+		{
+			url       => 'http://213.144.24.66/kvv2/XML_DM_REQUEST',
+			name      => 'Karlsruher Verkehrsverbund',
+			shortname => 'KVV',
+		},
+		{
+			url  => 'http://www.travelineeastmidlands.co.uk/em/XSLT_DM_REQUEST',
+			name => 'Traveline East Midlands',
+			shortname => 'TLEM',
+		},
+		{
+			url       => 'http://mobil.vbl.ch/vblmobil/XML_DM_REQUEST',
+			name      => 'Verkehrsbetriebe Luzern',
+			shortname => 'VBL',
+		},
 
 	);
 }
