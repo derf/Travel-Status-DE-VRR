@@ -338,6 +338,16 @@ $efa = new_efa_by_url($efa_url);
 
 if ( my $err = $efa->errstr ) {
 	say STDERR "Request error: ${err}";
+
+	if ( $efa->place_candidates ) {
+		say 'You might want to try one of the following places:';
+		say join( "\n", $efa->place_candidates );
+	}
+	elsif ( $efa->name_candidates ) {
+		say 'You might want to try one of the following names:';
+		say join( "\n", $efa->name_candidates );
+	}
+
 	exit 2;
 }
 

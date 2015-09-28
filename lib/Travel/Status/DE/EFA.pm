@@ -167,6 +167,24 @@ sub errstr {
 	return $self->{errstr};
 }
 
+sub name_candidates {
+	my ($self) = @_;
+
+	if ( $self->{name_candidates} ) {
+		return @{ $self->{name_candidates} };
+	}
+	return;
+}
+
+sub place_candidates {
+	my ($self) = @_;
+
+	if ( $self->{place_candidates} ) {
+		return @{ $self->{place_candidates} };
+	}
+	return;
+}
+
 sub sprintf_date {
 	my ($e) = @_;
 
@@ -222,21 +240,16 @@ sub check_for_ambiguous {
 	my $s_name  = $e_name->getAttribute('state');
 
 	if ( $s_place eq 'list' ) {
-		$self->{errstr} = sprintf(
-			'Ambiguous place input: %s',
-			join( q{ | },
-				map { decode( 'UTF-8', $_->textContent ) }
-				  @{ $e_place->findnodes($xp_place_elem) } )
-		);
+		$self->{place_candidates} = [ map { decode( 'UTF-8', $_->textContent ) }
+			  @{ $e_place->findnodes($xp_place_elem) } ];
+		$self->{errstr} = 'ambiguous place parameter';
 		return;
 	}
 	if ( $s_name eq 'list' ) {
-		$self->{errstr} = sprintf(
-			'Ambiguous name input: %s',
-			join( q{ | },
-				map { decode( 'UTF-8', $_->textContent ) }
-				  @{ $e_name->findnodes($xp_name_elem) } )
-		);
+		$self->{name_candidates} = [ map { decode( 'UTF-8', $_->textContent ) }
+			  @{ $e_name->findnodes($xp_name_elem) } ];
+
+		$self->{errstr} = 'ambiguous name parameter';
 		return;
 	}
 	if ( $s_place eq 'notidentified' ) {
@@ -703,6 +716,16 @@ will return ("Essen", "Martinstr.").
 
 Returns a list of Travel::Status::DE::EFA::Line(3pm) objects, each one
 describing one line servicing the selected station.
+
+=item $status->name_candidates
+
+Returns a list of B<name> candidates if I<name> is ambiguous. Returns
+nothing (undef / empty list) otherwise.
+
+=item $status->place_candidates
+
+Returns a list of B<place> candidates if I<place> is ambiguous. Returns
+nothing (undef / empty list) otherwise.
 
 =item $status->results
 

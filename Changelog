@@ -1,3 +1,10 @@
+git HEAD
+
+    * EFA: Add accessors name_candidates and place_candidates
+    * EFA: errstr: in cases of ambiguous input, the name/place
+      candidates list is no longer encoded in the errstr accessor. Use the
+      new name_candidates / place_candidates accessors instead.
+
 Travel::Status::DE::VRR 1.12 - Tue Aug 04 2015
 
     * EFA: Add static method get_efa_urls

@@ -5,7 +5,7 @@ use 5.010;
 use utf8;
 
 use File::Slurp qw(slurp);
-use Test::More tests => 7;
+use Test::More tests => 9;
 
 BEGIN {
 	use_ok('Travel::Status::DE::VRR');
@@ -21,8 +21,10 @@ can_ok($status, qw(errstr results));
 
 $status->check_for_ambiguous();
 
-is($status->errstr, 'Ambiguous name input: Alfredusbad | Am Alfredusbad',
-	'errstr ok');
+is($status->errstr, 'ambiguous name parameter', 'errstr ok');
+
+is_deeply([$status->place_candidates], [], 'place candidates ok');
+is_deeply([$status->name_candidates], ['Alfredusbad', 'Am Alfredusbad'], 'name candidates ok');
 
 is_deeply([$status->lines], [], 'no lines');
 is_deeply([$status->results], [], 'no results');
