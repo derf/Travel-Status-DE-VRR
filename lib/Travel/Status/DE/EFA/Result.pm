@@ -218,7 +218,7 @@ true if the platform number is operated by DB ("Gleis x"), false ("Bstg. x")
 otherwise.
 
 Unfortunately, there is no distinction between tram and bus platforms yet,
-which also may have the same numbers.
+which may alsn have the same numbers.
 
 =item $departure->route_interesting
 
