@@ -271,6 +271,10 @@ sub check_for_ambiguous {
 sub identified_data {
 	my ($self) = @_;
 
+	if ( not $self->{tree} ) {
+		return;
+	}
+
 	my $xp_place
 	  = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvPlace/odvPlaceElem');
 	my $xp_name
@@ -286,16 +290,20 @@ sub lines {
 	my ($self) = @_;
 	my @lines;
 
+	if ( $self->{lines} ) {
+		return @{ $self->{lines} };
+	}
+
+	if ( not $self->{tree} ) {
+		return;
+	}
+
 	my $xp_element
 	  = XML::LibXML::XPathExpression->new('//itdServingLines/itdServingLine');
 
 	my $xp_info  = XML::LibXML::XPathExpression->new('./itdNoTrain');
 	my $xp_route = XML::LibXML::XPathExpression->new('./itdRouteDescText');
 	my $xp_oper  = XML::LibXML::XPathExpression->new('./itdOperator/name');
-
-	if ( $self->{lines} ) {
-		return @{ $self->{lines} };
-	}
 
 	for my $e ( $self->{tree}->findnodes($xp_element) ) {
 
@@ -376,6 +384,10 @@ sub results {
 	my ($self) = @_;
 	my @results;
 
+	if ( $self->{results} ) {
+		return @{ $self->{results} };
+	}
+
 	if ( not $self->{tree} ) {
 		return;
 	}
@@ -393,10 +405,6 @@ sub results {
 	  = XML::LibXML::XPathExpression->new('./itdPrevStopSeq/itdPoint');
 	my $xp_next_route
 	  = XML::LibXML::XPathExpression->new('./itdOnwardStopSeq/itdPoint');
-
-	if ( $self->{results} ) {
-		return @{ $self->{results} };
-	}
 
 	$self->lines;
 
