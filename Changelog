@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 1.13 - Sun Mar 06 2016
 
     * EFA: Add accessors name_candidates and place_candidates
     * EFA: errstr: in cases of ambiguous input, the name/place
