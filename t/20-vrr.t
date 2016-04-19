@@ -6,7 +6,7 @@ use utf8;
 
 use Encode qw(decode);
 use File::Slurp qw(slurp);
-use Test::More tests => 111;
+use Test::More tests => 113;
 
 BEGIN {
 	use_ok('Travel::Status::DE::VRR');
@@ -19,6 +19,9 @@ my $status = Travel::Status::DE::VRR->new_from_xml(xml => $xml);
 
 isa_ok($status, 'Travel::Status::DE::EFA');
 can_ok($status, qw(errstr results));
+
+is($status->errstr, undef, 'no error');
+is_deeply([$status->identified_data], [qw[Essen Hauptbahnhof]], 'identified_data');
 
 my @results = $status->results;
 

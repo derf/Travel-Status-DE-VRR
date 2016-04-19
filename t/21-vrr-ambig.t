@@ -5,7 +5,7 @@ use 5.010;
 use utf8;
 
 use File::Slurp qw(slurp);
-use Test::More tests => 9;
+use Test::More tests => 10;
 
 BEGIN {
 	use_ok('Travel::Status::DE::VRR');
@@ -28,3 +28,4 @@ is_deeply([$status->name_candidates], ['Alfredusbad', 'Am Alfredusbad'], 'name c
 
 is_deeply([$status->lines], [], 'no lines');
 is_deeply([$status->results], [], 'no results');
+is_deeply([$status->identified_data], [qw[Essen Alfredusbad]], 'identified data');
