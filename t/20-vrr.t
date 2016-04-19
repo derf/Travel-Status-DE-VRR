@@ -6,7 +6,7 @@ use utf8;
 
 use Encode qw(decode);
 use File::Slurp qw(slurp);
-use Test::More tests => 108;
+use Test::More tests => 111;
 
 BEGIN {
 	use_ok('Travel::Status::DE::VRR');
@@ -35,6 +35,7 @@ is($results[0]->time, '09:40', 'first result: real time ok');
 is($results[0]->delay, 4, 'first result: delay 4');
 is($results[0]->sched_date, '16.11.2011', 'first result: scheduled date ok');
 is($results[0]->sched_time, '09:36', 'first result: scheduled time ok');
+is($results[0]->mot_name, 'zug', 'first result: mot_name ok');
 #is($results[0]->platform, '1', 'first result: platform ok');
 #is($results[0]->platform_db, 1, 'first result: platform_db ok');
 
@@ -46,6 +47,7 @@ is($results[3]->time, '09:39', 'fourth result: real time ok');
 is($results[3]->delay, undef, 'fourth result: delay undef');
 is($results[3]->sched_date, '16.11.2011', 'fourth result: scheduled date ok');
 is($results[3]->sched_time, '09:39', 'fourth result: scheduled time ok');
+is($results[3]->mot_name, 'u-bahn', 'fourth result: mot_name ok');
 #is($results[3]->platform, '2', 'fourth result: platform ok');
 #is($results[3]->platform_db, 0, 'fourth result: platform_db ok');
 
@@ -56,6 +58,7 @@ is($results[-1]->line, 'RE1', 'last result: line ok');
 is($results[-1]->date, '16.11.2011', 'last result: date ok');
 is($results[-1]->time, '10:05', 'last result: time ok');
 is($results[-1]->sched_date, '16.11.2011', 'first result: scheduled date ok');
-is($results[-1]->sched_time, '09:53', 'first result: scheduled time ok');
+is($results[-1]->sched_time, '09:53', 'last result: scheduled time ok');
+is($results[-1]->mot_name, 'zug', 'last result: mot_name ok');
 #is($results[-1]->platform, '6', 'last result: platform ok');
 #is($results[-1]->platform_db, 1, 'last result: platform ok');
