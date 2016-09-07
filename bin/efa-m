@@ -484,7 +484,7 @@ already included.
 =item B<-s>, B<--service> I<name>
 
 Short name of the EFA entry point. See Travel::Status::DE::EFA(3pm) and the
-B<-l> option for a list of services.
+B<--list> option for a list of services.
 
 =item B<-t>, B<--time> I<hh:mm>
 
@@ -495,7 +495,7 @@ Show departures starting at I<time> instead of now.
 URL to the EFA entry point, defaults to
 L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST>.  Depending on your location, some
 I<url>s may contain more specific data than others.  See
-Travel::Status::DE::EFA(3pm) and the B<-l> option for alternatives.
+Travel::Status::DE::EFA(3pm) and the B<--list> option for alternatives.
 
 =item B<--timeout> I<seconds>
 
