@@ -125,9 +125,9 @@ sub show_help {
 }
 
 sub show_services {
-	printf( "%-40s %-14s %s\n\n", 'service', 'abbr. (-s)', 'url (-u)' );
+	printf( "%-45s %-14s %s\n\n", 'service', 'abbr. (-s)', 'url (-u)' );
 	for my $service ( Travel::Status::DE::EFA::get_efa_urls() ) {
-		printf( "%-40s %-14s %s\n", @{$service}{qw(name shortname url)} );
+		printf( "%-45s %-14s %s\n", @{$service}{qw(name shortname url)} );
 	}
 
 	exit 0;
