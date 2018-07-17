@@ -586,7 +586,7 @@ sub get_efa_urls {
 			shortname => 'VRNdelfi',
 		},
 		{
-			url       => 'http://fahrplanauskunft.vrn.de/vrn/XSLT_DM_REQUEST',
+			url       => 'http://fahrplanauskunft.vrn.de/rnn/XML_DM_REQUEST',
 			name      => 'Verkehrsverbund Rhein-Neckar',
 			shortname => 'VRN',
 		},
