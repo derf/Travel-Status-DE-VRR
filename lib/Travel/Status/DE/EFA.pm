@@ -598,6 +598,11 @@ sub get_efa_urls {
 			name => 'Karlsruher Verkehrsverbund',
 			shortname => 'KVV',
 		},
+		{
+			url       => 'https://efa.mvv-muenchen.de/mobile/XSLT_DM_REQUEST',
+			name      => 'Münchner Verkehrs- und Tarifverbund',
+			shortname => 'MVV',
+		},
 
 		# HTTPS: invalid certificate
 		{
