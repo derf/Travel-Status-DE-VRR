@@ -519,84 +519,77 @@ sub results {
 sub get_efa_urls {
 	return (
 		{
-			url       => 'http://www.ding.eu/ding3/XSLT_DM_REQUEST',
+			url       => 'https://www.ding.eu/ding3/XSLT_DM_REQUEST',
 			name      => 'Donau-Iller Nahverkehrsverbund',
 			shortname => 'DING',
 		},
-		{
-			url       => 'http://efa.ivb.at/ivb/XSLT_DM_REQUEST',
-			name      => 'Innsbrucker Verkehrsbetriebe',
-			shortname => 'IVB',
-		},
+
+		# HTTPS not supported
 		{
 			url       => 'http://efa.svv-info.at/sbs/XSLT_DM_REQUEST',
 			name      => 'Salzburger Verkehrsverbund',
 			shortname => 'SVV',
 		},
 		{
-			url       => 'http://efa.vor.at/wvb/XSLT_DM_REQUEST',
+			url       => 'https://efa.vor.at/wvb/XSLT_DM_REQUEST',
 			name      => 'Verkehrsverbund Ost-Region',
 			shortname => 'VOR',
 		},
-		{
-			url       => 'http://efaneu.vmobil.at/vvv/XSLT_DM_REQUEST',
-			name      => 'Vorarlberger Verkehrsverbund',
-			shortname => 'VVV',
-		},
 
-		# Returns broken Unicode which makes Encode::decode die()
-		#{
-		#	url       => 'http://fahrplan.verbundlinie.at/stv/XSLT_DM_REQUEST',
-		#	name      => 'Verkehrsverbund Steiermark',
-		#	shortname => 'Verbundlinie',
-		#},
+		# HTTPS not supported
 		{
-			url       => 'http://www.linzag.at/static/XSLT_DM_REQUEST',
+			url       => 'http://fahrplan.verbundlinie.at/stv/XSLT_DM_REQUEST',
+			name      => 'Verkehrsverbund Steiermark',
+			shortname => 'Verbundlinie',
+		},
+		{
+			url       => 'https://www.linzag.at/static/XSLT_DM_REQUEST',
 			name      => 'Linz AG',
 			shortname => 'LinzAG',
 		},
 		{
-			url       => 'http://212.114.197.7/vgnExt_oeffi/XML_DM_REQUEST',
+			url       => 'https://efa.vgn.de/vgnExt_oeffi/XML_DM_REQUEST',
 			name      => 'Verkehrsverbund Grossraum Nuernberg',
 			shortname => 'VGN',
 		},
 		{
-			url       => 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST',
+			url       => 'https://efa.vrr.de/vrr/XSLT_DM_REQUEST',
 			name      => 'Verkehrsverbund Rhein-Ruhr',
 			shortname => 'VRR',
 		},
 		{
-			url       => 'http://app.vrr.de/standard/XML_DM_REQUEST',
+			url       => 'https://app.vrr.de/standard/XML_DM_REQUEST',
 			name      => 'Verkehrsverbund Rhein-Ruhr (alternative)',
 			shortname => 'VRR2',
 		},
 		{
-			url       => 'http://www2.vvs.de/vvs/XSLT_DM_REQUEST',
+			url       => 'https://www2.vvs.de/vvs/XSLT_DM_REQUEST',
 			name      => 'Verkehrsverbund Stuttgart',
 			shortname => 'VVS',
 		},
+
+		# HTTPS not supported
 		{
-			url  => 'http://delfi1.vvo-online.de:8080/delfi3/XSLT_DM_REQUEST',
-			name => 'Verkehrsverbund Oberelbe',
+			url       => 'http://efa.vvo-online.de:8080/dvb/XSLT_DM_REQUEST',
+			name      => 'Verkehrsverbund Oberelbe',
 			shortname => 'VVO',
 		},
+
+		# HTTPS not supported
 		{
-			url       => 'http://delfi.vrn.de/delfi/XSLT_DM_REQUEST',
-			name      => 'Verkehrsverbund Rhein-Neckar (DELFI)',
-			shortname => 'VRNdelfi',
-		},
-		{
-			url       => 'http://fahrplanauskunft.vrn.de/rnn/XML_DM_REQUEST',
+			url       => 'http://fahrplanauskunft.vrn.de/vrn/XML_DM_REQUEST',
 			name      => 'Verkehrsverbund Rhein-Neckar',
 			shortname => 'VRN',
 		},
 		{
-			url       => 'http://www.efa-bw.de/nvbw/XSLT_DM_REQUEST',
+			url       => 'https://www.efa-bw.de/nvbw/XSLT_DM_REQUEST',
 			name      => 'Nahverkehrsgesellschaft Baden-Württemberg',
 			shortname => 'NVBW',
 		},
+
+		# HTTPS: certificate verification fails
 		{
-			url       => 'http://80.146.180.107/vmv/XSLT_DM_REQUEST',
+			url       => 'http://efa.vmv-mbh.de/vmv/XML_DM_REQUEST',
 			name      => 'Verkehrsgesellschaft Mecklenburg-Vorpommern',
 			shortname => 'VMV',
 		},
@@ -605,18 +598,22 @@ sub get_efa_urls {
 			name => 'Karlsruher Verkehrsverbund',
 			shortname => 'KVV',
 		},
+
+		# HTTPS: invalid certificate
 		{
 			url  => 'http://www.travelineeastmidlands.co.uk/em/XSLT_DM_REQUEST',
 			name => 'Traveline East Midlands',
 			shortname => 'TLEM',
 		},
+
+		# HTTPS: unsupported protocol
 		{
 			url       => 'http://mobil.vbl.ch/vblmobil/XML_DM_REQUEST',
 			name      => 'Verkehrsbetriebe Luzern',
 			shortname => 'VBL',
 		},
 		{
-			url       => 'http://bsvg.efa.de/bsvagstd/XML_DM_REQUEST',
+			url       => 'https://bsvg.efa.de/bsvagstd/XML_DM_REQUEST',
 			name      => 'Braunschweiger Verkehrs-GmbH',
 			shortname => 'BSVG',
 		},
