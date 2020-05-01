@@ -617,7 +617,11 @@ sub get_efa_urls {
 			name      => 'Braunschweiger Verkehrs-GmbH',
 			shortname => 'BSVG',
 		},
-
+		{
+			url       => 'https://efa.vagfr.de/vagfr3/XSLT_DM_REQUEST',
+			name      => 'Freiburger Verkehrs AG',
+			shortname => 'VAG',
+		},
 	);
 }
 

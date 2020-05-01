@@ -18,7 +18,8 @@ VMV Schwerin Hbf
 KVV Karlsruhe Hbf
 TLEM London Waterloo East
 VBL Luzern Bf
-BSVG Braunschweig Hbf"
+BSVG Braunschweig Hbf
+VAG Schallstadt Bf"
 
 echo $checks | while read service name place; do
 	echo -n "${service} ... "
