@@ -601,8 +601,8 @@ sub get_efa_urls {
 			shortname => 'VMV',
 		},
 		{
-			url       => 'http://213.144.24.66/kvv2/XML_DM_REQUEST',
-			name      => 'Karlsruher Verkehrsverbund',
+			url  => 'https://projekte.kvv-efa.de/sl3-alone/XSLT_DM_REQUEST',
+			name => 'Karlsruher Verkehrsverbund',
 			shortname => 'KVV',
 		},
 		{
