@@ -126,7 +126,12 @@ sub new {
 		return $self;
 	}
 
-	$self->{xml} = $response->decoded_content;
+	if ( $opt{efa_encoding} ) {
+		$self->{xml} = encode( $opt{efa_encoding}, $response->content );
+	}
+	else {
+		$self->{xml} = $response->decoded_content;
+	}
 
 	if ( not $self->{xml} ) {
 
@@ -534,6 +539,7 @@ sub get_efa_urls {
 			url       => 'https://efa.vor.at/wvb/XSLT_DM_REQUEST',
 			name      => 'Verkehrsverbund Ost-Region',
 			shortname => 'VOR',
+			encoding  => 'iso-8859-15',
 		},
 
 		# HTTPS not supported
@@ -546,6 +552,7 @@ sub get_efa_urls {
 			url       => 'https://www.linzag.at/static/XSLT_DM_REQUEST',
 			name      => 'Linz AG',
 			shortname => 'LinzAG',
+			encoding  => 'iso-8859-15',
 		},
 		{
 			url       => 'https://efa.vgn.de/vgnExt_oeffi/XML_DM_REQUEST',
@@ -643,7 +650,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
     use Travel::Status::DE::EFA;
 
     my $status = Travel::Status::DE::EFA->new(
-        efa_url => 'http://efa.vrr.de/vrr/XSLT_DM_REQUEST',
+        efa_url => 'https://efa.vrr.de/vrr/XSLT_DM_REQUEST',
         place => 'Essen', name => 'Helenenstr'
     );
 
@@ -672,7 +679,8 @@ It reports all upcoming tram/bus/train departures at a given place.
 =item my $status = Travel::Status::DE::EFA->new(I<%opt>)
 
 Requests the departures as specified by I<opts> and returns a new
-Travel::Status::DE::EFA object.  Dies if the wrong I<opts> were passed.
+Travel::Status::DE::EFA object.  B<efa_url>, B<place> and B<name> are
+mandatory.  Dies if the wrong I<opts> were passed.
 
 Arguments:
 
@@ -680,20 +688,9 @@ Arguments:
 
 =item B<efa_url> => I<url>
 
-URL to the EFA service. Known URLs are:
-
-=over
-
-=item * L<http://212.114.197.7/vgnExt_oeffi/XML_DM_REQUEST> (Verkehrsverbund GroE<szlig>raum NE<uuml>rnberg)
-
-=item * L<http://efa.vrr.de/vrr/XSLT_DM_REQUEST> (Verkehrsverbund Rhein-Ruhr)
-
-=item * L<http://www2.vvs.de/vvs/XSLT_DM_REQUEST> (Verkehrsverbund Stuttgart)
-
-=back
-
-If you found a URL not listed here, please send it to
-E<lt>derf@finalrewind.orgE<gt>.
+URL to the EFA service. See C<< efa-m --list >> for known URLs.
+If you found a URL not listed there, please notify
+E<lt>derf+efa@finalrewind.orgE<gt>.
 
 =item B<place> => I<place>
 
@@ -707,6 +704,12 @@ B<stop> (stop/station name).
 =item B<name> => I<name>
 
 address / poi / stop name to list departures for.
+
+=item B<efa_encoding> => I<encoding>
+
+Some EFA servers do not correctly specify their response encoding. If you
+observe encoding issues, you can manually specify it here. Example:
+iso-8859-15.
 
 =item B<full_routes> => B<0>|B<1>
 
@@ -764,6 +767,8 @@ the following elements.
 =item B<name>: Name of the entity operating this service
 
 =item B<shortname>: Short name of the entity
+
+=item B<encoding>: Server-side encoding override for B<efa_encoding> (optional)
 
 =back
 
