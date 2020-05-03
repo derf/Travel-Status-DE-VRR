@@ -26,8 +26,8 @@ can run `efa-m --version` to verify this. Documentation is available via
 
 [lib.finalrewind.org/deb](https://lib.finalrewind.org/deb) provides Debian
 packages of both development and release versions. Note that these are not part
-of the official Debian repository and are thus not covered by its quality
-assurance process.
+of the official Debian repository and are not covered by its quality assurance
+process.
 
 To install the latest release, run:
 
@@ -117,6 +117,22 @@ If you are using the Git repository, use the following commands:
 ./Build manifest
 ./Build test
 sudo ./Build install
+```
+
+If you do not have superuser rights or do not want to perform a system-wide
+installation, you may leave out `Build install` and use **efa-m** from the
+current working directory.
+
+With carton:
+
+```
+carton exec efa-m --version
+```
+
+Otherwise (also works with carton):
+
+```
+perl -Ilocal/lib/perl5 -Ilib bin/efa-m --version
 ```
 
 ### Running efa-m via Docker
