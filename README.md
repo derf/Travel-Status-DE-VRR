@@ -33,7 +33,7 @@ To install the latest release, run:
 
 ```
 wget https://lib.finalrewind.org/deb/libtravel-status-de-vrr-perl_latest_all.deb
-sudo dpkg -i libtravel-statusg-de-vrr-perl_latest_all.deb
+sudo dpkg -i libtravel-status-de-vrr-perl_latest_all.deb
 sudo apt --fix-broken install
 rm libtravel-status-de-vrr-perl_latest_all.deb
 ```
