@@ -296,6 +296,20 @@ sub show_results {
 			$output_line[3]
 			  = join( q{  }, map { $_->name_suf } $d->route_interesting );
 		}
+		elsif ( $d->occupancy ) {
+			if ( $d->occupancy eq 'MANY_SEATS' ) {
+				$output_line[3] = '_';
+			}
+			elsif ( $d->occupancy eq 'FEW_SEATS' ) {
+				$output_line[3] = '*';
+			}
+			elsif ( $d->occupancy eq 'STANDING_ONLY' ) {
+				$output_line[3] = '!';
+			}
+			else {
+				$output_line[3] = '?';
+			}
+		}
 
 		if ( $edata{fullroute} ) {
 			$output_line[6]

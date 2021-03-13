@@ -12,7 +12,7 @@ our $VERSION = '1.17';
 
 Travel::Status::DE::EFA::Result->mk_ro_accessors(
 	qw(countdown date delay destination is_cancelled info key line lineref
-	  mot platform platform_db platform_name sched_date sched_time time type)
+	  mot occupancy operator platform platform_db platform_name sched_date sched_time time type)
 );
 
 my @mot_mapping = qw{

@@ -437,11 +437,12 @@ sub results {
 
 		my $platform      = $e->getAttribute('platform');
 		my $platform_name = $e->getAttribute('platformName');
+		my $countdown     = $e->getAttribute('countdown');
+		my $occupancy     = $e->getAttribute('occupancy');
 		my $line          = $e_line->getAttribute('number');
 		my $dest          = $e_line->getAttribute('direction');
 		my $info          = $e_info->textContent;
 		my $key           = $e_line->getAttribute('key');
-		my $countdown     = $e->getAttribute('countdown');
 		my $delay         = $e_info->getAttribute('delay');
 		my $type          = $e_info->getAttribute('name');
 		my $mot           = $e_line->getAttribute('motType');
@@ -498,6 +499,7 @@ sub results {
 				lineref       => $line_obj[0] // undef,
 				line          => $line,
 				destination   => $dest,
+				occupancy     => $occupancy,
 				countdown     => $countdown,
 				info          => $info,
 				delay         => $delay,
