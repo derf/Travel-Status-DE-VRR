@@ -208,6 +208,14 @@ and 11.
 Returns the "mode of transport", for instance "zug", "s-bahn", "tram" or
 "sonstige".
 
+=item $departure->occupancy
+
+Returns expected occupancy, if available, undef otherwise.
+
+Occupancy values are passed from the backend as-is. Known values are
+"MANY_SEATS" (low occupation), "FEW_SEATS" (high occupation), and
+"STANDING_ONLY" (very high occupation).
+
 =item $departure->platform
 
 Departure platform number (may not be a number).
