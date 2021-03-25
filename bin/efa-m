@@ -401,6 +401,25 @@ version 1.17
 =head1 DESCRIPTION
 
 B<efa-m> lists scheduled tram, bus and train departures at the location I<name>.
+
+For each departure, it shows
+
+=over
+
+=item * scheduled departure time,
+
+=item * delay in minutes,
+
+=item * platform,
+
+=item * line,
+
+=item * expected occupation (from _ to !, if available), and
+
+=item * destination.
+
+=back
+
 If I<city> is specified, I<name> refers to a location within I<city>. Otherwise,
 I<name> must be self-contained. I.e., both C<< efa Essen Hbf >> and
 C<< efa "Essen Hbf" >> are valid. Note, however, than C<< efa E Hbf >> works,
