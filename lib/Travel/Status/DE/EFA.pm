@@ -31,8 +31,8 @@ sub new {
 	my @time = @now[ 2, 1 ];
 	my @date = ( $now[3], $now[4] + 1, $now[5] + 1900 );
 
-	if ( not( $opt{place} and $opt{name} ) ) {
-		confess('You need to specify a place and a name');
+	if ( not( $opt{name} ) ) {
+		confess('You must specify a name');
 	}
 	if ( $opt{type} and not( $opt{type} ~~ [qw[stop address poi]] ) ) {
 		confess('type must be stop, address or poi');
@@ -93,9 +93,6 @@ sub new {
 			nameState_dm           => 'empty',
 			name_dm                => encode( 'UTF-8', $opt{name} ),
 			outputFormat           => 'XML',
-			placeInfo_dm           => 'invalid',
-			placeState_dm          => 'empty',
-			place_dm               => encode( 'UTF-8', $opt{place} ),
 			ptOptionsActive        => '1',
 			requestID              => '0',
 			reset                  => 'neue Anfrage',
@@ -108,6 +105,12 @@ sub new {
 		},
 		developer_mode => $opt{developer_mode},
 	};
+
+	if ( $opt{place} ) {
+		$self->{post}{placeInfo_dm}  = 'invalid';
+		$self->{post}{placeState_dm} = 'empty';
+		$self->{post}{place_dm}      = encode( 'UTF-8', $opt{place} );
+	}
 
 	if ( $opt{full_routes} ) {
 		$self->{post}->{depType}                = 'stopEvents';
@@ -656,7 +659,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
 
     my $status = Travel::Status::DE::EFA->new(
         efa_url => 'https://efa.vrr.de/vrr/XSLT_DM_REQUEST',
-        place => 'Essen', name => 'Helenenstr'
+        name => 'Essen Helenenstr'
     );
 
     for my $d ($status->results) {
@@ -684,7 +687,7 @@ It reports all upcoming tram/bus/train departures at a given place.
 =item my $status = Travel::Status::DE::EFA->new(I<%opt>)
 
 Requests the departures as specified by I<opts> and returns a new
-Travel::Status::DE::EFA object.  B<efa_url>, B<place> and B<name> are
+Travel::Status::DE::EFA object.  B<efa_url> and B<name> are
 mandatory.  Dies if the wrong I<opts> were passed.
 
 Arguments:
