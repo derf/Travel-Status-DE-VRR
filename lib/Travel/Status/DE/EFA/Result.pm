@@ -12,7 +12,7 @@ our $VERSION = '1.18';
 
 Travel::Status::DE::EFA::Result->mk_ro_accessors(
 	qw(countdown date delay destination is_cancelled info key line lineref
-	  mot occupancy operator platform platform_db platform_name sched_date sched_time time type)
+	  mot occupancy operator platform platform_db platform_name sched_date sched_time time train_no type)
 );
 
 my @mot_mapping = qw{
@@ -236,12 +236,12 @@ object.
 
 =item $departure->route_pre
 
-List of stations the train passed (or will have passed) befoe this stop.
+List of stations the vehicle passed (or will have passed) before this stop.
 Each station is a Travel::Status::DE::EFA::Stop(3pm) object.
 
 =item $departure->route_post
 
-List of stations the train will pass after this stop.
+List of stations the vehicle will pass after this stop.
 Each station is a Travel::Status::DE::EFA::Stop(3pm) object.
 
 =item $departure->sched_date
@@ -255,6 +255,10 @@ Scheduled departure time (HH:MM).
 =item $departure->time
 
 Actual departure time (HH:MM).
+
+=item $departure->train_no
+
+Train number. Only defined if departure is a train.
 
 =item $departure->type
 

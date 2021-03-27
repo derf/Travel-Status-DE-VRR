@@ -443,6 +443,7 @@ sub results {
 		my $countdown     = $e->getAttribute('countdown');
 		my $occupancy     = $e->getAttribute('occupancy');
 		my $line          = $e_line->getAttribute('number');
+		my $train_no      = $e_line->getAttribute('trainNum');
 		my $dest          = $e_line->getAttribute('direction');
 		my $info          = $e_info->textContent;
 		my $key           = $e_line->getAttribute('key');
@@ -501,6 +502,7 @@ sub results {
 				key           => $key,
 				lineref       => $line_obj[0] // undef,
 				line          => $line,
+				train_no      => $train_no,
 				destination   => $dest,
 				occupancy     => $occupancy,
 				countdown     => $countdown,
