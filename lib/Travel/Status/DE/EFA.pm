@@ -7,7 +7,7 @@ use utf8;
 
 no if $] >= 5.018, warnings => 'experimental::smartmatch';
 
-our $VERSION = '1.19';
+our $VERSION = '1.20';
 
 use Carp qw(confess cluck);
 use Encode qw(encode);
@@ -673,7 +673,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
 
 =head1 VERSION
 
-version 1.19
+version 1.20
 
 =head1 DESCRIPTION
 
