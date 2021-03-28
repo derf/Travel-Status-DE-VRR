@@ -100,7 +100,7 @@ sub new {
 			submitButton           => 'anfordern',
 			typeInfo_dm            => 'invalid',
 			type_dm                => $opt{type} // 'stop',
-			useProxFootSearch      => '0',
+			useProxFootSearch      => $opt{proximity_search} ? '1' : '0',
 			useRealtime            => '1',
 		},
 		developer_mode => $opt{developer_mode},
@@ -726,6 +726,11 @@ iso-8859-15.
 If true: Request full routes for all departures from the backend. This
 enables the B<route_pre>, B<route_post> and B<route_interesting> accessors in
 Travel::Status::DE::EFA::Result(3pm).
+
+=item B<proximity_search> => B<0>|B<1>
+
+If true: Show departures for stops in the proximity of the requested place
+as well.
 
 =item B<timeout> => I<seconds>
 
