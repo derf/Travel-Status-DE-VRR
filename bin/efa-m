@@ -75,7 +75,7 @@ else {
 	( $place, $input ) = @ARGV;
 }
 
-if ( $input =~ s{ ^ (?<type> address|poi|stop) : }{}x ) {
+if ( $input =~ s{ ^ (?<type> address|poi|stop|stopID) : }{}x ) {
 	$input_type = $+{type};
 }
 

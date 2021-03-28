@@ -34,8 +34,8 @@ sub new {
 	if ( not( $opt{name} ) ) {
 		confess('You must specify a name');
 	}
-	if ( $opt{type} and not( $opt{type} ~~ [qw[stop address poi]] ) ) {
-		confess('type must be stop, address or poi');
+	if ( $opt{type} and not( $opt{type} ~~ [qw[stop stopID address poi]] ) ) {
+		confess('type must be stop, stopID, address, or poi');
 	}
 
 	if ( not $opt{efa_url} ) {
@@ -706,7 +706,7 @@ E<lt>derf+efa@finalrewind.orgE<gt>.
 
 Name of the place/city
 
-=item B<type> => B<address>|B<poi>|B<stop>
+=item B<type> => B<address>|B<poi>|B<stop>|B<stopID>
 
 Type of the following I<name>.  B<poi> means "point of interest".  Defaults to
 B<stop> (stop/station name).
