@@ -631,6 +631,11 @@ sub get_efa_urls {
 			name      => 'Verkehrsverbund Rhein-Ruhr (alternative)',
 			shortname => 'VRR2',
 		},
+		{
+			url       => 'https://efa.vrr.de/rbgstd3/XML_DM_REQUEST',
+			name      => 'Verkehrsverbund Rhein-Ruhr (alternative alternative)',
+			shortname => 'VRR3',
+		},
 
 		# HTTPS not supported
 		{
