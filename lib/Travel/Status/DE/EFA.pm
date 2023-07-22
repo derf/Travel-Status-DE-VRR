@@ -564,13 +564,6 @@ sub get_efa_urls {
 			shortname => 'NVBW',
 		},
 
-		# HTTPS not supported
-		{
-			url       => 'http://efa.svv-info.at/sbs/XSLT_DM_REQUEST',
-			name      => 'Salzburger Verkehrsverbund',
-			shortname => 'SVV',
-		},
-
 		# HTTPS: invalid certificate
 		{
 			url  => 'http://www.travelineeastmidlands.co.uk/em/XSLT_DM_REQUEST',
