@@ -7,7 +7,7 @@ use utf8;
 
 no if $] >= 5.018, warnings => 'experimental::smartmatch';
 
-our $VERSION = '1.20';
+our $VERSION = '1.21';
 
 use Carp qw(confess cluck);
 use Encode qw(encode);
@@ -640,7 +640,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
 
 =head1 VERSION
 
-version 1.20
+version 1.21
 
 =head1 DESCRIPTION
 
@@ -782,7 +782,7 @@ efa-m(1), Travel::Status::DE::EFA::Result(3pm).
 
 =head1 AUTHOR
 
-Copyright (C) 2011-2015 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2011-2023 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 
