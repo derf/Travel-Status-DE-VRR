@@ -575,13 +575,6 @@ sub get_efa_urls {
 			name      => 'Freiburger Verkehrs AG',
 			shortname => 'VAG',
 		},
-
-		# HTTPS not supported
-		{
-			url       => 'http://fahrplan.verbundlinie.at/stv/XSLT_DM_REQUEST',
-			name      => 'Verkehrsverbund Steiermark',
-			shortname => 'Verbundlinie',
-		},
 		{
 			url       => 'https://efa.vgn.de/vgnExt_oeffi/XML_DM_REQUEST',
 			name      => 'Verkehrsverbund Grossraum Nuernberg',
