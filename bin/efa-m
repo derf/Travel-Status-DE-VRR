@@ -251,7 +251,7 @@ sub show_results {
 		my $dtime    = (
 			$relative_times
 			? sprintf( '%2d min', $d->countdown )
-			: $d->sched_time
+			: $d->time
 		);
 
 		if ( $d->platform_db ) {
