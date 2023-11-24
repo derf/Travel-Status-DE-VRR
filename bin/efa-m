@@ -146,6 +146,14 @@ sub show_version {
 	exit 0;
 }
 
+sub format_delay {
+	my ( $delay, $len ) = @_;
+	if ( $delay and $len ) {
+		return sprintf( "(%+${len}d)", $delay );
+	}
+	return q{};
+}
+
 sub format_route {
 	my (@route) = @_;
 
@@ -244,6 +252,17 @@ sub show_lines {
 sub show_results {
 	my @output;
 
+	my $delay_len = 0;
+	my $delay_fmt = 0;
+	for my $d ( $efa->results ) {
+		if ( $d->delay ) {
+			$delay_len = max( $delay_len, length( $d->delay ) + 1 );
+		}
+	}
+	if ($delay_len) {
+		$delay_fmt = $delay_len + 3;
+	}
+
 	for my $d ( $efa->results ) {
 
 		my @output_line;
@@ -285,12 +304,7 @@ sub show_results {
 			$dtime .= ' → ' . $via->arr_time;
 		}
 		if ( $d->delay ) {
-			if ($relative_times) {
-				$dtime .= ' (+' . $d->delay . ')';
-			}
-			else {
-				$dtime .= ' +' . $d->delay;
-			}
+			$dtime .= ' ' . format_delay( $d->delay, $delay_len );
 		}
 
 		@output_line
