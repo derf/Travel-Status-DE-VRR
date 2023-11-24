@@ -443,6 +443,8 @@ sub results {
 		my $countdown     = $e->getAttribute('countdown');
 		my $occupancy     = $e->getAttribute('occupancy');
 		my $line          = $e_line->getAttribute('number');
+		my $train_type    = $e_line->getAttribute('trainType');
+		my $train_name    = $e_line->getAttribute('trainName');
 		my $train_no      = $e_line->getAttribute('trainNum');
 		my $dest          = $e_line->getAttribute('direction');
 		my $info          = $e_info->textContent;
@@ -502,6 +504,8 @@ sub results {
 				key           => $key,
 				lineref       => $line_obj[0] // undef,
 				line          => $line,
+				train_type    => $train_type,
+				train_name    => $train_name,
 				train_no      => $train_no,
 				destination   => $dest,
 				occupancy     => $occupancy,
