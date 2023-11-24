@@ -82,6 +82,7 @@ for my $efield (@edata_pre) {
 	elsif ( $efield eq 'b' ) { $edata{route_before} = 1; $full_routes = 1 }
 	elsif ( $efield eq 'f' ) { $edata{fullroute}    = 1; $full_routes = 1 }
 	elsif ( $efield eq 'r' ) { $edata{route}        = 1; $full_routes = 1 }
+	elsif ( $efield eq 'm' ) { $edata{messages}     = 1 }
 	else                     { $edata{$efield}      = 1 }
 }
 if ($filter_via) {
@@ -193,7 +194,7 @@ sub display_result {
 
 	for my $line (@lines) {
 
-		if ( length( $line->[5] ) ) {
+		if ( $edata{messages} and length( $line->[5] ) ) {
 			$line->[5] =~ tr{\n\x0d}{ }s;
 			chomp $line->[5];
 			print "\n";
@@ -508,6 +509,12 @@ after the requested station.
 Show up to three stops between the requested station and the departure's
 destination. B<efa-m> tries to display the three most important stops,
 however these are heuristically determined and may not be optimal.
+
+=item m / messages
+
+Show free-text messages associated with individual departures. These can
+include generic information such is bicycle transportation options or Wi-Fi
+availability, delay reasons, and more.
 
 =back
 
