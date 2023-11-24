@@ -307,8 +307,13 @@ sub show_results {
 			$dtime .= ' ' . format_delay( $d->delay, $delay_len );
 		}
 
+		my $line = $d->line;
+		if ( length($line) > 10 and $d->train_type and $d->train_no ) {
+			$line = $d->train_type . ' ' . $d->train_no;
+		}
+
 		@output_line
-		  = ( $dtime, $platform, $d->line, q{}, $d->destination, $d->info );
+		  = ( $dtime, $platform, $line, q{}, $d->destination, $d->info );
 
 		if ( $edata{route} ) {
 			$output_line[3]
