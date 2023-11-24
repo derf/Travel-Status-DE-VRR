@@ -296,7 +296,7 @@ sub show_results {
 				next;
 			}
 			else {
-				$dtime .= ' CANCELED';
+				$dtime = '--:--';
 			}
 		}
 		elsif ($track_via) {
