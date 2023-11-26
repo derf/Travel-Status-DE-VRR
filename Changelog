@@ -1,3 +1,8 @@
+git HEAD
+
+    * EFA: Fix full_route creating route elements with invalid data
+    * efa-m: Fix -v / -V (as a consequence of the fix above)
+
 Travel::Status::DE::VRR 1.23 - Fri Nov 24 2023
 
     * efa-m: Do not show free-text messages by default. Use the newly

@@ -375,10 +375,10 @@ sub parse_route {
 		push(
 			@ret,
 			Travel::Status::DE::EFA::Stop->new(
-				arr_date => sprintf_date( $dates[0] ),
-				arr_time => sprintf_time( $times[0] ),
-				dep_date => sprintf_date( $dates[-1] ),
-				dep_time => sprintf_time( $times[-1] ),
+				arr_date => scalar sprintf_date( $dates[0] ),
+				arr_time => scalar sprintf_time( $times[0] ),
+				dep_date => scalar sprintf_date( $dates[-1] ),
+				dep_time => scalar sprintf_time( $times[-1] ),
 				name     => $e->getAttribute('name'),
 				name_suf => $e->getAttribute('nameWO'),
 				platform => $e->getAttribute('platformName'),
