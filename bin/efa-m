@@ -619,6 +619,12 @@ choose the appropriate EFA URL for these by itself. In these cases, you should
 find an appropriate EFA service using the B<-D>/B<--discover> option and then
 use B<-s> I<service> when making requests.
 
+=over
+
+=item * B<--track-via> uses real-time data for departure but schedule data for arrival
+
+=back
+
 =head1 AUTHOR
 
 Copyright (C) 2011-2021 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
