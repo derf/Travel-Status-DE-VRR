@@ -164,23 +164,35 @@ sub format_route {
 			say 'BUG';
 			next;
 		}
-		if ( not defined $stop->arr_time ) {
-			$output .= sprintf( "        %5s  %40s %s\n",
-				$stop->dep_time, $stop->name, $stop->platform, );
+		if ( defined $stop->arr and defined $stop->dep ) {
+			if ( $stop->arr->epoch == $stop->dep->epoch ) {
+				$output .= sprintf(
+					"    %5s      %40s %s\n",
+					$stop->arr->strftime('%H:%M'),
+					$stop->name, $stop->platform,
+				);
+			}
+			else {
+				$output .= sprintf(
+					"%5s → %5s  %40s %s\n",
+					$stop->arr->strftime('%H:%M'),
+					$stop->dep->strftime('%H:%M'),
+					$stop->name, $stop->platform,
+				);
+			}
 		}
-		elsif ( not defined $stop->dep_time ) {
-			$output .= sprintf( "%5s          %40s %s\n",
-				$stop->arr_time, $stop->name, $stop->platform, );
-		}
-		elsif ( $stop->arr_time eq $stop->dep_time ) {
-			$output .= sprintf( "    %5s      %40s %s\n",
-				$stop->dep_time, $stop->name, $stop->platform, );
-		}
-		else {
+		elsif ( defined $stop->arr ) {
 			$output .= sprintf(
-				"%5s → %5s  %40s %s\n",
-				$stop->arr_time, $stop->dep_time,
-				$stop->name,     $stop->platform,
+				"%5s          %40s %s\n",
+				$stop->arr->strftime('%H:%M'),
+				$stop->name, $stop->platform,
+			);
+		}
+		elsif ( defined $stop->dep ) {
+			$output .= sprintf(
+				"        %5s  %40s %s\n",
+				$stop->dep->strftime('%H:%M'),
+				$stop->name, $stop->platform,
 			);
 		}
 	}
@@ -270,7 +282,7 @@ sub show_results {
 		my $dtime    = (
 			$relative_times
 			? sprintf( '%2d min', $d->countdown )
-			: $d->time
+			: $d->datetime->strftime('%H:%M')
 		);
 
 		if ( $d->platform_db ) {
@@ -301,7 +313,7 @@ sub show_results {
 		}
 		elsif ($track_via) {
 			my $via = first { $_->name =~ m{$filter_via}io } $d->route_post;
-			$dtime .= ' → ' . $via->arr_time;
+			$dtime .= ' → ' . $via->arr->strftime('%H:%M');
 		}
 		if ( $d->delay ) {
 			$dtime .= ' ' . format_delay( $d->delay, $delay_len );
