@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 1.24 - Sat Dec 02 2023
 
     * EFA: Fix full_route creating route elements with invalid data
     * efa-m: Fix -v / -V (as a consequence of the fix above)
