@@ -313,7 +313,10 @@ sub show_results {
 		}
 		elsif ($track_via) {
 			my $via = first { $_->name =~ m{$filter_via}io } $d->route_post;
-			$dtime .= ' → ' . $via->arr->strftime('%H:%M');
+			$dtime
+			  .= ' → '
+			  . $via->arr->clone->add( minutes => $d->delay // 0 )
+			  ->strftime('%H:%M');
 		}
 		if ( $d->delay ) {
 			$dtime .= ' ' . format_delay( $d->delay, $delay_len );
@@ -633,7 +636,9 @@ use B<-s> I<service> when making requests.
 
 =over
 
-=item * B<--track-via> uses real-time data for departure but schedule data for arrival
+=item * EFA does not provide real-time data for the routes of requested
+departures. Hence, B<--track-via> estimates the arrival time from scheduled
+departure and departure delay
 
 =back
 
