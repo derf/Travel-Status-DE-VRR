@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 2.00 - Sun Dec 03 2023
 
     * New dependency: DateTime
     * Result: Add datetime, sched_datetime, rt_datetime accessors.
