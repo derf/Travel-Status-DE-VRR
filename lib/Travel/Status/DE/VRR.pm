@@ -35,7 +35,8 @@ Travel::Status::DE::VRR - unofficial VRR departure monitor.
     for my $d ($status->results) {
         printf(
             "%s %d %-5s %s\n",
-            $d->time, $d->platform, $d->line, $d->destination
+            $d->datetime->strftime('%H:%M'),
+            $d->platform, $d->line, $d->destination
         );
     }
 

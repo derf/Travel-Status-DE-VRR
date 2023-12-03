@@ -658,7 +658,8 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
     for my $d ($status->results) {
         printf(
             "%s %-8s %-5s %s\n",
-            $d->time, $d->platform_name, $d->line, $d->destination
+            $d->datetime->strftime('%H:%M'),
+            $d->platform_name, $d->line, $d->destination
         );
     }
 
