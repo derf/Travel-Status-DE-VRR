@@ -48,23 +48,23 @@ use it you will have to trust me not to screw up your system with bogus
 packages. Also, note that the packages are not part of the official Debian
 repository and are not covered by its quality assurance process.
 
-To set up the repository and install the latest Travel::Routing::DE::HAFAS
+To set up the repository and install the latest Travel::Status::DE::VRR
 release, run:
 
 ```
 curl -s https://finalrewind.org/apt.asc | sudo tee /etc/apt/trusted.gpg.d/finalrewind.asc
 echo 'deb https://lib.finalrewind.org/apt stable main' | sudo tee /etc/apt/sources.list.d/finalrewind.list
 sudo apt update
-sudo apt install libtravel-routing-de-hafas-perl
+sudo apt install libtravel-status-de-vrr-perl
 ```
 
 Afterwards, `apt update` and `apt upgrade` will automatically install new
-Travel::Routing::DE::HAFAS releases.
+Travel::Status::DE::VRR releases.
 
-Uninstallation of Travel::Routing::DE::HAFAS works as usual:
+Uninstallation of Travel::Status::DE::VRR works as usual:
 
 ```
-sudo apt remove libtravel-routing-de-hafas-perl
+sudo apt remove libtravel-status-de-vrr-perl
 ```
 
 To remove the APT repository from your system, run:
