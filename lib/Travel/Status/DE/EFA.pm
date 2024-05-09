@@ -16,6 +16,73 @@ use Travel::Status::DE::EFA::Stop;
 use LWP::UserAgent;
 use XML::LibXML;
 
+sub new_p {
+	my ( $class, %opt ) = @_;
+	my $promise = $opt{promise}->new;
+
+	my $self;
+
+	eval { $self = $class->new( %opt, async => 1 ); };
+	if ($@) {
+		return $promise->reject($@);
+	}
+
+	$self->{promise} = $opt{promise};
+
+	$self->{ua}->post_p( $opt{efa_url} => form => $self->{post} )->then(
+		sub {
+			my ($tx) = @_;
+			if ( my $err = $tx->error ) {
+				$promise->reject(
+"POST $opt{efa_url} returned HTTP $err->{code} $err->{message}"
+				);
+				return;
+			}
+			my $content = $tx->res->body;
+
+			if ( $opt{efa_encoding} ) {
+				$self->{xml} = encode( $opt{efa_encoding}, $content );
+			}
+			else {
+				$self->{xml} = $content;
+			}
+
+			if ( not $self->{xml} ) {
+
+				# LibXML doesn't like empty documents
+				$promise->reject('Server returned nothing (empty result)');
+				return;
+			}
+
+			$self->{tree} = XML::LibXML->load_xml(
+				string => $self->{xml},
+			);
+
+			if ( $self->{developer_mode} ) {
+				say $self->{tree}->toString(1);
+			}
+
+			$self->check_for_ambiguous();
+
+			if ( $self->{errstr} ) {
+				$promise->reject( $self->{errstr} );
+				return;
+			}
+
+			$promise->resolve($self);
+			return;
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			$promise->reject($err);
+			return;
+		}
+	)->wait;
+
+	return $promise;
+}
+
 sub new {
 	my ( $class, %opt ) = @_;
 
@@ -24,7 +91,6 @@ sub new {
 		delete $opt{timeout};
 	}
 
-	my $ua  = LWP::UserAgent->new(%opt);
 	my @now = localtime( time() );
 
 	my @time = @now[ 2, 1 ];
@@ -121,9 +187,20 @@ sub new {
 
 	bless( $self, $class );
 
-	$ua->env_proxy;
+	if ( $opt{user_agent} ) {
+		$self->{ua} = $opt{user_agent};
+	}
+	else {
+		my %lwp_options = %{ $opt{lwp_options} // { timeout => 10 } };
+		$self->{ua} = LWP::UserAgent->new(%lwp_options);
+		$self->{ua}->env_proxy;
+	}
 
-	my $response = $ua->post( $opt{efa_url}, $self->{post} );
+	if ( $opt{async} ) {
+		return $self;
+	}
+
+	my $response = $self->{ua}->post( $opt{efa_url}, $self->{post} );
 
 	if ( $response->is_error ) {
 		$self->{errstr} = $response->status_line;
