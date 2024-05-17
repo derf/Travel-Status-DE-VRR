@@ -96,12 +96,12 @@ sub new_p {
 
 	$self->{promise} = $opt{promise};
 
-	$self->{ua}->post_p( $opt{efa_url} => form => $self->{post} )->then(
+	$self->{ua}->post_p( $self->{efa_url} => form => $self->{post} )->then(
 		sub {
 			my ($tx) = @_;
 			if ( my $err = $tx->error ) {
 				$promise->reject(
-"POST $opt{efa_url} returned HTTP $err->{code} $err->{message}"
+"POST $self->{efa_url} returned HTTP $err->{code} $err->{message}"
 				);
 				return;
 			}
@@ -242,6 +242,8 @@ sub new {
 			useRealtime            => '1',
 		},
 		developer_mode => $opt{developer_mode},
+		efa_url        => $opt{efa_url},
+		service        => $opt{service},
 	};
 
 	if ( $opt{place} ) {
@@ -271,7 +273,7 @@ sub new {
 		return $self;
 	}
 
-	my $response = $self->{ua}->post( $opt{efa_url}, $self->{post} );
+	my $response = $self->{ua}->post( $self->{efa_url}, $self->{post} );
 
 	if ( $response->is_error ) {
 		$self->{errstr} = $response->status_line;
