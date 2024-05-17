@@ -16,6 +16,73 @@ use Travel::Status::DE::EFA::Stop;
 use LWP::UserAgent;
 use XML::LibXML;
 
+my %efa_instance = (
+	BSVG => {
+		url  => 'https://bsvg.efa.de/bsvagstd/XML_DM_REQUEST',
+		name => 'Braunschweiger Verkehrs-GmbH',
+	},
+	DING => {
+		url  => 'https://www.ding.eu/ding3/XSLT_DM_REQUEST',
+		name => 'Donau-Iller Nahverkehrsverbund',
+	},
+	KVV => {
+		url  => 'https://projekte.kvv-efa.de/sl3-alone/XSLT_DM_REQUEST',
+		name => 'Karlsruher Verkehrsverbund',
+	},
+	LinzAG => {
+		url      => 'https://www.linzag.at/static/XSLT_DM_REQUEST',
+		name     => 'Linz AG',
+		encoding => 'iso-8859-15',
+	},
+	MVV => {
+		url  => 'https://efa.mvv-muenchen.de/mobile/XSLT_DM_REQUEST',
+		name => 'Münchner Verkehrs- und Tarifverbund',
+	},
+	NVBW => {
+		url  => 'https://www.efa-bw.de/nvbw/XSLT_DM_REQUEST',
+		name => 'Nahverkehrsgesellschaft Baden-Württemberg',
+	},
+	VAG => {
+		url  => 'https://efa.vagfr.de/vagfr3/XSLT_DM_REQUEST',
+		name => 'Freiburger Verkehrs AG',
+	},
+	VGN => {
+		url  => 'https://efa.vgn.de/vgnExt_oeffi/XML_DM_REQUEST',
+		name => 'Verkehrsverbund Grossraum Nuernberg',
+	},
+
+	# HTTPS: certificate verification fails
+	VMV => {
+		url  => 'http://efa.vmv-mbh.de/vmv/XML_DM_REQUEST',
+		name => 'Verkehrsgesellschaft Mecklenburg-Vorpommern',
+	},
+	VRN => {
+		url  => 'https://www.vrn.de/mngvrn//XML_DM_REQUEST',
+		name => 'Verkehrsverbund Rhein-Neckar',
+	},
+	VRR => {
+		url  => 'https://efa.vrr.de/vrr/XSLT_DM_REQUEST',
+		name => 'Verkehrsverbund Rhein-Ruhr',
+	},
+	VRR2 => {
+		url  => 'https://app.vrr.de/standard/XML_DM_REQUEST',
+		name => 'Verkehrsverbund Rhein-Ruhr (alternative)',
+	},
+	VRR3 => {
+		url  => 'https://efa.vrr.de/rbgstd3/XML_DM_REQUEST',
+		name => 'Verkehrsverbund Rhein-Ruhr (alternative alternative)',
+	},
+	VVO => {
+		url  => 'https://efa.vvo-online.de/VMSSL3/XSLT_DM_REQUEST',
+		name => 'Verkehrsverbund Oberelbe',
+	},
+	VVS => {
+		url  => 'https://www2.vvs.de/vvs/XSLT_DM_REQUEST',
+		name => 'Verkehrsverbund Stuttgart',
+	},
+
+);
+
 sub new_p {
 	my ( $class, %opt ) = @_;
 	my $promise = $opt{promise}->new;
@@ -105,8 +172,12 @@ sub new {
 		confess('type must be stop, stopID, address, or poi');
 	}
 
+	if ( $opt{service} and exists $efa_instance{ $opt{service} } ) {
+		$opt{efa_url} = $efa_instance{ $opt{service} }{url};
+	}
+
 	if ( not $opt{efa_url} ) {
-		confess('efa_url is mandatory');
+		confess('service or efa_url must be specified');
 	}
 
 	## no critic (RegularExpressions::ProhibitUnusedCapture)
@@ -630,89 +701,14 @@ sub results {
 
 # static
 sub get_efa_urls {
+	return map {
+		{ %{ $efa_instance{$_} }, shortname => $_ }
+	} sort keys %efa_instance;
+}
 
-	# sorted lexically by shortname
-	return (
-		{
-			url       => 'https://bsvg.efa.de/bsvagstd/XML_DM_REQUEST',
-			name      => 'Braunschweiger Verkehrs-GmbH',
-			shortname => 'BSVG',
-		},
-		{
-			url       => 'https://www.ding.eu/ding3/XSLT_DM_REQUEST',
-			name      => 'Donau-Iller Nahverkehrsverbund',
-			shortname => 'DING',
-		},
-		{
-			url  => 'https://projekte.kvv-efa.de/sl3-alone/XSLT_DM_REQUEST',
-			name => 'Karlsruher Verkehrsverbund',
-			shortname => 'KVV',
-		},
-		{
-			url       => 'https://www.linzag.at/static/XSLT_DM_REQUEST',
-			name      => 'Linz AG',
-			shortname => 'LinzAG',
-			encoding  => 'iso-8859-15',
-		},
-		{
-			url       => 'https://efa.mvv-muenchen.de/mobile/XSLT_DM_REQUEST',
-			name      => 'Münchner Verkehrs- und Tarifverbund',
-			shortname => 'MVV',
-		},
-		{
-			url       => 'https://www.efa-bw.de/nvbw/XSLT_DM_REQUEST',
-			name      => 'Nahverkehrsgesellschaft Baden-Württemberg',
-			shortname => 'NVBW',
-		},
-		{
-			url       => 'https://efa.vagfr.de/vagfr3/XSLT_DM_REQUEST',
-			name      => 'Freiburger Verkehrs AG',
-			shortname => 'VAG',
-		},
-		{
-			url       => 'https://efa.vgn.de/vgnExt_oeffi/XML_DM_REQUEST',
-			name      => 'Verkehrsverbund Grossraum Nuernberg',
-			shortname => 'VGN',
-		},
-
-		# HTTPS: certificate verification fails
-		{
-			url       => 'http://efa.vmv-mbh.de/vmv/XML_DM_REQUEST',
-			name      => 'Verkehrsgesellschaft Mecklenburg-Vorpommern',
-			shortname => 'VMV',
-		},
-		{
-			url       => 'https://www.vrn.de/mngvrn//XML_DM_REQUEST',
-			name      => 'Verkehrsverbund Rhein-Neckar',
-			shortname => 'VRN',
-		},
-		{
-			url       => 'https://efa.vrr.de/vrr/XSLT_DM_REQUEST',
-			name      => 'Verkehrsverbund Rhein-Ruhr',
-			shortname => 'VRR',
-		},
-		{
-			url       => 'https://app.vrr.de/standard/XML_DM_REQUEST',
-			name      => 'Verkehrsverbund Rhein-Ruhr (alternative)',
-			shortname => 'VRR2',
-		},
-		{
-			url       => 'https://efa.vrr.de/rbgstd3/XML_DM_REQUEST',
-			name      => 'Verkehrsverbund Rhein-Ruhr (alternative alternative)',
-			shortname => 'VRR3',
-		},
-		{
-			url       => 'https://efa.vvo-online.de/VMSSL3/XSLT_DM_REQUEST',
-			name      => 'Verkehrsverbund Oberelbe',
-			shortname => 'VVO',
-		},
-		{
-			url       => 'https://www2.vvs.de/vvs/XSLT_DM_REQUEST',
-			name      => 'Verkehrsverbund Stuttgart',
-			shortname => 'VVS',
-		},
-
-	);
+sub get_service {
+	my ($service) = @_;
+	return $efa_instance{$service};
 }
 
 1;
