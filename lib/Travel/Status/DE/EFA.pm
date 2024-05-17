@@ -5,7 +5,7 @@ use warnings;
 use 5.010;
 use utf8;
 
-our $VERSION = '2.00';
+our $VERSION = '2.01';
 
 use Carp qw(confess cluck);
 use DateTime;
@@ -740,7 +740,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
 
 =head1 VERSION
 
-version 2.00
+version 2.01
 
 =head1 DESCRIPTION
 
@@ -806,6 +806,26 @@ Default: 10 seconds. Set to 0 or a negative value to disable it.
 
 =back
 
+=item my $status_p = Travel::Status::DE::EFA->new_p(I<%opt>)
+
+Returns a promise that resolves into a Travel::Status::DE::EFA instance
+($status) on success and rejects with an error message on failure. In addition
+to the arguments of B<new>, the following mandatory arguments must be set.
+
+=over
+
+=item B<promise> => I<promises module>
+
+Promises implementation to use for internal promises as well as B<new_p> return
+value. Recommended: Mojo::Promise(3pm).
+
+=item B<user_agent> => I<user agent>
+
+User agent instance to use for asynchronous requests. The object must implement
+a B<post_p> function. Recommended: Mojo::UserAgent(3pm).
+
+=back
+
 =item $status->errstr
 
 In case of an HTTP request or EFA error, returns a string describing it. If
@@ -853,6 +873,11 @@ the following elements.
 =item B<encoding>: Server-side encoding override for B<efa_encoding> (optional)
 
 =back
+
+=item Travel::Status::DE::EFA::service(I<$service>)
+
+Returns a hashref describing the service I<$service>, or undef if it is not
+known. See B<get_efa_urls> for the hashref layout.
 
 =back
 
