@@ -175,7 +175,8 @@ sub new {
 	if ( not $opt{efa_url} ) {
 		confess('service or efa_url must be specified');
 	}
-	my $now = DateTime->now( time_zone => $opt{time_zone} // 'Europe/Berlin' );
+	my $dt = $opt{datetime}
+	  // DateTime->now( time_zone => $opt{time_zone} // 'Europe/Berlin' );
 
 	## no critic (RegularExpressions::ProhibitUnusedCapture)
 	## no critic (Variables::ProhibitPunctuationVars)
@@ -788,6 +789,11 @@ B<stop> (stop/station name).
 =item B<name> => I<name>
 
 address / poi / stop name to list departures for.
+
+=item B<datetime> => I<DateTime object>
+
+Request departures for the date/time specified by I<DateTime object>.
+Default: now.
 
 =item B<efa_encoding> => I<encoding>
 
