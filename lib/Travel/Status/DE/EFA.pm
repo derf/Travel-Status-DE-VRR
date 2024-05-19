@@ -764,17 +764,17 @@ It reports all upcoming tram/bus/train departures at a given place.
 =item my $status = Travel::Status::DE::EFA->new(I<%opt>)
 
 Requests the departures as specified by I<opts> and returns a new
-Travel::Status::DE::EFA object.  B<efa_url> and B<name> are
+Travel::Status::DE::EFA object.  B<service> and B<name> are
 mandatory.  Dies if the wrong I<opts> were passed.
 
 Arguments:
 
 =over
 
-=item B<efa_url> => I<url>
+=item B<service> => I<name>
 
-URL to the EFA service. See C<< efa-m --list >> for known URLs.
-If you found a URL not listed there, please notify
+EFA service. See C<< efa-m --list >> for known services.
+If you found a service not listed there, please notify
 E<lt>derf+efa@finalrewind.orgE<gt>.
 
 =item B<place> => I<place>
