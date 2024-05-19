@@ -1,4 +1,4 @@
-git HEAD
+Travel::Status::DE::VRR 2.02 - Sun May 19 2024
     * EFA->new: Deprecate "efa_url" option. Use "service" instead.
       "efa_url" is still supported, just not documented anymore.
     * EFA->new: Request departures in Europe/Berlin by default rather than
