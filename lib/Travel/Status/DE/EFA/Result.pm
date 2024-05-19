@@ -213,8 +213,8 @@ Returns the "mode of transport", for instance "zug", "s-bahn", "tram" or
 Returns expected occupancy, if available, undef otherwise.
 
 Occupancy values are passed from the backend as-is. Known values are
-"MANY_SEATS" (low occupation), "FEW_SEATS" (high occupation), and
-"STANDING_ONLY" (very high occupation).
+"MANY_SEATS" (low occupation), "FEW_SEATS" (high occupation),
+"STANDING_ONLY" (very high occupation), and "FULL" (boarding not advised).
 
 =item $departure->platform
 
