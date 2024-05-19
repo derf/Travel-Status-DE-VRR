@@ -158,11 +158,6 @@ sub new {
 		delete $opt{timeout};
 	}
 
-	my @now = localtime( time() );
-
-	my @time = @now[ 2, 1 ];
-	my @date = ( $now[3], $now[4] + 1, $now[5] + 1900 );
-
 	if ( not( $opt{name} ) ) {
 		confess('You must specify a name');
 	}
@@ -174,11 +169,13 @@ sub new {
 
 	if ( $opt{service} and exists $efa_instance{ $opt{service} } ) {
 		$opt{efa_url} = $efa_instance{ $opt{service} }{url};
+		$opt{time_zone} //= $efa_instance{ $opt{service} }{time_zone};
 	}
 
 	if ( not $opt{efa_url} ) {
 		confess('service or efa_url must be specified');
 	}
+	my $now = DateTime->now( time_zone => $opt{time_zone} // 'Europe/Berlin' );
 
 	## no critic (RegularExpressions::ProhibitUnusedCapture)
 	## no critic (Variables::ProhibitPunctuationVars)
@@ -186,7 +183,10 @@ sub new {
 	if (    $opt{time}
 		and $opt{time} =~ m{ ^ (?<hour> \d\d? ) : (?<minute> \d\d ) $ }x )
 	{
-		@time = @+{qw{hour minute}};
+		$now->set(
+			hour   => $+{hour},
+			minute => $+{minute}
+		);
 	}
 	elsif ( $opt{time} ) {
 		confess('Invalid time specified');
@@ -199,10 +199,17 @@ sub new {
 	  )
 	{
 		if ( $+{year} ) {
-			@date = @+{qw{day month year}};
+			$now->set(
+				day   => $+{day},
+				month => $+{month},
+				year  => $+{year}
+			);
 		}
 		else {
-			@date[ 0, 1 ] = @+{qw{day month}};
+			$now->set(
+				day   => $+{day},
+				month => $+{month}
+			);
 		}
 	}
 	elsif ( $opt{date} ) {
@@ -214,17 +221,17 @@ sub new {
 			command                => q{},
 			deleteAssignedStops_dm => '1',
 			help                   => 'Hilfe',
-			itdDateDay             => $date[0],
-			itdDateMonth           => $date[1],
-			itdDateYear            => $date[2],
+			itdDateDay             => $now->day,
+			itdDateMonth           => $now->month,
+			itdDateYear            => $now->year,
 			itdLPxx_id_dm          => ':dm',
 			itdLPxx_mapState_dm    => q{},
 			itdLPxx_mdvMap2_dm     => q{},
 			itdLPxx_mdvMap_dm      => '3406199:401077:NAV3',
 			itdLPxx_transpCompany  => 'vrr',
 			itdLPxx_view           => q{},
-			itdTimeHour            => $time[0],
-			itdTimeMinute          => $time[1],
+			itdTimeHour            => $now->hour,
+			itdTimeMinute          => $now->minute,
 			language               => 'de',
 			mode                   => 'direct',
 			nameInfo_dm            => 'invalid',
