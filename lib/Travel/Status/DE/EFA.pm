@@ -184,7 +184,7 @@ sub new {
 	if (    $opt{time}
 		and $opt{time} =~ m{ ^ (?<hour> \d\d? ) : (?<minute> \d\d ) $ }x )
 	{
-		$now->set(
+		$dt->set(
 			hour   => $+{hour},
 			minute => $+{minute}
 		);
@@ -200,14 +200,14 @@ sub new {
 	  )
 	{
 		if ( $+{year} ) {
-			$now->set(
+			$dt->set(
 				day   => $+{day},
 				month => $+{month},
 				year  => $+{year}
 			);
 		}
 		else {
-			$now->set(
+			$dt->set(
 				day   => $+{day},
 				month => $+{month}
 			);
@@ -222,17 +222,17 @@ sub new {
 			command                => q{},
 			deleteAssignedStops_dm => '1',
 			help                   => 'Hilfe',
-			itdDateDay             => $now->day,
-			itdDateMonth           => $now->month,
-			itdDateYear            => $now->year,
+			itdDateDay             => $dt->day,
+			itdDateMonth           => $dt->month,
+			itdDateYear            => $dt->year,
 			itdLPxx_id_dm          => ':dm',
 			itdLPxx_mapState_dm    => q{},
 			itdLPxx_mdvMap2_dm     => q{},
 			itdLPxx_mdvMap_dm      => '3406199:401077:NAV3',
 			itdLPxx_transpCompany  => 'vrr',
 			itdLPxx_view           => q{},
-			itdTimeHour            => $now->hour,
-			itdTimeMinute          => $now->minute,
+			itdTimeHour            => $dt->hour,
+			itdTimeMinute          => $dt->minute,
 			language               => 'de',
 			mode                   => 'direct',
 			nameInfo_dm            => 'invalid',
