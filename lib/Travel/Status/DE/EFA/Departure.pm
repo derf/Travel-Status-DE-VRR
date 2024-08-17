@@ -1,4 +1,4 @@
-package Travel::Status::DE::EFA::Result;
+package Travel::Status::DE::EFA::Departure;
 
 use strict;
 use warnings;
@@ -8,10 +8,10 @@ use parent 'Class::Accessor';
 
 our $VERSION = '2.02';
 
-Travel::Status::DE::EFA::Result->mk_ro_accessors(
+Travel::Status::DE::EFA::Departure->mk_ro_accessors(
 	qw(countdown datetime delay destination is_cancelled info key line lineref
-	  mot occupancy operator platform platform_db platform_name rt_datetime
-	  sched_datetime train_type train_name train_no type)
+	  mot occupancy operator origin platform platform_db platform_name
+	  rt_datetime sched_datetime train_type train_name train_no type)
 );
 
 my @mot_mapping = qw{
@@ -121,7 +121,7 @@ __END__
 
 =head1 NAME
 
-Travel::Status::DE::EFA::Result - Information about a single
+Travel::Status::DE::EFA::Departure - Information about a single
 departure received by Travel::Status::DE::EFA
 
 =head1 SYNOPSIS
@@ -140,7 +140,7 @@ version 2.02
 
 =head1 DESCRIPTION
 
-Travel::Status::DE::EFA::Result describes a single departure as obtained by
+Travel::Status::DE::EFA::Departure describes a single departure as obtained by
 Travel::Status::DE::EFA.  It contains information about the time, platform,
 line number and destination.
 
@@ -216,6 +216,10 @@ Occupancy values are passed from the backend as-is. Known values are
 "MANY_SEATS" (low occupation), "FEW_SEATS" (high occupation),
 "STANDING_ONLY" (very high occupation), and "FULL" (boarding not advised).
 
+=item $departure->origin
+
+Origin name.
+
 =item $departure->platform
 
 Departure platform number (may not be a number).
@@ -277,9 +281,9 @@ field.  See L</DEPARTURE TYPES>.
 
 =over
 
-=item $departure = Travel::Status::DE::EFA::Result->new(I<%data>)
+=item $departure = Travel::Status::DE::EFA::Departure->new(I<%data>)
 
-Returns a new Travel::Status::DE::EFA::Result object.  You should not need to
+Returns a new Travel::Status::DE::EFA::Departure object.  You should not need to
 call this.
 
 =item $departure->TO_JSON

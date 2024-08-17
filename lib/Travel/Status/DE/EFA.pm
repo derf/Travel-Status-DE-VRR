@@ -10,11 +10,11 @@ our $VERSION = '2.02';
 use Carp qw(confess cluck);
 use DateTime;
 use Encode qw(encode);
+use JSON;
 use Travel::Status::DE::EFA::Line;
-use Travel::Status::DE::EFA::Result;
+use Travel::Status::DE::EFA::Departure;
 use Travel::Status::DE::EFA::Stop;
 use LWP::UserAgent;
-use XML::LibXML;
 
 my %efa_instance = (
 	BSVG => {
@@ -22,28 +22,30 @@ my %efa_instance = (
 		name => 'Braunschweiger Verkehrs-GmbH',
 	},
 	DING => {
-		url  => 'https://www.ding.eu/ding3/XSLT_DM_REQUEST',
+		url     => 'https://www.ding.eu/ding3/XML_DM_REQUEST',
+		stopseq =>
+'https://www.ding.eu/ding3/XML_STOPSEQCOORD_REQUEST?=&jsonp=jsonpFn5&line=din:87002: :R:j24&stop=9001008&tripCode=290&date=20240520&time=14.0041.00&coordOutputFormat=WGS84[DD.DDDDD]&coordListOutputFormat=string&outputFormat=json&tStOTType=NEXT&hideBannerInfo=1',
 		name => 'Donau-Iller Nahverkehrsverbund',
 	},
 	KVV => {
-		url  => 'https://projekte.kvv-efa.de/sl3-alone/XSLT_DM_REQUEST',
+		url  => 'https://projekte.kvv-efa.de/sl3-alone/XML_DM_REQUEST',
 		name => 'Karlsruher Verkehrsverbund',
 	},
 	LinzAG => {
-		url      => 'https://www.linzag.at/static/XSLT_DM_REQUEST',
+		url      => 'https://www.linzag.at/static/XML_DM_REQUEST',
 		name     => 'Linz AG',
 		encoding => 'iso-8859-15',
 	},
 	MVV => {
-		url  => 'https://efa.mvv-muenchen.de/mobile/XSLT_DM_REQUEST',
+		url  => 'https://efa.mvv-muenchen.de/mobile/XML_DM_REQUEST',
 		name => 'Münchner Verkehrs- und Tarifverbund',
 	},
 	NVBW => {
-		url  => 'https://www.efa-bw.de/nvbw/XSLT_DM_REQUEST',
+		url  => 'https://www.efa-bw.de/nvbw/XML_DM_REQUEST',
 		name => 'Nahverkehrsgesellschaft Baden-Württemberg',
 	},
 	VAG => {
-		url  => 'https://efa.vagfr.de/vagfr3/XSLT_DM_REQUEST',
+		url  => 'https://efa.vagfr.de/vagfr3/XML_DM_REQUEST',
 		name => 'Freiburger Verkehrs AG',
 	},
 	VGN => {
@@ -61,7 +63,7 @@ my %efa_instance = (
 		name => 'Verkehrsverbund Rhein-Neckar',
 	},
 	VRR => {
-		url  => 'https://efa.vrr.de/vrr/XSLT_DM_REQUEST',
+		url  => 'https://efa.vrr.de/vrr/XML_DM_REQUEST',
 		name => 'Verkehrsverbund Rhein-Ruhr',
 	},
 	VRR2 => {
@@ -73,11 +75,11 @@ my %efa_instance = (
 		name => 'Verkehrsverbund Rhein-Ruhr (alternative alternative)',
 	},
 	VVO => {
-		url  => 'https://efa.vvo-online.de/VMSSL3/XSLT_DM_REQUEST',
+		url  => 'https://efa.vvo-online.de/VMSSL3/XML_DM_REQUEST',
 		name => 'Verkehrsverbund Oberelbe',
 	},
 	VVS => {
-		url  => 'https://www2.vvs.de/vvs/XSLT_DM_REQUEST',
+		url  => 'https://www2.vvs.de/vvs/XML_DM_REQUEST',
 		name => 'Verkehrsverbund Stuttgart',
 	},
 
@@ -219,39 +221,24 @@ sub new {
 
 	my $self = {
 		post => {
-			command                => q{},
-			deleteAssignedStops_dm => '1',
-			help                   => 'Hilfe',
-			itdDateDay             => $dt->day,
-			itdDateMonth           => $dt->month,
-			itdDateYear            => $dt->year,
-			itdLPxx_id_dm          => ':dm',
-			itdLPxx_mapState_dm    => q{},
-			itdLPxx_mdvMap2_dm     => q{},
-			itdLPxx_mdvMap_dm      => '3406199:401077:NAV3',
-			itdLPxx_transpCompany  => 'vrr',
-			itdLPxx_view           => q{},
-			itdTimeHour            => $dt->hour,
-			itdTimeMinute          => $dt->minute,
-			language               => 'de',
-			mode                   => 'direct',
-			nameInfo_dm            => 'invalid',
-			nameState_dm           => 'empty',
-			name_dm                => encode( 'UTF-8', $opt{name} ),
-			outputFormat           => 'XML',
-			ptOptionsActive        => '1',
-			requestID              => '0',
-			reset                  => 'neue Anfrage',
-			sessionID              => '0',
-			submitButton           => 'anfordern',
-			typeInfo_dm            => 'invalid',
-			type_dm                => $opt{type} // 'stop',
-			useProxFootSearch      => $opt{proximity_search} ? '1' : '0',
-			useRealtime            => '1',
+			language          => 'de',
+			mode              => 'direct',
+			outputFormat      => 'JSON',
+			type_dm           => $opt{type} // 'stop',
+			useProxFootSearch => $opt{proximity_search} ? '1' : '0',
+			useRealtime       => '1',
+			itdDateDay        => $dt->day,
+			itdDateMonth      => $dt->month,
+			itdDateYear       => $dt->year,
+			itdTimeHour       => $dt->hour,
+			itdTimeMinute     => $dt->minute,
+			name_dm           => encode( 'UTF-8', $opt{name} ),
 		},
 		developer_mode => $opt{developer_mode},
 		efa_url        => $opt{efa_url},
 		service        => $opt{service},
+
+		json => JSON->new->utf8,
 	};
 
 	if ( $opt{place} ) {
@@ -288,45 +275,15 @@ sub new {
 		return $self;
 	}
 
-	if ( $opt{efa_encoding} ) {
-		$self->{xml} = encode( $opt{efa_encoding}, $response->content );
-	}
-	else {
-		$self->{xml} = $response->decoded_content;
-	}
-
-	if ( not $self->{xml} ) {
-
-		# LibXML doesn't like empty documents
-		$self->{errstr} = 'Server returned nothing (empty result)';
-		return $self;
-	}
-
-	$self->{tree} = XML::LibXML->load_xml(
-		string => $self->{xml},
-	);
+	$self->{response} = $self->{json}->decode( $response->content );
 
 	if ( $self->{developer_mode} ) {
-		say $self->{tree}->toString(1);
+		say $self->{json}->pretty->encode( $self->{response} );
 	}
 
 	$self->check_for_ambiguous();
 
 	return $self;
-}
-
-sub new_from_xml {
-	my ( $class, %opt ) = @_;
-
-	my $self = {
-		xml => $opt{xml},
-	};
-
-	$self->{tree} = XML::LibXML->load_xml(
-		string => $self->{xml},
-	);
-
-	return bless( $self, $class );
 }
 
 sub errstr {
@@ -356,54 +313,23 @@ sub place_candidates {
 sub check_for_ambiguous {
 	my ($self) = @_;
 
-	my $xml = $self->{tree};
+	my $json = $self->{response};
 
-	my $xp_place = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvPlace');
-	my $xp_name  = XML::LibXML::XPathExpression->new('//itdOdv/itdOdvName');
-	my $xp_mesg
-	  = XML::LibXML::XPathExpression->new('//itdMessage[@type="error"]');
-
-	my $xp_place_elem = XML::LibXML::XPathExpression->new('./odvPlaceElem');
-	my $xp_name_elem  = XML::LibXML::XPathExpression->new('./odvNameElem');
-
-	my $e_place = ( $xml->findnodes($xp_place) )[0];
-	my $e_name  = ( $xml->findnodes($xp_name) )[0];
-	my @e_mesg  = $xml->findnodes($xp_mesg);
-
-	if ( not( $e_place and $e_name ) ) {
-
-		# this should not happen[tm]
-		cluck('skipping ambiguity check- itdOdvPlace/itdOdvName missing');
+	if ($json->{departureList}) {
 		return;
 	}
 
-	my $s_place = $e_place->getAttribute('state');
-	my $s_name  = $e_name->getAttribute('state');
-
-	if ( $s_place eq 'list' ) {
-		$self->{place_candidates} = [ map { $_->textContent }
-			  @{ $e_place->findnodes($xp_place_elem) } ];
-		$self->{errstr} = 'ambiguous place parameter';
-		return;
-	}
-	if ( $s_name eq 'list' ) {
-		$self->{name_candidates}
-		  = [ map { $_->textContent } @{ $e_name->findnodes($xp_name_elem) } ];
-
-		$self->{errstr} = 'ambiguous name parameter';
-		return;
-	}
-	if ( $s_place eq 'notidentified' ) {
-		$self->{errstr} = 'invalid place parameter';
-		return;
-	}
-	if ( $s_name eq 'notidentified' ) {
-		$self->{errstr} = 'invalid name parameter';
-		return;
-	}
-	if (@e_mesg) {
-		$self->{errstr} = join( q{; }, map { $_->textContent } @e_mesg );
-		return;
+	for my $m (@{$json->{dm}{message} // []}) {
+		if ($m->{name} eq 'error' and $m->{value} eq 'name list') {
+			$self->{errstr} = "ambiguous name parameter";
+			$self->{name_candidates} = [ map { $_->{name} } @{$json->{dm}{points} // []} ];
+			return;
+		}
+		if ($m->{name} eq 'error' and $m->{value} eq 'place list') {
+			$self->{errstr} = "ambiguous name parameter";
+			$self->{name_candidates} = [ map { $_->{name} } @{$json->{dm}{points} // []} ];
+			return;
+		}
 	}
 
 	return;
@@ -429,62 +355,29 @@ sub identified_data {
 
 sub lines {
 	my ($self) = @_;
-	my @lines;
 
 	if ( $self->{lines} ) {
 		return @{ $self->{lines} };
 	}
 
-	if ( not $self->{tree} ) {
-		return;
+	for my $line (@{$self->{response}{servingLines} // []}) {
+		push(@{$self->{lines}}, $self->parse_line($line));
 	}
+}
 
-	my $xp_element
-	  = XML::LibXML::XPathExpression->new('//itdServingLines/itdServingLine');
+sub parse_line {
+	my ($self, $line) = @_;
 
-	my $xp_info  = XML::LibXML::XPathExpression->new('./itdNoTrain');
-	my $xp_route = XML::LibXML::XPathExpression->new('./itdRouteDescText');
-	my $xp_oper  = XML::LibXML::XPathExpression->new('./itdOperator/name');
+	my $mode = $line->{mode} // {};
 
-	for my $e ( $self->{tree}->findnodes($xp_element) ) {
-
-		my $e_info  = ( $e->findnodes($xp_info) )[0];
-		my $e_route = ( $e->findnodes($xp_route) )[0];
-		my $e_oper  = ( $e->findnodes($xp_oper) )[0];
-
-		if ( not($e_info) ) {
-			cluck( 'node with insufficient data. This should not happen. '
-				  . $e->getAttribute('number') );
-			next;
-		}
-
-		my $line       = $e->getAttribute('number');
-		my $direction  = $e->getAttribute('direction');
-		my $valid      = $e->getAttribute('valid');
-		my $type       = $e_info->getAttribute('name');
-		my $mot        = $e->getAttribute('motType');
-		my $route      = ( $e_route ? $e_route->textContent : undef );
-		my $operator   = ( $e_oper  ? $e_oper->textContent  : undef );
-		my $identifier = $e->getAttribute('stateless');
-
-		push(
-			@lines,
-			Travel::Status::DE::EFA::Line->new(
-				name       => $line,
-				direction  => $direction,
-				valid      => $valid,
-				type       => $type,
-				mot        => $mot,
-				route      => $route,
-				operator   => $operator,
-				identifier => $identifier,
-			)
-		);
-	}
-
-	$self->{lines} = \@lines;
-
-	return @lines;
+		return Travel::Status::DE::EFA::Line->new(
+				name       => $mode->{name},
+				direction  => $mode->{destination},
+				valid      => $mode->{timetablePeriod},
+				mot        => $mode->{product},
+				operator   => $mode->{diva}{operator},
+				identifier => $mode->{diva}{globalId},,
+			);
 }
 
 sub parse_route {
@@ -549,6 +442,56 @@ sub parse_route {
 	return @ret;
 }
 
+sub parse_departure {
+	my ($self, $departure) = @_;
+
+	my ($sched_dt, $real_dt);
+
+	if (my $dt = $departure->{dateTime}) {
+		$sched_dt = DateTime->new(
+			year => $dt->{year},
+			month => $dt->{month},
+			day => $dt->{day},
+			hour => $dt->{hour},
+			minute => $dt->{minute},
+			second => $dt->{second} // 0,
+			time_zone => 'Europe/Berlin',
+		);
+	}
+
+	if (my $dt = $departure->{realDateTime}) {
+		$real_dt = DateTime->new(
+			year => $dt->{year},
+			month => $dt->{month},
+			day => $dt->{day},
+			hour => $dt->{hour},
+			minute => $dt->{minute},
+			second => $dt->{second} // 0,
+			time_zone => 'Europe/Berlin',
+		);
+	}
+
+	return Travel::Status::DE::EFA::Departure->new(
+		rt_datetime    => $real_dt,
+		platform       => $departure->{platform},
+		platform_name  => $departure->{platformName},
+		platform_type  => $departure->{pointType},
+		line           => $departure->{servingLine}{symbol},
+		train_type     => $departure->{servingLine}{trainType},
+		train_name     => $departure->{servingLine}{trainName},
+		train_no       => $departure->{servingLine}{trainNum},
+		origin         => $departure->{servingLine}{directionFrom},
+		destination    => $departure->{servingLine}{direction},
+		occupancy      => $departure->{occupancy},
+		countdown      => $departure->{countdown},
+		delay          => $departure->{servingLine}{delay},
+		sched_datetime => $sched_dt,
+		type           => $departure->{servingLine}{name},
+		mot            => $departure->{servingLine}{motType},
+	);
+}
+
+
 sub results {
 	my ($self) = @_;
 	my @results;
@@ -557,148 +500,18 @@ sub results {
 		return @{ $self->{results} };
 	}
 
-	if ( not $self->{tree} ) {
-		return;
+	my $json = $self->{response};
+
+	if (not @{$self->{lines} // []}) {
+		for my $line (@{$json->{servingLines}{lines} // []}) {
+			push(@{$self->{lines}}, $self->parse_line($line));
+		}
 	}
 
-	my $xp_element = XML::LibXML::XPathExpression->new('//itdDeparture');
-
-	my $xp_date  = XML::LibXML::XPathExpression->new('./itdDateTime/itdDate');
-	my $xp_time  = XML::LibXML::XPathExpression->new('./itdDateTime/itdTime');
-	my $xp_rdate = XML::LibXML::XPathExpression->new('./itdRTDateTime/itdDate');
-	my $xp_rtime = XML::LibXML::XPathExpression->new('./itdRTDateTime/itdTime');
-	my $xp_line  = XML::LibXML::XPathExpression->new('./itdServingLine');
-	my $xp_info
-	  = XML::LibXML::XPathExpression->new('./itdServingLine/itdNoTrain');
-	my $xp_prev_route
-	  = XML::LibXML::XPathExpression->new('./itdPrevStopSeq/itdPoint');
-	my $xp_next_route
-	  = XML::LibXML::XPathExpression->new('./itdOnwardStopSeq/itdPoint');
-
-	$self->lines;
-
-	for my $e ( $self->{tree}->findnodes($xp_element) ) {
-
-		my $e_date = ( $e->findnodes($xp_date) )[0];
-		my $e_time = ( $e->findnodes($xp_time) )[0];
-		my $e_line = ( $e->findnodes($xp_line) )[0];
-		my $e_info = ( $e->findnodes($xp_info) )[0];
-
-		my $e_rdate = ( $e->findnodes($xp_rdate) )[0];
-		my $e_rtime = ( $e->findnodes($xp_rtime) )[0];
-
-		if ( not( $e_date and $e_time and $e_line ) ) {
-			cluck('node with insufficient data. This should not happen');
-			next;
-		}
-
-		my ( $sched_dt, $real_dt );
-
-		if ( $e_date and $e_time and $e_date->getAttribute('day') != -1 ) {
-			$sched_dt = DateTime->new(
-				year      => $e_date->getAttribute('year'),
-				month     => $e_date->getAttribute('month'),
-				day       => $e_date->getAttribute('day'),
-				hour      => $e_time->getAttribute('hour'),
-				minute    => $e_time->getAttribute('minute'),
-				second    => $e_time->getAttribute('second') // 0,
-				time_zone => 'Europe/Berlin'
-			);
-		}
-
-		if ( $e_rdate and $e_rtime and $e_rdate->getAttribute('day') != -1 ) {
-			$real_dt = DateTime->new(
-				year      => $e_rdate->getAttribute('year'),
-				month     => $e_rdate->getAttribute('month'),
-				day       => $e_rdate->getAttribute('day'),
-				hour      => $e_rtime->getAttribute('hour'),
-				minute    => $e_rtime->getAttribute('minute'),
-				second    => $e_rtime->getAttribute('second') // 0,
-				time_zone => 'Europe/Berlin'
-			);
-		}
-
-		my $platform      = $e->getAttribute('platform');
-		my $platform_name = $e->getAttribute('platformName');
-		my $countdown     = $e->getAttribute('countdown');
-		my $occupancy     = $e->getAttribute('occupancy');
-		my $line          = $e_line->getAttribute('number');
-		my $train_type    = $e_line->getAttribute('trainType');
-		my $train_name    = $e_line->getAttribute('trainName');
-		my $train_no      = $e_line->getAttribute('trainNum');
-		my $dest          = $e_line->getAttribute('direction');
-		my $info          = $e_info->textContent;
-		my $key           = $e_line->getAttribute('key');
-		my $delay         = $e_info->getAttribute('delay');
-		my $type          = $e_info->getAttribute('name');
-		my $mot           = $e_line->getAttribute('motType');
-
-		my $platform_is_db = 0;
-
-		my @prev_route;
-		my @next_route;
-
-		if ( $self->{want_full_routes} ) {
-			@prev_route
-			  = $self->parse_route( @{ [ $e->findnodes($xp_prev_route) ] } );
-			@next_route
-			  = $self->parse_route( @{ [ $e->findnodes($xp_next_route) ] } );
-		}
-
-		my @line_obj
-		  = grep { $_->{identifier} eq $e_line->getAttribute('stateless') }
-		  @{ $self->{lines} };
-
-		# platform / platformName are inconsistent. The following cases are
-		# known:
-		#
-		# * platform="int", platformName="" : non-DB platform
-		# * platform="int", platformName="Bstg. int" : non-DB platform
-		# * platform="#int", platformName="Gleis int" : non-DB platform
-		# * platform="#int", platformName="Gleis int" : DB platform?
-		# * platform="", platformName="Gleis int" : DB platform
-		# * platform="DB", platformName="Gleis int" : DB platform
-		# * platform="gibberish", platformName="Gleis int" : DB platform
-
-		if ( ( $platform_name and $platform_name =~ m{ ^ Gleis }ox )
-			and not( $platform and $platform =~ s{ ^ \# }{}ox ) )
-		{
-			$platform_is_db = 1;
-		}
-
-		if ( $platform_name and $platform_name =~ m{ ^ (Gleis | Bstg[.])}ox ) {
-			$platform = ( split( / /, $platform_name ) )[1];
-		}
-		elsif ( $platform_name and not $platform ) {
-			$platform = $platform_name;
-		}
-
-		push(
-			@results,
-			Travel::Status::DE::EFA::Result->new(
-				rt_datetime    => $real_dt,
-				platform       => $platform,
-				platform_db    => $platform_is_db,
-				platform_name  => $platform_name,
-				key            => $key,
-				lineref        => $line_obj[0] // undef,
-				line           => $line,
-				train_type     => $train_type,
-				train_name     => $train_name,
-				train_no       => $train_no,
-				destination    => $dest,
-				occupancy      => $occupancy,
-				countdown      => $countdown,
-				info           => $info,
-				delay          => $delay,
-				sched_datetime => $sched_dt,
-				type           => $type,
-				mot            => $mot,
-				prev_route     => \@prev_route,
-				next_route     => \@next_route,
-			)
-		);
+	for my $departure (@{$json->{departureList} // []}) {
+		push(@results, $self->parse_departure($departure));
 	}
+
 
 	@results = map { $_->[0] }
 	  sort { $a->[1] <=> $b->[1] }
@@ -734,7 +547,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
     use Travel::Status::DE::EFA;
 
     my $status = Travel::Status::DE::EFA->new(
-        efa_url => 'https://efa.vrr.de/vrr/XSLT_DM_REQUEST',
+        efa_url => 'https://efa.vrr.de/vrr/XML_DM_REQUEST',
         name => 'Essen Helenenstr'
     );
 
@@ -805,7 +618,7 @@ iso-8859-15.
 
 If true: Request full routes for all departures from the backend. This
 enables the B<route_pre>, B<route_post> and B<route_interesting> accessors in
-Travel::Status::DE::EFA::Result(3pm).
+Travel::Status::DE::EFA::Departure(3pm).
 
 =item B<proximity_search> => B<0>|B<1>
 
@@ -867,7 +680,7 @@ nothing (undef / empty list) otherwise.
 
 =item $status->results
 
-Returns a list of Travel::Status::DE::EFA::Result(3pm) objects, each one describing
+Returns a list of Travel::Status::DE::EFA::Departure(3pm) objects, each one describing
 one departure.
 
 =item Travel::Status::DE::EFA::get_efa_urls()
@@ -918,7 +731,7 @@ Not all features of the web interface are supported.
 
 =head1 SEE ALSO
 
-efa-m(1), Travel::Status::DE::EFA::Result(3pm).
+efa-m(1), Travel::Status::DE::EFA::Departure(3pm).
 
 =head1 AUTHOR
 
