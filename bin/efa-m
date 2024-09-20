@@ -198,6 +198,13 @@ sub format_route {
 				$stop->name, $stop->platform,
 			);
 		}
+		elsif ( $stop->name ) {
+			$output .= sprintf( "               %40s %s\n",
+				$stop->name, $stop->platform, );
+		}
+		else {
+			$output .= "?\n";
+		}
 	}
 	return $output;
 }
@@ -322,7 +329,10 @@ sub show_results {
 		}
 
 		my $line = $d->line;
-		if ( (length($line) > 10 or not $line) and $d->train_type and $d->train_no ) {
+		if (    ( length($line) > 10 or not $line )
+			and $d->train_type
+			and $d->train_no )
+		{
 			$line = $d->train_type . ' ' . $d->train_no;
 		}
 

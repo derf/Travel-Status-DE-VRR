@@ -46,13 +46,13 @@ sub mot_name {
 sub route_pre {
 	my ($self) = @_;
 
-	return @{ $self->{prev_route} };
+	return @{ $self->{prev_route} // [] };
 }
 
 sub route_post {
 	my ($self) = @_;
 
-	return @{ $self->{next_route} };
+	return @{ $self->{next_route} // [] };
 }
 
 sub route_interesting {

@@ -9,6 +9,8 @@ our $VERSION = '2.02';
 
 use Carp qw(confess cluck);
 use DateTime;
+use DateTime;
+use DateTime::Format::Strptime;
 use Encode qw(encode);
 use JSON;
 use Travel::Status::DE::EFA::Line;
@@ -237,6 +239,14 @@ sub new {
 		developer_mode => $opt{developer_mode},
 		efa_url        => $opt{efa_url},
 		service        => $opt{service},
+		strp_stopseq   => DateTime::Format::Strptime->new(
+			pattern   => '%Y%m%d %H:%M',
+			time_zone => 'Europe/Berlin',
+		),
+		strp_stopseq_s => DateTime::Format::Strptime->new(
+			pattern   => '%Y%m%d %H:%M:%S',
+			time_zone => 'Europe/Berlin',
+		),
 
 		json => JSON->new->utf8,
 	};
@@ -315,19 +325,21 @@ sub check_for_ambiguous {
 
 	my $json = $self->{response};
 
-	if ($json->{departureList}) {
+	if ( $json->{departureList} ) {
 		return;
 	}
 
-	for my $m (@{$json->{dm}{message} // []}) {
-		if ($m->{name} eq 'error' and $m->{value} eq 'name list') {
+	for my $m ( @{ $json->{dm}{message} // [] } ) {
+		if ( $m->{name} eq 'error' and $m->{value} eq 'name list' ) {
 			$self->{errstr} = "ambiguous name parameter";
-			$self->{name_candidates} = [ map { $_->{name} } @{$json->{dm}{points} // []} ];
+			$self->{name_candidates}
+			  = [ map { $_->{name} } @{ $json->{dm}{points} // [] } ];
 			return;
 		}
-		if ($m->{name} eq 'error' and $m->{value} eq 'place list') {
+		if ( $m->{name} eq 'error' and $m->{value} eq 'place list' ) {
 			$self->{errstr} = "ambiguous name parameter";
-			$self->{name_candidates} = [ map { $_->{name} } @{$json->{dm}{points} // []} ];
+			$self->{name_candidates}
+			  = [ map { $_->{name} } @{ $json->{dm}{points} // [] } ];
 			return;
 		}
 	}
@@ -360,71 +372,63 @@ sub lines {
 		return @{ $self->{lines} };
 	}
 
-	for my $line (@{$self->{response}{servingLines} // []}) {
-		push(@{$self->{lines}}, $self->parse_line($line));
+	for my $line ( @{ $self->{response}{servingLines} // [] } ) {
+		push( @{ $self->{lines} }, $self->parse_line($line) );
 	}
 }
 
 sub parse_line {
-	my ($self, $line) = @_;
+	my ( $self, $line ) = @_;
 
 	my $mode = $line->{mode} // {};
 
-		return Travel::Status::DE::EFA::Line->new(
-				name       => $mode->{name},
-				direction  => $mode->{destination},
-				valid      => $mode->{timetablePeriod},
-				mot        => $mode->{product},
-				operator   => $mode->{diva}{operator},
-				identifier => $mode->{diva}{globalId},,
-			);
+	return Travel::Status::DE::EFA::Line->new(
+		name       => $mode->{name},
+		direction  => $mode->{destination},
+		valid      => $mode->{timetablePeriod},
+		mot        => $mode->{product},
+		operator   => $mode->{diva}{operator},
+		identifier => $mode->{diva}{globalId},
+		,
+	);
 }
 
 sub parse_route {
-	my ( $self, @nodes ) = @_;
-	my $xp_routepoint_date
-	  = XML::LibXML::XPathExpression->new('./itdDateTime/itdDate');
-	my $xp_routepoint_time
-	  = XML::LibXML::XPathExpression->new('./itdDateTime/itdTime');
-
+	my ( $self, $stop_seq ) = @_;
 	my @ret;
 
-	for my $e (@nodes) {
-		my @dates = $e->findnodes($xp_routepoint_date);
-		my @times = $e->findnodes($xp_routepoint_time);
+	if ( not $stop_seq ) {
+		return \@ret;
+	}
 
+	# Oh EFA, you so silly
+	if ( ref($stop_seq) eq 'HASH' ) {
+		$stop_seq = [$stop_seq];
+	}
+
+	for my $stop ( @{ $stop_seq // [] } ) {
+		say "handle stop";
+		my $ref = $stop->{ref};
 		my ( $arr, $dep );
 
-		# note that the first stop has an arrival node with an invalid
-		# timestamp and the terminal stop has a departure node with an
-		# invalid timestamp.
-
-		if ( $dates[0] and $times[0] and $dates[0]->getAttribute('day') != -1 )
-		{
-			$arr = DateTime->new(
-				year      => $dates[0]->getAttribute('year'),
-				month     => $dates[0]->getAttribute('month'),
-				day       => $dates[0]->getAttribute('day'),
-				hour      => $times[0]->getAttribute('hour'),
-				minute    => $times[0]->getAttribute('minute'),
-				second    => $times[0]->getAttribute('second') // 0,
-				time_zone => 'Europe/Berlin'
-			);
+		if ( $ref->{arrDateTimeSec} ) {
+			$arr = $self->{strp_stopseq_s}
+			  ->parse_datetime( $ref->{arrDateTimeSec} );
+			say $arr;
+		}
+		elsif ( $ref->{arrDateTime} ) {
+			$arr = $self->{strp_stopseq}->parse_datetime( $ref->{arrDateTime} );
+			say $arr;
 		}
 
-		if (    $dates[-1]
-			and $times[-1]
-			and $dates[-1]->getAttribute('day') != -1 )
-		{
-			$dep = DateTime->new(
-				year      => $dates[-1]->getAttribute('year'),
-				month     => $dates[-1]->getAttribute('month'),
-				day       => $dates[-1]->getAttribute('day'),
-				hour      => $times[-1]->getAttribute('hour'),
-				minute    => $times[-1]->getAttribute('minute'),
-				second    => $times[-1]->getAttribute('second') // 0,
-				time_zone => 'Europe/Berlin'
-			);
+		if ( $ref->{depDateTimeSec} ) {
+			$dep = $self->{strp_stopseq_s}
+			  ->parse_datetime( $ref->{depDateTimeSec} );
+			say $dep;
+		}
+		elsif ( $ref->{depDateTime} ) {
+			$dep = $self->{strp_stopseq}->parse_datetime( $ref->{depDateTime} );
+			say $dep;
 		}
 
 		push(
@@ -432,43 +436,51 @@ sub parse_route {
 			Travel::Status::DE::EFA::Stop->new(
 				arr      => $arr,
 				dep      => $dep,
-				name     => $e->getAttribute('name'),
-				name_suf => $e->getAttribute('nameWO'),
-				platform => $e->getAttribute('platformName'),
+				name     => $stop->{name},
+				name_suf => $stop->{nameWO},
+				platform => $ref->{platform} || $stop->{platformName} || undef,
 			)
 		);
 	}
 
-	return @ret;
+	return \@ret;
 }
 
 sub parse_departure {
-	my ($self, $departure) = @_;
+	my ( $self, $departure ) = @_;
 
-	my ($sched_dt, $real_dt);
+	my ( $sched_dt,   $real_dt );
+	my ( $prev_route, $next_route );
 
-	if (my $dt = $departure->{dateTime}) {
+	if ( my $dt = $departure->{dateTime} ) {
 		$sched_dt = DateTime->new(
-			year => $dt->{year},
-			month => $dt->{month},
-			day => $dt->{day},
-			hour => $dt->{hour},
-			minute => $dt->{minute},
-			second => $dt->{second} // 0,
+			year      => $dt->{year},
+			month     => $dt->{month},
+			day       => $dt->{day},
+			hour      => $dt->{hour},
+			minute    => $dt->{minute},
+			second    => $dt->{second} // 0,
 			time_zone => 'Europe/Berlin',
 		);
 	}
 
-	if (my $dt = $departure->{realDateTime}) {
+	if ( my $dt = $departure->{realDateTime} ) {
 		$real_dt = DateTime->new(
-			year => $dt->{year},
-			month => $dt->{month},
-			day => $dt->{day},
-			hour => $dt->{hour},
-			minute => $dt->{minute},
-			second => $dt->{second} // 0,
+			year      => $dt->{year},
+			month     => $dt->{month},
+			day       => $dt->{day},
+			hour      => $dt->{hour},
+			minute    => $dt->{minute},
+			second    => $dt->{second} // 0,
 			time_zone => 'Europe/Berlin',
 		);
+	}
+
+	if ( $departure->{prevStopSeq} ) {
+		$prev_route = $self->parse_route( $departure->{prevStopSeq} );
+	}
+	if ( $departure->{onwardStopSeq} ) {
+		$next_route = $self->parse_route( $departure->{onwardStopSeq} );
 	}
 
 	return Travel::Status::DE::EFA::Departure->new(
@@ -488,9 +500,10 @@ sub parse_departure {
 		sched_datetime => $sched_dt,
 		type           => $departure->{servingLine}{name},
 		mot            => $departure->{servingLine}{motType},
+		prev_route     => $prev_route,
+		next_route     => $next_route,
 	);
 }
-
 
 sub results {
 	my ($self) = @_;
@@ -502,16 +515,15 @@ sub results {
 
 	my $json = $self->{response};
 
-	if (not @{$self->{lines} // []}) {
-		for my $line (@{$json->{servingLines}{lines} // []}) {
-			push(@{$self->{lines}}, $self->parse_line($line));
+	if ( not @{ $self->{lines} // [] } ) {
+		for my $line ( @{ $json->{servingLines}{lines} // [] } ) {
+			push( @{ $self->{lines} }, $self->parse_line($line) );
 		}
 	}
 
-	for my $departure (@{$json->{departureList} // []}) {
-		push(@results, $self->parse_departure($departure));
+	for my $departure ( @{ $json->{departureList} // [] } ) {
+		push( @results, $self->parse_departure($departure) );
 	}
-
 
 	@results = map { $_->[0] }
 	  sort { $a->[1] <=> $b->[1] }
