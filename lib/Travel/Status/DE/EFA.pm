@@ -411,28 +411,23 @@ sub parse_route {
 	}
 
 	for my $stop ( @{ $stop_seq // [] } ) {
-		say "handle stop";
 		my $ref = $stop->{ref};
 		my ( $arr, $dep );
 
 		if ( $ref->{arrDateTimeSec} ) {
 			$arr = $self->{strp_stopseq_s}
 			  ->parse_datetime( $ref->{arrDateTimeSec} );
-			say $arr;
 		}
 		elsif ( $ref->{arrDateTime} ) {
 			$arr = $self->{strp_stopseq}->parse_datetime( $ref->{arrDateTime} );
-			say $arr;
 		}
 
 		if ( $ref->{depDateTimeSec} ) {
 			$dep = $self->{strp_stopseq_s}
 			  ->parse_datetime( $ref->{depDateTimeSec} );
-			say $dep;
 		}
 		elsif ( $ref->{depDateTime} ) {
 			$dep = $self->{strp_stopseq}->parse_datetime( $ref->{depDateTime} );
-			say $dep;
 		}
 
 		push(
