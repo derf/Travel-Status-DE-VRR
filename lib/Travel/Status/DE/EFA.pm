@@ -20,68 +20,68 @@ use LWP::UserAgent;
 
 my %efa_instance = (
 	BSVG => {
-		url  => 'https://bsvg.efa.de/bsvagstd/XML_DM_REQUEST',
+		url  => 'https://bsvg.efa.de/bsvagstd',
 		name => 'Braunschweiger Verkehrs-GmbH',
 	},
 	DING => {
-		url     => 'https://www.ding.eu/ding3/XML_DM_REQUEST',
+		url     => 'https://www.ding.eu/ding3',
 		stopseq =>
 'https://www.ding.eu/ding3/XML_STOPSEQCOORD_REQUEST?=&jsonp=jsonpFn5&line=din:87002: :R:j24&stop=9001008&tripCode=290&date=20240520&time=14.0041.00&coordOutputFormat=WGS84[DD.DDDDD]&coordListOutputFormat=string&outputFormat=json&tStOTType=NEXT&hideBannerInfo=1',
 		name => 'Donau-Iller Nahverkehrsverbund',
 	},
 	KVV => {
-		url  => 'https://projekte.kvv-efa.de/sl3-alone/XML_DM_REQUEST',
+		url  => 'https://projekte.kvv-efa.de/sl3-alone',
 		name => 'Karlsruher Verkehrsverbund',
 	},
 	LinzAG => {
-		url      => 'https://www.linzag.at/static/XML_DM_REQUEST',
+		url      => 'https://www.linzag.at/static',
 		name     => 'Linz AG',
 		encoding => 'iso-8859-15',
 	},
 	MVV => {
-		url  => 'https://efa.mvv-muenchen.de/mobile/XML_DM_REQUEST',
+		url  => 'https://efa.mvv-muenchen.de/mobile',
 		name => 'Münchner Verkehrs- und Tarifverbund',
 	},
 	NVBW => {
-		url  => 'https://www.efa-bw.de/nvbw/XML_DM_REQUEST',
+		url  => 'https://www.efa-bw.de/nvbw',
 		name => 'Nahverkehrsgesellschaft Baden-Württemberg',
 	},
 	VAG => {
-		url  => 'https://efa.vagfr.de/vagfr3/XML_DM_REQUEST',
+		url  => 'https://efa.vagfr.de/vagfr3',
 		name => 'Freiburger Verkehrs AG',
 	},
 	VGN => {
-		url  => 'https://efa.vgn.de/vgnExt_oeffi/XML_DM_REQUEST',
+		url  => 'https://efa.vgn.de/vgnExt_oeffi',
 		name => 'Verkehrsverbund Grossraum Nuernberg',
 	},
 
 	# HTTPS: certificate verification fails
 	VMV => {
-		url  => 'http://efa.vmv-mbh.de/vmv/XML_DM_REQUEST',
+		url  => 'http://efa.vmv-mbh.de/vmv',
 		name => 'Verkehrsgesellschaft Mecklenburg-Vorpommern',
 	},
 	VRN => {
-		url  => 'https://www.vrn.de/mngvrn//XML_DM_REQUEST',
+		url  => 'https://www.vrn.de/mngvrn/',
 		name => 'Verkehrsverbund Rhein-Neckar',
 	},
 	VRR => {
-		url  => 'https://efa.vrr.de/vrr/XML_DM_REQUEST',
+		url  => 'https://efa.vrr.de/vrr',
 		name => 'Verkehrsverbund Rhein-Ruhr',
 	},
 	VRR2 => {
-		url  => 'https://app.vrr.de/standard/XML_DM_REQUEST',
+		url  => 'https://app.vrr.de/standard',
 		name => 'Verkehrsverbund Rhein-Ruhr (alternative)',
 	},
 	VRR3 => {
-		url  => 'https://efa.vrr.de/rbgstd3/XML_DM_REQUEST',
+		url  => 'https://efa.vrr.de/rbgstd3',
 		name => 'Verkehrsverbund Rhein-Ruhr (alternative alternative)',
 	},
 	VVO => {
-		url  => 'https://efa.vvo-online.de/VMSSL3/XML_DM_REQUEST',
+		url  => 'https://efa.vvo-online.de/VMSSL3',
 		name => 'Verkehrsverbund Oberelbe',
 	},
 	VVS => {
-		url  => 'https://www2.vvs.de/vvs/XML_DM_REQUEST',
+		url  => 'https://www2.vvs.de/vvs',
 		name => 'Verkehrsverbund Stuttgart',
 	},
 
@@ -173,6 +173,12 @@ sub new {
 
 	if ( $opt{service} and exists $efa_instance{ $opt{service} } ) {
 		$opt{efa_url} = $efa_instance{ $opt{service} }{url};
+		if ( $opt{journey} ) {
+			$opt{efa_url} .= '/XML_STOPSEQCOORD_REQUEST';
+		}
+		else {
+			$opt{efa_url} .= '/XML_DM_REQUEST';
+		}
 		$opt{time_zone} //= $efa_instance{ $opt{service} }{time_zone};
 	}
 
