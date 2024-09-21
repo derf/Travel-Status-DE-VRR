@@ -372,9 +372,11 @@ sub lines {
 		return @{ $self->{lines} };
 	}
 
-	for my $line ( @{ $self->{response}{servingLines} // [] } ) {
+	for my $line ( @{ $self->{response}{servingLines}{lines} // [] } ) {
 		push( @{ $self->{lines} }, $self->parse_line($line) );
 	}
+
+	return @{ $self->{lines} // [] };
 }
 
 sub parse_line {
@@ -383,7 +385,9 @@ sub parse_line {
 	my $mode = $line->{mode} // {};
 
 	return Travel::Status::DE::EFA::Line->new(
+		type       => $mode->{product},
 		name       => $mode->{name},
+		number     => $mode->{number},
 		direction  => $mode->{destination},
 		valid      => $mode->{timetablePeriod},
 		mot        => $mode->{product},
@@ -514,12 +518,6 @@ sub results {
 	}
 
 	my $json = $self->{response};
-
-	if ( not @{ $self->{lines} // [] } ) {
-		for my $line ( @{ $json->{servingLines}{lines} // [] } ) {
-			push( @{ $self->{lines} }, $self->parse_line($line) );
-		}
-	}
 
 	for my $departure ( @{ $json->{departureList} // [] } ) {
 		push( @results, $self->parse_departure($departure) );

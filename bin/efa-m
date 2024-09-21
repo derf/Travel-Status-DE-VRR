@@ -251,7 +251,7 @@ sub show_lines {
 
 	for my $l ( $efa->lines ) {
 
-		if (   ( @grep_lines and none { $l->name eq $_ } @grep_lines )
+		if (   ( @grep_lines and none { $l->number eq $_ } @grep_lines )
 			or ( @grep_mots and none { $l->mot_name eq $_ } @grep_mots ) )
 		{
 			next;
@@ -261,8 +261,13 @@ sub show_lines {
 			next;
 		}
 
-		push( @output,
-			[ $l->type, $l->name, $l->direction // q{}, q{}, $l->route // q{} ]
+		push(
+			@output,
+			[
+				$l->type, $l->number,
+				$l->direction // q{}, q{},
+				$l->route // q{}
+			]
 		);
 	}
 
