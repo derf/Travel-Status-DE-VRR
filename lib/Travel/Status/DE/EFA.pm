@@ -284,6 +284,13 @@ sub new {
 		return $self;
 	}
 
+	if ( $self->{developer_mode} ) {
+		say 'POST ' . $self->{efa_url};
+		while ( my ( $key, $value ) = each %{ $self->{post} } ) {
+			printf( "%30s = %s\n", $key, $value );
+		}
+	}
+
 	my $response = $self->{ua}->post( $self->{efa_url}, $self->{post} );
 
 	if ( $response->is_error ) {
