@@ -544,7 +544,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
     use Travel::Status::DE::EFA;
 
     my $status = Travel::Status::DE::EFA->new(
-        efa_url => 'https://efa.vrr.de/vrr/XML_DM_REQUEST',
+        service => 'VRR',
         name => 'Essen Helenenstr'
     );
 
