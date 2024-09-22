@@ -410,7 +410,7 @@ sub parse_line {
 }
 
 sub parse_route {
-	my ( $self, $stop_seq ) = @_;
+	my ( $self, $stop_seq, $requested_id ) = @_;
 	my @ret;
 
 	if ( not $stop_seq ) {
@@ -419,6 +419,11 @@ sub parse_route {
 
 	# Oh EFA, you so silly
 	if ( ref($stop_seq) eq 'HASH' ) {
+
+		# For lines that start or terminate at the requested stop, onwardStopSeq / prevStopSeq includes the requested stop.
+		if ( $stop_seq->{ref}{id} eq $requested_id ) {
+			return \@ret;
+		}
 		$stop_seq = [$stop_seq];
 	}
 
@@ -488,10 +493,12 @@ sub parse_departure {
 	}
 
 	if ( $departure->{prevStopSeq} ) {
-		$prev_route = $self->parse_route( $departure->{prevStopSeq} );
+		$prev_route = $self->parse_route( $departure->{prevStopSeq},
+			$departure->{stopID} );
 	}
 	if ( $departure->{onwardStopSeq} ) {
-		$next_route = $self->parse_route( $departure->{onwardStopSeq} );
+		$next_route = $self->parse_route( $departure->{onwardStopSeq},
+			$departure->{stopID} );
 	}
 
 	return Travel::Status::DE::EFA::Departure->new(
