@@ -1,3 +1,13 @@
+git HEAD
+    * Drop XML::LibXML dependency
+    * New dependencies: DateTime::Format::Strptime, JSON
+    * Switch API language from XML to JSON
+    * Rename Travel::Status::DE::EFA::Result to Travel::Status::DE::EFA::Departure
+    * EFA: Remove "identified_data" accessor (not supported by JSON backends)
+    * Result/Departure: Remove "info" accessor
+    * Result/Departure: add "hints" accessor
+    * Line: Add "number" accessor
+
 Travel::Status::DE::VRR 2.02 - Sun May 19 2024
     * EFA->new: Deprecate "efa_url" option. Use "service" instead.
       "efa_url" is still supported, just not documented anymore.

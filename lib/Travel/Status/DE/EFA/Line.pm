@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '2.02';
 
 Travel::Status::DE::EFA::Line->mk_ro_accessors(
-	qw(direction mot name operator route type valid));
+	qw(direction mot name number operator route type valid));
 
 my @mot_mapping = qw{
   zug s-bahn u-bahn stadtbahn tram stadtbus regionalbus

@@ -198,6 +198,13 @@ sub format_route {
 				$stop->name, $stop->platform,
 			);
 		}
+		elsif ( $stop->name ) {
+			$output .= sprintf( "               %40s %s\n",
+				$stop->name, $stop->platform, );
+		}
+		else {
+			$output .= "?\n";
+		}
 	}
 	return $output;
 }
@@ -217,12 +224,12 @@ sub display_result {
 
 	for my $line (@lines) {
 
-		if ( $edata{messages} and length( $line->[5] ) ) {
-			$line->[5] =~ tr{\n\x0d}{ }s;
-			chomp $line->[5];
+		if ( $edata{messages} and $line->[5] and @{ $line->[5] } ) {
 			print "\n";
-			for my $info_line ( split( qr{\n}, $line->[5] ) ) {
-				say "# ${info_line}";
+			for my $hint ( @{ $line->[5] } ) {
+				$hint =~ tr{\n\x0d}{ }s;
+				chomp $hint;
+				say "# ${hint}";
 			}
 		}
 
@@ -244,7 +251,7 @@ sub show_lines {
 
 	for my $l ( $efa->lines ) {
 
-		if (   ( @grep_lines and none { $l->name eq $_ } @grep_lines )
+		if (   ( @grep_lines and none { $l->number eq $_ } @grep_lines )
 			or ( @grep_mots and none { $l->mot_name eq $_ } @grep_mots ) )
 		{
 			next;
@@ -254,8 +261,13 @@ sub show_lines {
 			next;
 		}
 
-		push( @output,
-			[ $l->type, $l->name, $l->direction // q{}, q{}, $l->route // q{} ]
+		push(
+			@output,
+			[
+				$l->type, $l->number,
+				$l->direction // q{}, q{},
+				$l->route // q{}
+			]
 		);
 	}
 
@@ -287,10 +299,6 @@ sub show_results {
 			? sprintf( '%2d min', $d->countdown )
 			: $d->datetime->strftime('%H:%M')
 		);
-
-		if ( $d->platform_db ) {
-			$platform .= ' (DB)';
-		}
 
 		if (
 			   ( @grep_lines and none { $d->line eq $_ } @grep_lines )
@@ -326,12 +334,15 @@ sub show_results {
 		}
 
 		my $line = $d->line;
-		if ( length($line) > 10 and $d->train_type and $d->train_no ) {
+		if (    ( length($line) > 10 or not $line )
+			and $d->train_type
+			and $d->train_no )
+		{
 			$line = $d->train_type . ' ' . $d->train_no;
 		}
 
 		@output_line
-		  = ( $dtime, $platform, $line, q{}, $d->destination, $d->info );
+		  = ( $dtime, $platform, $line, q{}, $d->destination, [ $d->hints ] );
 
 		if ( $edata{route} ) {
 			$output_line[3]
@@ -614,8 +625,6 @@ None.
 =item * LWP::UserAgent(3pm)
 
 =item * Travel::Status::DE::EFA(3pm)
-
-=item * XML::LibXML(3pm)
 
 =back
 
