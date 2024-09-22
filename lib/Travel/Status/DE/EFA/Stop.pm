@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '2.02';
 
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
-	qw(arr dep place name full_name platform));
+	qw(arr dep place name full_name id platform));
 
 sub new {
 	my ( $obj, %conf ) = @_;
@@ -70,6 +70,10 @@ first scheduled stop.
 
 DateTime(3pm) object holding departure date and time. undef if this is the
 final scheduled stop.
+
+=item $stop->id
+
+Stop ID.
 
 =item $stop->place
 

@@ -367,6 +367,7 @@ sub stops {
 				place     => $stop->{place},
 				name      => $stop->{name},
 				full_name => $stop->{nameWithPlace},
+				id        => $stop->{stopID},
 			)
 		);
 	}
@@ -450,6 +451,7 @@ sub parse_route {
 			Travel::Status::DE::EFA::Stop->new(
 				arr       => $arr,
 				dep       => $dep,
+				id        => $stop->{ref}{id},
 				full_name => $stop->{name},
 				place     => $stop->{place},
 				name      => $stop->{nameWO},
