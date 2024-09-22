@@ -9,7 +9,6 @@ our $VERSION = '2.02';
 
 use Carp qw(confess cluck);
 use DateTime;
-use DateTime;
 use DateTime::Format::Strptime;
 use Encode qw(encode);
 use JSON;
@@ -737,15 +736,17 @@ None.
 
 =item * DateTime(3pm)
 
-=item * LWP::UserAgent(3pm)
+=item * DateTime::Format::Strptime(3pm)
 
-=item * XML::LibXML(3pm)
+=item * JSON(3pm)
+
+=item * LWP::UserAgent(3pm)
 
 =back
 
 =head1 BUGS AND LIMITATIONS
 
-Not all features of the web interface are supported.
+The API is not exposed completely.
 
 =head1 SEE ALSO
 
@@ -753,7 +754,7 @@ efa-m(1), Travel::Status::DE::EFA::Departure(3pm).
 
 =head1 AUTHOR
 
-Copyright (C) 2011-2023 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2011-2024 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 
