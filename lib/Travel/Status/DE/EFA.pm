@@ -149,7 +149,7 @@ sub new {
 		confess('You must specify a name');
 	}
 	if ( $opt{type}
-		and not( $opt{type} =~ m{ ^ (?: stop stopID address poi ) $ }x ) )
+		and not( $opt{type} =~ m{ ^ (?: stop | stopID | address | poi ) $ }x ) )
 	{
 		confess('type must be stop, stopID, address, or poi');
 	}
