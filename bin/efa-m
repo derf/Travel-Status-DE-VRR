@@ -17,7 +17,7 @@ my $service = 'VRR';
 my $efa_url;
 my $efa_encoding;
 my ( $date,        $time, $input_type, $list_lines, $offset, $relative_times );
-my ( $full_routes, $filter_via );
+my ( $full_routes, $filter_via, $show_jid );
 my ( $timeout,     $developer_mode );
 my ( @grep_lines,  @grep_platforms, @grep_mots );
 my ( %edata,       @edata_pre );
@@ -31,6 +31,7 @@ GetOptions(
 	'd|date=s'                      => \$date,
 	'D|discover'                    => \$discover,
 	'h|help'                        => sub { show_help(0) },
+	'j|with-jid'                    => \$show_jid,
 	'l|line=s@'                     => \@grep_lines,
 	'L|linelist'                    => \$list_lines,
 	'list'                          => \$list_services,
@@ -224,9 +225,9 @@ sub display_result {
 
 	for my $line (@lines) {
 
-		if ( $edata{messages} and $line->[5] and @{ $line->[5] } ) {
+		if ( $edata{messages} and $line->[5]->hints ) {
 			print "\n";
-			for my $hint ( @{ $line->[5] } ) {
+			for my $hint ( $line->[5]->hints ) {
 				$hint =~ tr{\n\x0d}{ }s;
 				chomp $hint;
 				say "# ${hint}";
@@ -295,7 +296,7 @@ sub show_results {
 			say $stop->full_name;
 		}
 	}
-	elsif ($efa->stop_name) {
+	elsif ( $efa->stop_name ) {
 		say $efa->stop_name;
 	}
 
@@ -350,8 +351,12 @@ sub show_results {
 			$line = $d->train_type . ' ' . $d->train_no;
 		}
 
-		@output_line
-		  = ( $dtime, $platform, $line, q{}, $d->destination, [ $d->hints ] );
+		@output_line = ( $dtime, $platform, $line, q{}, $d->destination, $d );
+
+		if ($show_jid) {
+			$output_line[2]
+			  .= sprintf( '  %s@%d@%d', $d->stateless, $d->stop_id, $d->key );
+		}
 
 		if ( $edata{route} ) {
 			$output_line[3]

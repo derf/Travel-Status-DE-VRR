@@ -9,9 +9,9 @@ use parent 'Class::Accessor';
 our $VERSION = '2.02';
 
 Travel::Status::DE::EFA::Departure->mk_ro_accessors(
-	qw(countdown datetime delay destination is_cancelled key line lineref
-	  mot occupancy operator origin platform platform_db platform_name
-	  rt_datetime sched_datetime train_type train_name train_no type)
+	qw(countdown datetime delay destination is_cancelled key line lineref mot
+	  occupancy operator origin platform platform_db platform_name rt_datetime
+	  sched_datetime stateless stop_id train_type train_name train_no type)
 );
 
 my @mot_mapping = qw{
@@ -189,10 +189,8 @@ may be recent news related to the line's schedule.
 
 =item $departure->key
 
-Unknown.  Unlike the name may suggest, this is not a unique key / UUID for a
-departure: On the same day, different lines departing at the same station
-may have the same key.  It might, however, be unique when combined with the
-B<line> information.
+Key of this departure of the corresponding line. Unique for a given day when
+combined with B<stateless>.
 
 =item $departure->line
 
@@ -261,6 +259,10 @@ realtime data. Undef if unknown / unavailable.
 =item $departure->sched_datetime
 
 DateTime(3pm) object holding the scheduled departure date and time.
+
+=item $departure->stateless
+
+Unique line identifier.
 
 =item $departure->train_type
 
