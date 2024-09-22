@@ -686,12 +686,6 @@ a B<post_p> function. Recommended: Mojo::UserAgent(3pm).
 In case of an HTTP request or EFA error, returns a string describing it. If
 none occured, returns undef.
 
-=item $status->identified_data
-
-Returns a list of the identified values for I<place> and I<name>.
-For instance, when requesting data for "E", "MartinSTR", B<identified_data>
-will return ("Essen", "Martinstr.").
-
 =item $status->lines
 
 Returns a list of Travel::Status::DE::EFA::Line(3pm) objects, each one
