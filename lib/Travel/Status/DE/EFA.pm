@@ -419,11 +419,12 @@ sub parse_route {
 		push(
 			@ret,
 			Travel::Status::DE::EFA::Stop->new(
-				arr      => $arr,
-				dep      => $dep,
-				name     => $stop->{name},
-				name_suf => $stop->{nameWO},
-				platform => $ref->{platform} || $stop->{platformName} || undef,
+				arr       => $arr,
+				dep       => $dep,
+				full_name => $stop->{name},
+				place     => $stop->{place},
+				name      => $stop->{nameWO},
+				platform  => $ref->{platform} || $stop->{platformName} || undef,
 			)
 		);
 	}

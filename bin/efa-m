@@ -172,7 +172,7 @@ sub format_route {
 				$output .= sprintf(
 					"    %5s      %40s %s\n",
 					$stop->arr->strftime('%H:%M'),
-					$stop->name, $stop->platform,
+					$stop->full_name, $stop->platform,
 				);
 			}
 			else {
@@ -180,7 +180,7 @@ sub format_route {
 					"%5s → %5s  %40s %s\n",
 					$stop->arr->strftime('%H:%M'),
 					$stop->dep->strftime('%H:%M'),
-					$stop->name, $stop->platform,
+					$stop->full_name, $stop->platform,
 				);
 			}
 		}
@@ -188,19 +188,19 @@ sub format_route {
 			$output .= sprintf(
 				"%5s          %40s %s\n",
 				$stop->arr->strftime('%H:%M'),
-				$stop->name, $stop->platform,
+				$stop->full_name, $stop->platform,
 			);
 		}
 		elsif ( defined $stop->dep ) {
 			$output .= sprintf(
 				"        %5s  %40s %s\n",
 				$stop->dep->strftime('%H:%M'),
-				$stop->name, $stop->platform,
+				$stop->full_name, $stop->platform,
 			);
 		}
-		elsif ( $stop->name ) {
+		elsif ( $stop->full_name ) {
 			$output .= sprintf( "               %40s %s\n",
-				$stop->name, $stop->platform, );
+				$stop->full_name, $stop->platform, );
 		}
 		else {
 			$output .= "?\n";
@@ -346,7 +346,7 @@ sub show_results {
 
 		if ( $edata{route} ) {
 			$output_line[3]
-			  = join( q{  }, map { $_->name_suf } $d->route_interesting );
+			  = join( q{  }, map { $_->name } $d->route_interesting );
 		}
 		elsif ( $d->occupancy ) {
 			if ( $d->occupancy eq 'MANY_SEATS' ) {

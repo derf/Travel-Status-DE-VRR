@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '2.02';
 
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
-	qw(arr dep name name_suf platform));
+	qw(arr dep place name full_name platform));
 
 sub new {
 	my ( $obj, %conf ) = @_;
@@ -71,12 +71,16 @@ first scheduled stop.
 DateTime(3pm) object holding departure date and time. undef if this is the
 final scheduled stop.
 
-=item $stop->name
+=item $stop->place
+
+City name, for instance "Essen".
+
+=item $stop->full_name
 
 stop name with city prefix ("I<City> I<Stop>", for instance
 "Essen RE<uuml>ttenscheider Stern").
 
-=item $stop->name_suf
+=item $stop->name
 
 stop name without city prefix, for instance "RE<uuml>ttenscheider Stern".
 
