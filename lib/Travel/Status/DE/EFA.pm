@@ -145,7 +145,7 @@ sub new {
 		delete $opt{timeout};
 	}
 
-	if ( not( $opt{name} or $opt{from_json} ) ) {
+	if ( not( $opt{name} or $opt{stopseq} or $opt{from_json} ) ) {
 		confess('You must specify a name');
 	}
 	if ( $opt{type}
@@ -156,7 +156,7 @@ sub new {
 
 	if ( $opt{service} and exists $efa_instance{ $opt{service} } ) {
 		$opt{efa_url} = $efa_instance{ $opt{service} }{url};
-		if ( $opt{journey} ) {
+		if ( $opt{stopseq} ) {
 			$opt{efa_url} .= '/XML_STOPSEQCOORD_REQUEST';
 		}
 		else {
@@ -211,20 +211,6 @@ sub new {
 	}
 
 	my $self = {
-		post => {
-			language          => 'de',
-			mode              => 'direct',
-			outputFormat      => 'JSON',
-			type_dm           => $opt{type} // 'stop',
-			useProxFootSearch => $opt{proximity_search} ? '1' : '0',
-			useRealtime       => '1',
-			itdDateDay        => $dt->day,
-			itdDateMonth      => $dt->month,
-			itdDateYear       => $dt->year,
-			itdTimeHour       => $dt->hour,
-			itdTimeMinute     => $dt->minute,
-			name_dm           => encode( 'UTF-8', $opt{name} ),
-		},
 		response       => $opt{from_json},
 		developer_mode => $opt{developer_mode},
 		efa_url        => $opt{efa_url},
@@ -240,6 +226,33 @@ sub new {
 
 		json => JSON->new->utf8,
 	};
+
+	if ( $opt{stopseq} ) {
+		$self->{post} = {
+			line              => $opt{stopseq}{stateless},
+			stop              => $opt{stopseq}{stop_id},
+			tripCode          => $opt{stopseq}{key},
+			date              => $opt{stopseq}{date},
+			coordOutputFormat => 'WGS84[DD.DDDDD]',
+			outputFormat      => 'rapidJson',
+		};
+	}
+	else {
+		$self->{post} = {
+			language          => 'de',
+			mode              => 'direct',
+			outputFormat      => 'JSON',
+			type_dm           => $opt{type} // 'stop',
+			useProxFootSearch => $opt{proximity_search} ? '1' : '0',
+			useRealtime       => '1',
+			itdDateDay        => $dt->day,
+			itdDateMonth      => $dt->month,
+			itdDateYear       => $dt->year,
+			itdTimeHour       => $dt->hour,
+			itdTimeMinute     => $dt->minute,
+			name_dm           => encode( 'UTF-8', $opt{name} ),
+		};
+	}
 
 	if ( $opt{place} ) {
 		$self->{post}{placeInfo_dm}  = 'invalid';

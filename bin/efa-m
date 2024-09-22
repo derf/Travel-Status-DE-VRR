@@ -65,16 +65,26 @@ if ( @ARGV < 1 or @ARGV > 2 ) {
 @grep_mots      = split( qr{,}, join( q{,}, @grep_mots ) );
 @grep_platforms = split( qr{,}, join( q{,}, @grep_platforms ) );
 
-my ( $place, $input );
+my ( $place, $input, $stopseq );
 
 if ( @ARGV == 1 ) {
-	$input = $ARGV[0];
+	if ( $ARGV[0] =~ m{ ^ ! ([^@]*) @ ([^@]*) [(] ([^)]*) [)] (.*)  $ }x ) {
+		$stopseq = {
+			stateless => $1,
+			stop_id   => $2,
+			date      => $3,
+			key       => $4
+		};
+	}
+	else {
+		$input = $ARGV[0];
+	}
 }
 else {
 	( $place, $input ) = @ARGV;
 }
 
-if ( $input =~ s{ ^ (?<type> address|poi|stop|stopID) : }{}x ) {
+if ( $input and $input =~ s{ ^ (?<type> address|poi|stop|stopID) : }{}x ) {
 	$input_type = $+{type};
 }
 
@@ -118,6 +128,7 @@ sub new_efa {
 		full_routes    => $full_routes,
 		place          => $place,
 		name           => $input,
+		stopseq        => $stopseq,
 		time           => $time,
 		type           => $input_type,
 		timeout        => $timeout,
@@ -354,8 +365,9 @@ sub show_results {
 		@output_line = ( $dtime, $platform, $line, q{}, $d->destination, $d );
 
 		if ($show_jid) {
-			$output_line[2]
-			  .= sprintf( '  %s@%d@%d', $d->stateless, $d->stop_id, $d->key );
+			$output_line[2] .= sprintf( '  %s@%d(%s)%d',
+				$d->stateless,                          $d->stop_id,
+				$d->sched_datetime->strftime('%Y%m%d'), $d->key );
 		}
 
 		if ( $edata{route} ) {
