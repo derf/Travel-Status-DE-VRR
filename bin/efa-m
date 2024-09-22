@@ -295,7 +295,7 @@ sub show_results {
 			say $stop->full_name;
 		}
 	}
-	else {
+	elsif ($efa->stop_name) {
 		say $efa->stop_name;
 	}
 
