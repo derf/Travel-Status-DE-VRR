@@ -346,6 +346,35 @@ sub check_for_ambiguous {
 	return;
 }
 
+sub stop_name {
+	my ($self) = @_;
+
+	return $self->{response}{dm}{points}{point}{name};
+}
+
+sub stops {
+	my ($self) = @_;
+
+	if ( $self->{stops} ) {
+		return @{ $self->{stops} };
+	}
+
+	my @stops;
+	for my $stop ( @{ $self->{response}{dm}{itdOdvAssignedStops} // [] } ) {
+		push(
+			@stops,
+			Travel::Status::DE::EFA::Stop->new(
+				place     => $stop->{place},
+				name      => $stop->{name},
+				full_name => $stop->{nameWithPlace},
+			)
+		);
+	}
+
+	$self->{stops} = \@stops;
+	return @stops;
+}
+
 sub lines {
 	my ($self) = @_;
 

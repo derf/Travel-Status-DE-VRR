@@ -290,6 +290,15 @@ sub show_results {
 		$delay_fmt = $delay_len + 3;
 	}
 
+	if ( scalar $efa->stops > 1 ) {
+		for my $stop ( $efa->stops ) {
+			say $stop->full_name;
+		}
+	}
+	else {
+		say $efa->stop_name;
+	}
+
 	for my $d ( $efa->results ) {
 
 		my @output_line;
