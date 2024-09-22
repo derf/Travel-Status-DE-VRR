@@ -224,12 +224,12 @@ sub display_result {
 
 	for my $line (@lines) {
 
-		if ( $edata{messages} and length( $line->[5] ) ) {
-			$line->[5] =~ tr{\n\x0d}{ }s;
-			chomp $line->[5];
+		if ( $edata{messages} and $line->[5] and @{ $line->[5] } ) {
 			print "\n";
-			for my $info_line ( split( qr{\n}, $line->[5] ) ) {
-				say "# ${info_line}";
+			for my $hint ( @{ $line->[5] } ) {
+				$hint =~ tr{\n\x0d}{ }s;
+				chomp $hint;
+				say "# ${hint}";
 			}
 		}
 
@@ -342,7 +342,7 @@ sub show_results {
 		}
 
 		@output_line
-		  = ( $dtime, $platform, $line, q{}, $d->destination, $d->info );
+		  = ( $dtime, $platform, $line, q{}, $d->destination, [ $d->hints ] );
 
 		if ( $edata{route} ) {
 			$output_line[3]

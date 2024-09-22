@@ -501,6 +501,9 @@ sub parse_departure {
 			$departure->{stopID} );
 	}
 
+	my @hints
+	  = map { $_->{content} } @{ $departure->{servingLine}{hints} // [] };
+
 	return Travel::Status::DE::EFA::Departure->new(
 		rt_datetime    => $real_dt,
 		platform       => $departure->{platform},
@@ -518,6 +521,7 @@ sub parse_departure {
 		sched_datetime => $sched_dt,
 		type           => $departure->{servingLine}{name},
 		mot            => $departure->{servingLine}{motType},
+		hints          => \@hints,
 		prev_route     => $prev_route,
 		next_route     => $next_route,
 	);

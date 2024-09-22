@@ -9,7 +9,7 @@ use parent 'Class::Accessor';
 our $VERSION = '2.02';
 
 Travel::Status::DE::EFA::Departure->mk_ro_accessors(
-	qw(countdown datetime delay destination is_cancelled info key line lineref
+	qw(countdown datetime delay destination is_cancelled key line lineref
 	  mot occupancy operator origin platform platform_db platform_name
 	  rt_datetime sched_datetime train_type train_name train_no type)
 );
@@ -35,6 +35,12 @@ sub new {
 	$ref->{datetime} = $ref->{rt_datetime} // $ref->{sched_datetime};
 
 	return bless( $ref, $obj );
+}
+
+sub hints {
+	my ($self) = @_;
+
+	return @{ $self->{hints} // [] };
 }
 
 sub mot_name {
@@ -171,12 +177,11 @@ indicates departure on time. undef when no realtime information is available.
 
 Destination name.
 
-=item $departure->info
+=item $departure->hints
 
-Additional information related to the departure (string).  If departures for
-an address were requested, this is the stop name, otherwise it may be recent
-news related to the line's schedule.  If no information is available, returns
-an empty string.
+Additional information related to the departure (list of strings). If
+departures for an address were requested, this is the stop name, otherwise it
+may be recent news related to the line's schedule.
 
 =item $departure->is_cancelled
 
