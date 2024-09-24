@@ -68,7 +68,7 @@ if ( @ARGV < 1 or @ARGV > 2 ) {
 my ( $place, $input, $stopseq );
 
 if ( @ARGV == 1 ) {
-	if ( $ARGV[0] =~ m{ ^ ! ([^@]*) @ ([^@]*) [(] ([^)]*) [)] (.*)  $ }x ) {
+	if ( $ARGV[0] =~ m{ ^ ([^@]*) @ ([^@]*) [(] ([^)]*) [)] (.*)  $ }x ) {
 		$stopseq = {
 			stateless => $1,
 			stop_id   => $2,
