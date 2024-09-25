@@ -15,6 +15,7 @@ use JSON;
 use Travel::Status::DE::EFA::Line;
 use Travel::Status::DE::EFA::Departure;
 use Travel::Status::DE::EFA::Stop;
+use Travel::Status::DE::EFA::Trip;
 use LWP::UserAgent;
 
 my %efa_instance = (
@@ -566,6 +567,12 @@ sub results {
 	$self->{results} = \@results;
 
 	return @results;
+}
+
+sub result {
+	my ($self) = @_;
+
+	return Travel::Status::DE::EFA::Trip->new( json => $self->{response} );
 }
 
 # static

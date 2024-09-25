@@ -258,6 +258,26 @@ sub display_result {
 	return;
 }
 
+sub show_stopseq {
+	my $trip = $efa->result;
+
+	printf( "%s %s → %s\n",
+		$trip->line, $trip->number // q{},
+		$trip->dest_name );
+
+	for my $stop ( $trip->route ) {
+		printf( "%s → %s  %s\n",
+			$stop->{sched_arr}
+			? ( $stop->{rt_arr} // $stop->{sched_arr} )->strftime('%H:%M')
+			: q{     },
+			$stop->{sched_dep}
+			? ( $stop->{rt_dep} // $stop->{sched_dep} )->strftime('%H:%M')
+			: q{     },
+			$stop->{name_full},
+		);
+	}
+}
+
 sub show_lines {
 	my @output;
 
@@ -449,7 +469,10 @@ if ( my $err = $efa->errstr ) {
 	exit 2;
 }
 
-if ($list_lines) {
+if ($stopseq) {
+	show_stopseq();
+}
+elsif ($list_lines) {
 	show_lines();
 }
 else {
