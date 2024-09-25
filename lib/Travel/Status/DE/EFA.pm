@@ -235,6 +235,7 @@ sub new {
 			date              => $opt{stopseq}{date},
 			coordOutputFormat => 'WGS84[DD.DDDDD]',
 			outputFormat      => 'rapidJson',
+			useRealtime       => '1',
 		};
 	}
 	else {
