@@ -4,6 +4,9 @@ use strict;
 use warnings;
 use 5.010;
 
+use DateTime;
+use Travel::Status::DE::EFA::Stop;
+
 use parent 'Class::Accessor';
 
 our $VERSION = '2.02';
@@ -19,10 +22,67 @@ my @mot_mapping = qw{
   schnellbus seilbahn schiff ast sonstige
 };
 
+sub parse_departure {
+	my ( $self, $departure ) = @_;
+}
+
 sub new {
 	my ( $obj, %conf ) = @_;
 
-	my $ref = \%conf;
+	my $departure = $conf{json};
+	my ( $sched_dt, $real_dt );
+
+	if ( my $dt = $departure->{dateTime} ) {
+		$sched_dt = DateTime->new(
+			year      => $dt->{year},
+			month     => $dt->{month},
+			day       => $dt->{day},
+			hour      => $dt->{hour},
+			minute    => $dt->{minute},
+			second    => $dt->{second} // 0,
+			time_zone => 'Europe/Berlin',
+		);
+	}
+
+	if ( my $dt = $departure->{realDateTime} ) {
+		$real_dt = DateTime->new(
+			year      => $dt->{year},
+			month     => $dt->{month},
+			day       => $dt->{day},
+			hour      => $dt->{hour},
+			minute    => $dt->{minute},
+			second    => $dt->{second} // 0,
+			time_zone => 'Europe/Berlin',
+		);
+	}
+
+	my @hints
+	  = map { $_->{content} } @{ $departure->{servingLine}{hints} // [] };
+
+	my $ref = {
+		strp_stopseq_s => $conf{strp_stopseq_s},
+		strp_stopseq   => $conf{strp_stopseq},
+		rt_datetime    => $real_dt,
+		platform       => $departure->{platform},
+		platform_name  => $departure->{platformName},
+		platform_type  => $departure->{pointType},
+		key            => $departure->{servingLine}{key},
+		stateless      => $departure->{servingLine}{stateless},
+		stop_id        => $departure->{stopID},
+		line           => $departure->{servingLine}{symbol},
+		train_type     => $departure->{servingLine}{trainType},
+		train_name     => $departure->{servingLine}{trainName},
+		train_no       => $departure->{servingLine}{trainNum},
+		origin         => $departure->{servingLine}{directionFrom},
+		destination    => $departure->{servingLine}{direction},
+		occupancy      => $departure->{occupancy},
+		countdown      => $departure->{countdown},
+		delay          => $departure->{servingLine}{delay},
+		sched_datetime => $sched_dt,
+		type           => $departure->{servingLine}{name},
+		mot            => $departure->{servingLine}{motType},
+		hints          => \@hints,
+	};
 
 	if ( defined $ref->{delay} and $ref->{delay} eq '-9999' ) {
 		$ref->{delay}        = 0;
@@ -34,7 +94,73 @@ sub new {
 
 	$ref->{datetime} = $ref->{rt_datetime} // $ref->{sched_datetime};
 
-	return bless( $ref, $obj );
+	bless( $ref, $obj );
+
+	if ( $departure->{prevStopSeq} ) {
+		$ref->{prev_route} = $ref->parse_route( $departure->{prevStopSeq},
+			$departure->{stopID} );
+	}
+	if ( $departure->{onwardStopSeq} ) {
+		$ref->{next_route} = $ref->parse_route( $departure->{onwardStopSeq},
+			$departure->{stopID} );
+	}
+
+	return $ref;
+}
+
+sub parse_route {
+	my ( $self, $stop_seq, $requested_id ) = @_;
+	my @ret;
+
+	if ( not $stop_seq ) {
+		return \@ret;
+	}
+
+	# Oh EFA, you so silly
+	if ( ref($stop_seq) eq 'HASH' ) {
+
+		# For lines that start or terminate at the requested stop, onwardStopSeq / prevStopSeq includes the requested stop.
+		if ( $stop_seq->{ref}{id} eq $requested_id ) {
+			return \@ret;
+		}
+		$stop_seq = [$stop_seq];
+	}
+
+	for my $stop ( @{ $stop_seq // [] } ) {
+		my $ref = $stop->{ref};
+		my ( $arr, $dep );
+
+		if ( $ref->{arrDateTimeSec} ) {
+			$arr = $self->{strp_stopseq_s}
+			  ->parse_datetime( $ref->{arrDateTimeSec} );
+		}
+		elsif ( $ref->{arrDateTime} ) {
+			$arr = $self->{strp_stopseq}->parse_datetime( $ref->{arrDateTime} );
+		}
+
+		if ( $ref->{depDateTimeSec} ) {
+			$dep = $self->{strp_stopseq_s}
+			  ->parse_datetime( $ref->{depDateTimeSec} );
+		}
+		elsif ( $ref->{depDateTime} ) {
+			$dep = $self->{strp_stopseq}->parse_datetime( $ref->{depDateTime} );
+		}
+
+		push(
+			@ret,
+			Travel::Status::DE::EFA::Stop->new(
+				arr       => $arr,
+				dep       => $dep,
+				id        => $stop->{ref}{id},
+				full_name => $stop->{name},
+				place     => $stop->{place},
+				name      => $stop->{nameWO},
+				platform  => $ref->{platform} || $stop->{platformName} || undef,
+			)
+		);
+	}
+
+	return \@ret;
 }
 
 sub hints {
