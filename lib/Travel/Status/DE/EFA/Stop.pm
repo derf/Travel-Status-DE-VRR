@@ -9,12 +9,19 @@ use parent 'Class::Accessor';
 our $VERSION = '2.02';
 
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
-	qw(arr dep place name full_name id platform));
+	qw(sched_arr rt_arr arr
+	  sched_dep rt_dep dep
+	  place name full_name id latlon
+	  platform niveau)
+);
 
 sub new {
 	my ( $obj, %conf ) = @_;
 
 	my $ref = \%conf;
+
+	$ref->{arr} //= $ref->{rt_arr} // $ref->{sched_arr};
+	$ref->{dep} //= $ref->{rt_dep} // $ref->{sched_dep};
 
 	return bless( $ref, $obj );
 }

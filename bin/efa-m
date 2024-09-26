@@ -266,14 +266,15 @@ sub show_stopseq {
 		$trip->dest_name );
 
 	for my $stop ( $trip->route ) {
-		printf( "%s → %s  %s\n",
-			$stop->{sched_arr}
-			? ( $stop->{rt_arr} // $stop->{sched_arr} )->strftime('%H:%M')
+		printf(
+			"%s → %s  %s (%s) %s\n",
+			$stop->arr ? $stop->arr->strftime('%H:%M')
 			: q{     },
-			$stop->{sched_dep}
-			? ( $stop->{rt_dep} // $stop->{sched_dep} )->strftime('%H:%M')
+			$stop->dep ? $stop->dep->strftime('%H:%M')
 			: q{     },
-			$stop->{name_full},
+			$stop->full_name,
+			$stop->niveau,
+			$stop->platform
 		);
 	}
 }

@@ -5,6 +5,7 @@ use warnings;
 use 5.010;
 
 use DateTime::Format::Strptime;
+use Travel::Status::DE::EFA::Stop;
 
 use parent 'Class::Accessor';
 
@@ -63,20 +64,37 @@ sub route {
 	}
 
 	for my $stop ( @{ $self->{route_raw} // [] } ) {
+		my $chain = $stop;
+		my ( $platform, $place, $name, $name_full );
+		while ( $chain->{type} ) {
+			if ( $chain->{type} eq 'platform' ) {
+				$platform = $chain->{properties}{platformName}
+				  // $chain->{properties}{platform};
+			}
+			elsif ( $chain->{type} eq 'stop' ) {
+				$name      = $chain->{disassembledName};
+				$name_full = $chain->{name};
+			}
+			elsif ( $chain->{type} eq 'locality' ) {
+				$place = $chain->{name};
+			}
+			$chain = $chain->{parent};
+		}
 		push(
 			@{ $self->{route} },
-			{
+			Travel::Status::DE::EFA::Stop->new(
 				sched_arr => $self->parse_dt( $stop->{arrivalTimePlanned} ),
 				sched_dep => $self->parse_dt( $stop->{departureTimePlanned} ),
 				rt_arr    => $self->parse_dt( $stop->{arrivalTimeEstimated} ),
 				rt_dep    => $self->parse_dt( $stop->{departureTimeEstimated} ),
 				latlon    => $stop->{coord},
-				name_full => $stop->{name},
-				name      => $stop->{parent}{disassembledName},
-				place     => $stop->{parent}{parent}{name},
+				full_name => $name_full,
+				name      => $name,
+				place     => $place,
 				niveau    => $stop->{niveau},
+				platform  => $platform,
 				id        => $stop->{id},
-			}
+			)
 		);
 	}
 
