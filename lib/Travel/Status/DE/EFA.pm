@@ -24,9 +24,7 @@ my %efa_instance = (
 		name => 'Braunschweiger Verkehrs-GmbH',
 	},
 	DING => {
-		url     => 'https://www.ding.eu/ding3',
-		stopseq =>
-'https://www.ding.eu/ding3/XML_STOPSEQCOORD_REQUEST?=&jsonp=jsonpFn5&line=din:87002: :R:j24&stop=9001008&tripCode=290&date=20240520&time=14.0041.00&coordOutputFormat=WGS84[DD.DDDDD]&coordListOutputFormat=string&outputFormat=json&tStOTType=NEXT&hideBannerInfo=1',
+		url  => 'https://www.ding.eu/ding3',
 		name => 'Donau-Iller Nahverkehrsverbund',
 	},
 	KVV => {
