@@ -24,6 +24,14 @@ my ( %edata,       @edata_pre );
 my ( $list_services, $discover_and_print, $discover );
 my $efa;
 
+my %occupancy_map = (
+	MANY_SEATS    => '.',
+	FEW_SEATS     => 'o',
+	STANDING_ONLY => '*',
+	FULL          => '!',
+	unknown       => '?',
+);
+
 @ARGV = map { decode( 'UTF-8', $_ ) } @ARGV;
 
 GetOptions(
@@ -179,40 +187,42 @@ sub format_route {
 			say 'BUG';
 			next;
 		}
+		my $occupancy
+		  = $stop->occupancy ? format_occupancy( $stop->occupancy ) : q{ };
 		if ( defined $stop->arr and defined $stop->dep ) {
 			if ( $stop->arr->epoch == $stop->dep->epoch ) {
 				$output .= sprintf(
-					"    %5s      %40s %s\n",
+					"    %5s      %s %40s %s\n",
 					$stop->arr->strftime('%H:%M'),
-					$stop->full_name, $stop->platform,
+					$occupancy, $stop->full_name, $stop->platform,
 				);
 			}
 			else {
 				$output .= sprintf(
-					"%5s → %5s  %40s %s\n",
+					"%5s → %5s  %s %40s %s\n",
 					$stop->arr->strftime('%H:%M'),
 					$stop->dep->strftime('%H:%M'),
-					$stop->full_name, $stop->platform,
+					$occupancy, $stop->full_name, $stop->platform,
 				);
 			}
 		}
 		elsif ( defined $stop->arr ) {
 			$output .= sprintf(
-				"%5s          %40s %s\n",
+				"%5s          %s %40s %s\n",
 				$stop->arr->strftime('%H:%M'),
-				$stop->full_name, $stop->platform,
+				$occupancy, $stop->full_name, $stop->platform,
 			);
 		}
 		elsif ( defined $stop->dep ) {
 			$output .= sprintf(
-				"        %5s  %40s %s\n",
+				"        %5s  %s %40s %s\n",
 				$stop->dep->strftime('%H:%M'),
-				$stop->full_name, $stop->platform,
+				$occupancy, $stop->full_name, $stop->platform,
 			);
 		}
 		elsif ( $stop->full_name ) {
-			$output .= sprintf( "               %40s %s\n",
-				$stop->full_name, $stop->platform, );
+			$output .= sprintf( "               %s %40s %s\n",
+				$occupancy, $stop->full_name, $stop->platform, );
 		}
 		else {
 			$output .= "?\n";
@@ -309,6 +319,12 @@ sub show_lines {
 	return;
 }
 
+sub format_occupancy {
+	my ($occupancy) = @_;
+
+	return $occupancy_map{$occupancy} // $occupancy_map{unknown};
+}
+
 sub show_results {
 	my @output;
 
@@ -396,21 +412,7 @@ sub show_results {
 			  = join( q{  }, map { $_->name } $d->route_interesting );
 		}
 		elsif ( $d->occupancy ) {
-			if ( $d->occupancy eq 'MANY_SEATS' ) {
-				$output_line[3] = '.';
-			}
-			elsif ( $d->occupancy eq 'FEW_SEATS' ) {
-				$output_line[3] = 'o';
-			}
-			elsif ( $d->occupancy eq 'STANDING_ONLY' ) {
-				$output_line[3] = '*';
-			}
-			elsif ( $d->occupancy eq 'FULL' ) {
-				$output_line[3] = '!';
-			}
-			else {
-				$output_line[3] = '?';
-			}
+			$output_line[3] = format_occupancy( $d->occupancy );
 		}
 
 		if ( $edata{fullroute} ) {

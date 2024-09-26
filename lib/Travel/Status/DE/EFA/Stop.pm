@@ -11,6 +11,7 @@ our $VERSION = '2.02';
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
 	qw(sched_arr rt_arr arr
 	  sched_dep rt_dep dep
+	  occupancy
 	  place name full_name id latlon
 	  platform niveau)
 );

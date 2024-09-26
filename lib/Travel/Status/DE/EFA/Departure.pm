@@ -155,6 +155,7 @@ sub parse_route {
 				full_name => $stop->{name},
 				place     => $stop->{place},
 				name      => $stop->{nameWO},
+				occupancy => $stop->{occupancy},
 				platform  => $ref->{platform} || $stop->{platformName} || undef,
 			)
 		);
