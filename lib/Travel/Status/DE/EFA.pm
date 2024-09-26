@@ -229,6 +229,8 @@ sub new {
 	};
 
 	if ( $opt{stopseq} ) {
+
+		# outputFormat => 'JSON' also works; leads to different output
 		$self->{post} = {
 			line              => $opt{stopseq}{stateless},
 			stop              => $opt{stopseq}{stop_id},
