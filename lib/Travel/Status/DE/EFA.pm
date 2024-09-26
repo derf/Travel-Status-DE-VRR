@@ -376,8 +376,14 @@ sub stops {
 		return @{ $self->{stops} };
 	}
 
+	my $stops = $self->{response}{dm}{itdOdvAssignedStops} // [];
+
+	if ( ref($stops) eq 'HASH' ) {
+		$stops = [$stops];
+	}
+
 	my @stops;
-	for my $stop ( @{ $self->{response}{dm}{itdOdvAssignedStops} // [] } ) {
+	for my $stop ( @{$stops} ) {
 		push(
 			@stops,
 			Travel::Status::DE::EFA::Stop->new(
