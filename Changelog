@@ -4,11 +4,13 @@ git HEAD
     * Switch API language from XML to JSON
     * Rename Travel::Status::DE::EFA::Result to Travel::Status::DE::EFA::Departure
     * EFA: Remove "identified_data" accessor (not supported by JSON backends)
-    * Result/Departure: Remove "info" accessor
     * Result/Departure: Add "hints" accessor
-    * Stop: Remove "name_suf" accessor
+    * Result/Departure: Remove "info" accessor; use "hints" instead
     * Stop: Add "place", "full_name" and "occupancy" accessors
+    * Stop: Remove "name_suf" accessor; use "name" instead
     * Line: Add "number" accessor
+    * EFA: Remove "get_efa_urls" and "get_service" functions; use the newly
+      introduced Travel::Status::DE::EFA::Services package instead.
     * efa-m: -Oa, -Ob, -Of: show per-stop occupancy, if available
 
 Travel::Status::DE::VRR 2.02 - Sun May 19 2024

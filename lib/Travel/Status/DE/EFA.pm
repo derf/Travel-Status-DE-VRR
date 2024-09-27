@@ -12,78 +12,12 @@ use DateTime;
 use DateTime::Format::Strptime;
 use Encode qw(encode);
 use JSON;
-use Travel::Status::DE::EFA::Line;
 use Travel::Status::DE::EFA::Departure;
+use Travel::Status::DE::EFA::Line;
+use Travel::Status::DE::EFA::Services;
 use Travel::Status::DE::EFA::Stop;
 use Travel::Status::DE::EFA::Trip;
 use LWP::UserAgent;
-
-my %efa_instance = (
-	BSVG => {
-		url  => 'https://bsvg.efa.de/bsvagstd',
-		name => 'Braunschweiger Verkehrs-GmbH',
-	},
-	DING => {
-		url  => 'https://www.ding.eu/ding3',
-		name => 'Donau-Iller Nahverkehrsverbund',
-	},
-	KVV => {
-		url  => 'https://projekte.kvv-efa.de/sl3-alone',
-		name => 'Karlsruher Verkehrsverbund',
-	},
-	LinzAG => {
-		url      => 'https://www.linzag.at/static',
-		name     => 'Linz AG',
-		encoding => 'iso-8859-15',
-	},
-	MVV => {
-		url  => 'https://efa.mvv-muenchen.de/mobile',
-		name => 'Münchner Verkehrs- und Tarifverbund',
-	},
-	NVBW => {
-		url  => 'https://www.efa-bw.de/nvbw',
-		name => 'Nahverkehrsgesellschaft Baden-Württemberg',
-	},
-	VAG => {
-		url  => 'https://efa.vagfr.de/vagfr3',
-		name => 'Freiburger Verkehrs AG',
-	},
-	VGN => {
-		url  => 'https://efa.vgn.de/vgnExt_oeffi',
-		name => 'Verkehrsverbund Grossraum Nuernberg',
-	},
-
-	# HTTPS: certificate verification fails
-	VMV => {
-		url  => 'http://efa.vmv-mbh.de/vmv',
-		name => 'Verkehrsgesellschaft Mecklenburg-Vorpommern',
-	},
-	VRN => {
-		url  => 'https://www.vrn.de/mngvrn/',
-		name => 'Verkehrsverbund Rhein-Neckar',
-	},
-	VRR => {
-		url  => 'https://efa.vrr.de/vrr',
-		name => 'Verkehrsverbund Rhein-Ruhr',
-	},
-	VRR2 => {
-		url  => 'https://app.vrr.de/standard',
-		name => 'Verkehrsverbund Rhein-Ruhr (alternative)',
-	},
-	VRR3 => {
-		url  => 'https://efa.vrr.de/rbgstd3',
-		name => 'Verkehrsverbund Rhein-Ruhr (alternative alternative)',
-	},
-	VVO => {
-		url  => 'https://efa.vvo-online.de/VMSSL3',
-		name => 'Verkehrsverbund Oberelbe',
-	},
-	VVS => {
-		url  => 'https://www2.vvs.de/vvs',
-		name => 'Verkehrsverbund Stuttgart',
-	},
-
-);
 
 sub new_p {
 	my ( $class, %opt ) = @_;
@@ -153,22 +87,27 @@ sub new {
 		confess('type must be stop, stopID, address, or poi');
 	}
 
-	if ( $opt{service} and exists $efa_instance{ $opt{service} } ) {
-		$opt{efa_url} = $efa_instance{ $opt{service} }{url};
-		if ( $opt{stopseq} ) {
-			$opt{efa_url} .= '/XML_STOPSEQCOORD_REQUEST';
+	if ( $opt{service} ) {
+		if ( my $service
+			= Travel::Status::DE::EFA::Services::get_service( $opt{service} ) )
+		{
+			$opt{efa_url} = $service->{url};
+			if ( $opt{stopseq} ) {
+				$opt{efa_url} .= '/XML_STOPSEQCOORD_REQUEST';
+			}
+			else {
+				$opt{efa_url} .= '/XML_DM_REQUEST';
+			}
+			$opt{time_zone} //= $service->{time_zone};
 		}
-		else {
-			$opt{efa_url} .= '/XML_DM_REQUEST';
-		}
-		$opt{time_zone} //= $efa_instance{ $opt{service} }{time_zone};
 	}
+
+	$opt{time_zone} //= 'Europe/Berlin';
 
 	if ( not $opt{efa_url} ) {
 		confess('service or efa_url must be specified');
 	}
-	my $dt = $opt{datetime}
-	  // DateTime->now( time_zone => $opt{time_zone} // 'Europe/Berlin' );
+	my $dt = $opt{datetime} // DateTime->now( time_zone => $opt{time_zone} );
 
 	## no critic (RegularExpressions::ProhibitUnusedCapture)
 	## no critic (Variables::ProhibitPunctuationVars)
@@ -216,11 +155,11 @@ sub new {
 		service        => $opt{service},
 		strp_stopseq   => DateTime::Format::Strptime->new(
 			pattern   => '%Y%m%d %H:%M',
-			time_zone => 'Europe/Berlin',
+			time_zone => $opt{time_zone},
 		),
 		strp_stopseq_s => DateTime::Format::Strptime->new(
 			pattern   => '%Y%m%d %H:%M:%S',
-			time_zone => 'Europe/Berlin',
+			time_zone => $opt{time_zone},
 		),
 
 		json => JSON->new->utf8,
@@ -465,18 +404,6 @@ sub result {
 	return Travel::Status::DE::EFA::Trip->new( json => $self->{response} );
 }
 
-# static
-sub get_efa_urls {
-	return map {
-		{ %{ $efa_instance{$_} }, shortname => $_ }
-	} sort keys %efa_instance;
-}
-
-sub get_service {
-	my ($service) = @_;
-	return $efa_instance{$service};
-}
-
 1;
 
 __END__
@@ -619,28 +546,6 @@ nothing (undef / empty list) otherwise.
 
 Returns a list of Travel::Status::DE::EFA::Departure(3pm) objects, each one describing
 one departure.
-
-=item Travel::Status::DE::EFA::get_efa_urls()
-
-Returns a list of known EFA entry points. Each list element is a hashref with
-the following elements.
-
-=over
-
-=item B<url>: service URL as passed to B<efa_url>
-
-=item B<name>: Name of the entity operating this service
-
-=item B<shortname>: Short name of the entity
-
-=item B<encoding>: Server-side encoding override for B<efa_encoding> (optional)
-
-=back
-
-=item Travel::Status::DE::EFA::service(I<$service>)
-
-Returns a hashref describing the service I<$service>, or undef if it is not
-known. See B<get_efa_urls> for the hashref layout.
 
 =back
 
