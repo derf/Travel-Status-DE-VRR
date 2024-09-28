@@ -32,17 +32,9 @@ sub new_p {
 
 	$self->{promise} = $opt{promise};
 
-	$self->{ua}->post_p( $self->{efa_url} => form => $self->{post} )->then(
+	$self->post_with_cache_p->then(
 		sub {
-			my ($tx) = @_;
-			if ( my $err = $tx->error ) {
-				$promise->reject(
-"POST $self->{efa_url} returned HTTP $err->{code} $err->{message}"
-				);
-				return;
-			}
-			my $content = $tx->res->body;
-
+			my ($content) = @_;
 			$self->{response} = $self->{json}->decode($content);
 
 			if ( $self->{developer_mode} ) {
@@ -149,6 +141,7 @@ sub new {
 	}
 
 	my $self = {
+		cache          => $opt{cache},
 		response       => $opt{from_json},
 		developer_mode => $opt{developer_mode},
 		efa_url        => $opt{efa_url},
@@ -218,6 +211,13 @@ sub new {
 		$self->{ua}->env_proxy;
 	}
 
+	if ( $self->{cache} ) {
+		$self->{cache_key}
+		  = $self->{efa_url} . '?'
+		  . join( '&',
+			map { $_ . '=' . $self->{post}{$_} } sort keys %{ $self->{post} } );
+	}
+
 	if ( $opt{async} ) {
 		return $self;
 	}
@@ -230,14 +230,14 @@ sub new {
 	}
 
 	if ( not $self->{response} ) {
-		my $response = $self->{ua}->post( $self->{efa_url}, $self->{post} );
+		my ( $response, $error ) = $self->post_with_cache;
 
-		if ( $response->is_error ) {
-			$self->{errstr} = $response->status_line;
+		if ($error) {
+			$self->{errstr} = $error;
 			return $self;
 		}
 
-		$self->{response} = $self->{json}->decode( $response->content );
+		$self->{response} = $self->{json}->decode($response);
 	}
 
 	if ( $self->{developer_mode} ) {
@@ -247,6 +247,94 @@ sub new {
 	$self->check_for_ambiguous();
 
 	return $self;
+}
+
+sub post_with_cache {
+	my ($self) = @_;
+	my $cache  = $self->{cache};
+	my $url    = $self->{efa_url};
+
+	if ( $self->{developer_mode} ) {
+		say 'POST ' . ( $self->{cache_key} // $url );
+	}
+
+	if ($cache) {
+		my $content = $cache->thaw( $self->{cache_key} );
+		if ($content) {
+			if ( $self->{developer_mode} ) {
+				say '  cache hit';
+			}
+			return ( ${$content}, undef );
+		}
+	}
+
+	if ( $self->{developer_mode} ) {
+		say '  cache miss';
+	}
+
+	my $reply = $self->{ua}->post( $url, $self->{post} );
+
+	if ( $reply->is_error ) {
+		return ( undef, $reply->status_line );
+	}
+	my $content = $reply->content;
+
+	if ($cache) {
+		$cache->freeze( $self->{cache_key}, \$content );
+	}
+
+	return ( $content, undef );
+}
+
+sub post_with_cache_p {
+	my ($self) = @_;
+	my $cache  = $self->{cache};
+	my $url    = $self->{efa_url};
+
+	if ( $self->{developer_mode} ) {
+		say 'POST ' . ( $self->{cache_key} // $url );
+	}
+
+	my $promise = $self->{promise}->new;
+
+	if ($cache) {
+		my $content = $cache->thaw( $self->{cache_key} );
+		if ($content) {
+			if ( $self->{developer_mode} ) {
+				say '  cache hit';
+			}
+			return $promise->resolve( ${$content} );
+		}
+	}
+
+	if ( $self->{developer_mode} ) {
+		say '  cache miss';
+	}
+
+	$self->{ua}->post_p( $url, form => $self->{post} )->then(
+		sub {
+			my ($tx) = @_;
+			if ( my $err = $tx->error ) {
+				$promise->reject(
+					"POST $url returned HTTP $err->{code} $err->{message}");
+				return;
+			}
+			my $content = $tx->res->body;
+			if ($cache) {
+				$cache->freeze( $self->{cache_key}, \$content );
+			}
+			$promise->resolve($content);
+			return;
+		}
+	)->catch(
+		sub {
+			my ($err) = @_;
+			$promise->reject($err);
+			return;
+		}
+	)->wait;
+
+	return $promise;
 }
 
 sub errstr {

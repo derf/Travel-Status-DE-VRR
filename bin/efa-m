@@ -16,6 +16,8 @@ use Travel::Status::DE::EFA;
 my $service = 'VRR';
 my $efa_url;
 my $efa_encoding;
+my $use_cache = 1;
+my $cache;
 my ( $date,        $time, $input_type, $list_lines, $offset, $relative_times );
 my ( $full_routes, $filter_via, $show_jid );
 my ( $timeout,     $developer_mode );
@@ -54,6 +56,7 @@ GetOptions(
 	'u|efa-url=s'                   => \$efa_url,
 	'v|via=s'                       => \$filter_via,
 	'V|track-via=s'                 => \$filter_via,
+	'cache!'                        => \$use_cache,
 	'version'                       => \&show_version,
 	'devmode'                       => \$developer_mode,
 
@@ -65,6 +68,21 @@ if ($list_services) {
 
 if ( @ARGV < 1 or @ARGV > 2 ) {
 	show_help(1);
+}
+
+if ($use_cache) {
+	my $cache_path = ( $ENV{XDG_CACHE_HOME} // "$ENV{HOME}/.cache" ) . '/efa-m';
+	eval {
+		require Cache::File;
+		$cache = Cache::File->new(
+			cache_root      => $cache_path,
+			default_expires => '90 seconds',
+			lock_level      => Cache::File::LOCK_LOCAL(),
+		);
+	};
+	if ($@) {
+		$cache = undef;
+	}
 }
 
 # --line=foo,bar support
@@ -130,6 +148,7 @@ sub new_efa {
 	my $res = Travel::Status::DE::EFA->new(
 		service        => $s,
 		efa_url        => $u,
+		cache          => $cache,
 		date           => $date,
 		developer_mode => $developer_mode,
 		efa_encoding   => $efa_encoding,
