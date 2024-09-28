@@ -9,8 +9,8 @@ git HEAD
     * Stop: Add "place", "full_name" and "occupancy" accessors
     * Stop: Remove "name_suf" accessor; use "name" instead
     * Line: Add "number" accessor
-    * EFA: Remove "get_efa_urls" and "get_service" functions; use the newly
-      introduced Travel::Status::DE::EFA::Services package instead.
+    * EFA: Remove static "get_efa_urls" function; use "get_service_ids" instead
+    * EFA: Add static "get_service_ids" function
     * efa-m: -Oa, -Ob, -Of: show per-stop occupancy, if available
 
 Travel::Status::DE::VRR 2.02 - Sun May 19 2024

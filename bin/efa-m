@@ -12,7 +12,6 @@ use Encode       qw(decode);
 use Getopt::Long qw(:config no_ignore_case bundling);
 use List::Util   qw(first max none);
 use Travel::Status::DE::EFA;
-use Travel::Status::DE::EFA::Services;
 
 my $service = 'VRR';
 my $efa_url;
@@ -113,7 +112,7 @@ if ($efa_url) {
 	$service = undef;
 }
 elsif ($service) {
-	my $service_ref = Travel::Status::DE::EFA::Services::get_service($service);
+	my $service_ref = Travel::Status::DE::EFA::get_service($service);
 	if ( not $service_ref ) {
 		printf STDERR (
 			"Error: Unknown service '%s'. See 'efa-m --list' for a "
@@ -157,9 +156,8 @@ sub show_help {
 
 sub show_services {
 	printf( "%-45s %-14s %s\n\n", 'service', 'abbr. (-s)', 'url (-u)' );
-	for my $shortname ( Travel::Status::DE::EFA::Services::get_service_ids() ) {
-		my $service
-		  = Travel::Status::DE::EFA::Services::get_service($shortname);
+	for my $shortname ( Travel::Status::DE::EFA::get_service_ids() ) {
+		my $service = Travel::Status::DE::EFA::get_service($shortname);
 		printf( "%-45s %-14s %s\n",
 			$service->{name}, $shortname, $service->{url} );
 	}
@@ -441,14 +439,13 @@ sub show_results {
 }
 
 if ( $discover or $discover_and_print ) {
-	for my $shortname ( Travel::Status::DE::EFA::Services::get_service_ids() ) {
+	for my $shortname ( Travel::Status::DE::EFA::get_service_ids() ) {
 		$efa = new_efa($shortname);
 		if ( $efa and not $efa->errstr ) {
 			if ($discover_and_print) {
 				last;
 			}
-			my $service_ref
-			  = Travel::Status::DE::EFA::Services::get_service($shortname);
+			my $service_ref = Travel::Status::DE::EFA::get_service($shortname);
 			printf(
 				"%s / %s (%s)\n   ->  efa-m -s %s %s\n\n",
 				$service_ref->{name}, $shortname, $service_ref->{url},

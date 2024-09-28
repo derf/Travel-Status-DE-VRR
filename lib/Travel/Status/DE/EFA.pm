@@ -404,6 +404,16 @@ sub result {
 	return Travel::Status::DE::EFA::Trip->new( json => $self->{response} );
 }
 
+# static
+sub get_service_ids {
+	return Travel::Status::DE::EFA::Services::get_service_ids(@_);
+}
+
+# static
+sub get_service {
+	return Travel::Status::DE::EFA::Services::get_service(@_);
+}
+
 1;
 
 __END__
@@ -546,6 +556,41 @@ nothing (undef / empty list) otherwise.
 
 Returns a list of Travel::Status::DE::EFA::Departure(3pm) objects, each one describing
 one departure.
+
+=item Travel::Status::DE::EFA::get_service_ids()
+
+Returns the list of supported services (backends).
+
+=item Travel::Status::DE::EFA::get_service(I<service>)
+
+Returns a hashref describing the requested I<service> ID with the following keys.
+
+=over
+
+=item B<name> => I<string>
+
+Provider name, e.g. Verkehrsverbund Oberelbe.
+
+=item B<url> => I<string>
+
+Backend base URL.
+
+=item B<homepage> => I<string> (optional)
+
+Provider homepage.
+
+=item B<languages> => I<arrayref> (optional)
+
+Supportde languages, e.g. de, en.
+
+=item B<coverage> => I<hashref>
+
+Area in which the  service  provides  near-optimal  coverage.  Typically,  this
+means  a (nearly)  complete  list  of  departures  and  real-time  data.  The
+hashref contains two optional keys: B<area> (GeoJSON) and B<regions> (list of
+strings, e.g. "DE" or "CH-BE").
+
+=back
 
 =back
 
