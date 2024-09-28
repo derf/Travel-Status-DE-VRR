@@ -426,7 +426,9 @@ sub show_results {
 		if ($show_jid) {
 			$output_line[2] .= sprintf( '  %s@%d(%s)%d',
 				$d->stateless =~ s{ }{}gr,
-				$d->stop_id, $d->sched_datetime->strftime('%Y%m%d'), $d->key );
+				scalar $d->route_pre ? ( $d->route_pre )[0]->id : $d->stop_id,
+				$d->sched_datetime->strftime('%Y%m%d'),
+				$d->key );
 		}
 
 		if ( $edata{route} ) {
