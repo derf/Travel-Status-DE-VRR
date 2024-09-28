@@ -31,12 +31,16 @@ sub load_instance {
 	return %ret;
 }
 
+# GVH: 403
+# Rolph: 404
+# VRT: Encoding issues
 my %efa_instance = (
 	BSVG => {
 		url  => 'https://bsvg.efa.de/bsvagstd',
 		name => 'Braunschweiger Verkehrs-GmbH',
 	},
-	DING => {
+	bwegt => { load_instance('de/bwegt') },
+	DING  => {
 		url  => 'https://www.ding.eu/ding3',
 		name => 'Donau-Iller Nahverkehrsverbund',
 	},
@@ -46,10 +50,7 @@ my %efa_instance = (
 		name     => 'Linz AG',
 		encoding => 'iso-8859-15',
 	},
-	MVV => {
-		url  => 'https://efa.mvv-muenchen.de/mobile',
-		name => 'Münchner Verkehrs- und Tarifverbund',
-	},
+	MVV  => { load_instance('de/mvv') },
 	NVBW => {
 		url  => 'https://www.efa-bw.de/nvbw',
 		name => 'Nahverkehrsgesellschaft Baden-Württemberg',
@@ -58,40 +59,26 @@ my %efa_instance = (
 		url  => 'https://efa.vagfr.de/vagfr3',
 		name => 'Freiburger Verkehrs AG',
 	},
-	VGN => {
-		url  => 'https://efa.vgn.de/vgnExt_oeffi',
-		name => 'Verkehrsverbund Grossraum Nuernberg',
-	},
-
-	# HTTPS: certificate verification fails
-	VMV => {
-		url  => 'http://efa.vmv-mbh.de/vmv',
-		name => 'Verkehrsgesellschaft Mecklenburg-Vorpommern',
-	},
+	VGN =>
+	  { load_instance( 'de/vgn', url => 'https://efa.vgn.de/vgnExt_oeffi' ) },
+	VMV => { load_instance('de/vmv') },
 	VRN => {
 		url  => 'https://www.vrn.de/mngvrn/',
 		name => 'Verkehrsverbund Rhein-Neckar',
 	},
 	VRR => {
-		url  => 'https://efa.vrr.de/vrr',
-		name => 'Verkehrsverbund Rhein-Ruhr',
+		load_instance(
+			'de/vrr',
+			url => 'https://efa.vrr.de/vrr',
+		),
 	},
-	VRR2 => {
-		url  => 'https://app.vrr.de/standard',
-		name => 'Verkehrsverbund Rhein-Ruhr (alternative)',
-	},
-	VRR3 => {
-		url  => 'https://efa.vrr.de/rbgstd3',
-		name => 'Verkehrsverbund Rhein-Ruhr (alternative alternative)',
-	},
-	VVO => {
+	VRR2 => { load_instance('de/vrr') },
+	VRR3 => { load_instance( 'de/vrr', url => 'https://efa.vrr.de/rbgstd3' ) },
+	VVO  => {
 		url  => 'https://efa.vvo-online.de/VMSSL3',
 		name => 'Verkehrsverbund Oberelbe',
 	},
-	VVS => {
-		url  => 'https://www2.vvs.de/vvs',
-		name => 'Verkehrsverbund Stuttgart',
-	},
+	VVS => { load_instance('de/vvs') },
 
 );
 
