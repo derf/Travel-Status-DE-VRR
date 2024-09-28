@@ -71,7 +71,8 @@ if ( @ARGV < 1 or @ARGV > 2 ) {
 }
 
 if ($use_cache) {
-	my $cache_path = ( $ENV{XDG_CACHE_HOME} // "$ENV{HOME}/.cache" ) . '/efa-m';
+	my $cache_path = ( $ENV{XDG_CACHE_HOME} // "$ENV{HOME}/.cache" )
+	  . '/Travel-Status-DE-EFA';
 	eval {
 		require Cache::File;
 		$cache = Cache::File->new(
