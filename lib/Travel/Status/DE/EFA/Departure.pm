@@ -5,6 +5,7 @@ use warnings;
 use 5.010;
 
 use DateTime;
+use List::Util qw(any);
 use Travel::Status::DE::EFA::Stop;
 
 use parent 'Class::Accessor';
@@ -230,11 +231,11 @@ sub route_interesting {
 
 		while ( @via_show < $max_parts and @via_main ) {
 			my $stop = shift(@via_main);
-
-			# FIXME cannot smartmatch $stop since it became an object
-			#			if ( $stop ~~ \@via_show or $stop == $last_stop ) {
-			#				next;
-			#			}
+			if ( any { $_->name eq $stop->name } @via_show
+				or $stop->name eq $last_stop->name )
+			{
+				next;
+			}
 			push( @via_show, $stop );
 		}
 	}
