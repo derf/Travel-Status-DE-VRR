@@ -197,7 +197,7 @@ sub route_interesting {
 
 	for my $stop (@via) {
 		if (
-			$stop->name_suf =~ m{ Bf | Hbf | Flughafen | Hauptbahnhof
+			$stop->name =~ m{ Bf | Hbf | Flughafen | [Bb]ahnhof
 				| Krankenhaus | Klinik | (?: S $ ) }ox
 		  )
 		{
