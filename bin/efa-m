@@ -4,7 +4,7 @@ use warnings;
 use 5.010;
 use utf8;
 
-our $VERSION = '2.02';
+our $VERSION = '3.00';
 
 binmode( STDOUT, ':encoding(utf-8)' );
 
@@ -521,7 +521,7 @@ B<efa-m> [B<-Lr>] [B<-d> I<dd.mm.yyyy>] [B<-t> I<hh:mm>]
 
 =head1 VERSION
 
-version 2.02
+version 3.00
 
 =head1 DESCRIPTION
 

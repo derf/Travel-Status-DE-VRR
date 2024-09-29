@@ -9,7 +9,7 @@ use Travel::Status::DE::EFA::Stop;
 
 use parent 'Class::Accessor';
 
-our $VERSION = '2.02';
+our $VERSION = '3.00';
 
 Travel::Status::DE::EFA::Trip->mk_ro_accessors(
 	qw(operator name line number type id dest_name dest_id));

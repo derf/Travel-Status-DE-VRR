@@ -6,7 +6,7 @@ use 5.010;
 
 use parent 'Class::Accessor';
 
-our $VERSION = '2.02';
+our $VERSION = '3.00';
 
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
 	qw(sched_arr rt_arr arr
@@ -55,7 +55,7 @@ in a Travel::Status::DE::EFA::Result's route
 
 =head1 VERSION
 
-version 2.02
+version 3.00
 
 =head1 DESCRIPTION
 
