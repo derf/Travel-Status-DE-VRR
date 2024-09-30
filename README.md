@@ -133,6 +133,9 @@ If you are using the Git repository, use the following commands:
 sudo ./Build install
 ```
 
+Note that system-wide installation does not have a well-defined uninstallation
+procedure.
+
 If you do not have superuser rights or do not want to perform a system-wide
 installation, you may leave out `Build install` and use **efa-m** from the
 current working directory.
