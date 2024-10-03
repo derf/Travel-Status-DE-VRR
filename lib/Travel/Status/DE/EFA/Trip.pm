@@ -109,6 +109,9 @@ sub route {
 sub TO_JSON {
 	my ($self) = @_;
 
+	# lazy loading
+	$self->route;
+
 	my $ret = { %{$self} };
 
 	delete $ret->{strptime_obj};
