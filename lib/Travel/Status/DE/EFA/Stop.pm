@@ -9,9 +9,9 @@ use parent 'Class::Accessor';
 our $VERSION = '3.01';
 
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
-	qw(sched_arr rt_arr arr
-	  sched_dep rt_dep dep
-	  occupancy
+	qw(sched_arr rt_arr arr arr_delay
+	  sched_dep rt_dep dep dep_delay
+	  occupancy delay
 	  place name full_name id latlon
 	  platform niveau)
 );
@@ -23,6 +23,20 @@ sub new {
 
 	$ref->{arr} //= $ref->{rt_arr} // $ref->{sched_arr};
 	$ref->{dep} //= $ref->{rt_dep} // $ref->{sched_dep};
+
+	if ( $ref->{rt_arr} and $ref->{sched_arr} ) {
+		$ref->{arr_delay}
+		  = $ref->{rt_arr}->subtract_datetime( $ref->{sched_arr} )
+		  ->in_units('minutes');
+	}
+
+	if ( $ref->{rt_dep} and $ref->{sched_dep} ) {
+		$ref->{dep_delay}
+		  = $ref->{rt_dep}->subtract_datetime( $ref->{sched_dep} )
+		  ->in_units('minutes');
+	}
+
+	$ref->{delay} = $ref->{dep_delay} // $ref->{arr_delay};
 
 	return bless( $ref, $obj );
 }
