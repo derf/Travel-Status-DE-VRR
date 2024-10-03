@@ -30,7 +30,15 @@ sub new {
 sub TO_JSON {
 	my ($self) = @_;
 
-	return { %{$self} };
+	my $ret = { %{$self} };
+
+	for my $k (qw(sched_arr rt_arr arr sched_dep rt_dep dep)) {
+		if ( $ret->{$k} ) {
+			$ret->{$k} = $ret->{$k}->epoch;
+		}
+	}
+
+	return $ret;
 }
 
 1;

@@ -106,7 +106,11 @@ sub route {
 sub TO_JSON {
 	my ($self) = @_;
 
-	return { %{$self} };
+	my $ret = { %{$self} };
+
+	delete $ret->{strptime_obj};
+
+	return $ret;
 }
 
 1;

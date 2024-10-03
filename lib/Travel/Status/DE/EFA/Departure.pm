@@ -246,7 +246,18 @@ sub route_interesting {
 sub TO_JSON {
 	my ($self) = @_;
 
-	return { %{$self} };
+	my $ret = { %{$self} };
+
+	delete $ret->{strp_stopseq};
+	delete $ret->{strp_stopseq_s};
+
+	for my $k (qw(datetime rt_datetime sched_datetime)) {
+		if ( $ret->{$k} ) {
+			$ret->{$k} = $ret->{$k}->epoch;
+		}
+	}
+
+	return $ret;
 }
 
 1;
