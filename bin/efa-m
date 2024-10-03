@@ -587,6 +587,12 @@ May also be specified as I<dd.mm.>
 Probe all known EFA entry points for the specified stop. Print the URLs and
 names of all entry points which did not return an error.
 
+=item B<--json>
+
+Print result(s) as JSON and exit. This is a dump of internal data structures
+and not guaranteed to remain stable between minor versions. Please use the
+Travel::Status::DE::EFA(3pm) module if you need a proper API.
+
 =item B<-L>, B<--linelist>
 
 Do not show departures. Instead, list all lines serving the specified place.
