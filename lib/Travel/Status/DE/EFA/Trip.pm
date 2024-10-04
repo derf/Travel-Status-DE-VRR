@@ -68,7 +68,7 @@ sub route {
 
 	for my $stop ( @{ $self->{route_raw} // [] } ) {
 		my $chain = $stop;
-		my ( $platform, $place, $name, $name_full );
+		my ( $platform, $place, $name, $name_full, $stop_id );
 		while ( $chain->{type} ) {
 			if ( $chain->{type} eq 'platform' ) {
 				$platform = $chain->{properties}{platformName}
@@ -77,6 +77,7 @@ sub route {
 			elsif ( $chain->{type} eq 'stop' ) {
 				$name      = $chain->{disassembledName};
 				$name_full = $chain->{name};
+				$stop_id   = $chain->{properties}{stopId};
 			}
 			elsif ( $chain->{type} eq 'locality' ) {
 				$place = $chain->{name};
@@ -97,6 +98,7 @@ sub route {
 				niveau    => $stop->{niveau},
 				platform  => $platform,
 				id        => $stop->{id},
+				stop_id   => $stop_id,
 			)
 		);
 	}

@@ -394,6 +394,12 @@ sub stop_name {
 	return $self->{response}{dm}{points}{point}{name};
 }
 
+sub stop_id {
+	my ($self) = @_;
+
+	return $self->{response}{dm}{points}{point}{stateless};
+}
+
 sub stops {
 	my ($self) = @_;
 

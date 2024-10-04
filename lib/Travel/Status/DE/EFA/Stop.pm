@@ -12,7 +12,7 @@ Travel::Status::DE::EFA::Stop->mk_ro_accessors(
 	qw(sched_arr rt_arr arr arr_delay
 	  sched_dep rt_dep dep dep_delay
 	  occupancy delay
-	  place name full_name id latlon
+	  place name full_name id stop_id latlon
 	  platform niveau)
 );
 
