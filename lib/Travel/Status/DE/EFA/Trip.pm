@@ -38,6 +38,9 @@ sub new {
 			time_zone => 'UTC'
 		),
 	};
+	if ( ref( $ref->{polyline} ) eq 'ARRAY' and @{ $ref->{polyline} } == 1 ) {
+		$ref->{polyline} = $ref->{polyline}[0];
+	}
 	return bless( $ref, $obj );
 }
 
