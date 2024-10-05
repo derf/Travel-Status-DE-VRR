@@ -653,6 +653,17 @@ nothing (undef / empty list) otherwise.
 Returns a list of B<place> candidates if I<place> is ambiguous. Returns
 nothing (undef / empty list) otherwise.
 
+=item $status->stop
+
+Returns a Travel::Status::DE::EFA::Stop(3pm) instance describing the requested
+stop.
+
+=item $status->stops
+
+In case the requested place/name is served by multiple stops and the backend
+provides a list of those: returns a list of Travel::Status::DE::EFA::Stop(3pm)
+instances describing each of them. Returns an empty list otherwise.
+
 =item $status->results
 
 Returns a list of Travel::Status::DE::EFA::Departure(3pm) objects, each one describing
