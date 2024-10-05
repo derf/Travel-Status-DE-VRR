@@ -522,13 +522,15 @@ __END__
 
 =head1 NAME
 
-efa-m - Unofficial interface to the efa.vrr.de departure monitor
+efa-m - Unofficial interface to the efa.vrr.de departure and trip monitor
 
 =head1 SYNOPSIS
 
-B<efa-m> [B<-Lr>] [B<-d> I<dd.mm.yyyy>] [B<-t> I<hh:mm>]
-[B<-l> I<lines>] [B<-p> I<platforms>] [B<-u> I<url>]
+B<efa-m> [B<-jLr>] [B<-d> I<dd.mm.yyyy>] [B<-t> I<hh:mm>]
+[B<-l> I<lines>] [B<-p> I<platforms>] [B<-s> I<service>]
 [I<city>] [I<type>B<:>]I<name>
+
+B<efa-m> [B<-s> I<service>] I<tripid>
 
 =head1 VERSION
 
@@ -536,9 +538,10 @@ version 3.01
 
 =head1 DESCRIPTION
 
-B<efa-m> lists scheduled tram, bus and train departures at the location I<name>.
+B<efa-m> lists scheduled departures at location I<name> or details about the
+trip <tripid>.
 
-For each departure, it shows
+In departure monitor mode, for each departure, it shows
 
 =over
 
@@ -564,6 +567,9 @@ but C<< efa "E Hbf" >> does not.
 By default, I<name> refers to a stop, this can be changed by specifying
 I<type>.  Supported types are B<address> and B<poi> (point of interest).
 
+In trip details mode, it prints trip information and lists arrival and
+departure time, name, and platform of each stop on the trip's route.
+
 =head1 OPTIONS
 
 =over
@@ -586,6 +592,10 @@ May also be specified as I<dd.mm.>
 
 Probe all known EFA entry points for the specified stop. Print the URLs and
 names of all entry points which did not return an error.
+
+=item B<-j>, B<--with-jid>
+
+Show journey IDs for each
 
 =item B<--json>
 
