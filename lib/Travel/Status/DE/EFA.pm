@@ -379,7 +379,7 @@ sub check_for_ambiguous {
 		}
 		if ( $m->{name} eq 'error' and $m->{value} eq 'place list' ) {
 			$self->{errstr} = "ambiguous name parameter";
-			$self->{name_candidates}
+			$self->{place_candidates}
 			  = [ map { $_->{name} } @{ $json->{dm}{points} // [] } ];
 			return;
 		}
