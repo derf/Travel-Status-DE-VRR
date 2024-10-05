@@ -369,8 +369,8 @@ sub show_results {
 			say $stop->full_name;
 		}
 	}
-	elsif ( $efa->stop_name ) {
-		say $efa->stop_name;
+	elsif ( $efa->stop->full_name ) {
+		say $efa->stop->full_name;
 	}
 
 	for my $d ( $efa->results ) {

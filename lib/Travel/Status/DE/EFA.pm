@@ -388,16 +388,23 @@ sub check_for_ambiguous {
 	return;
 }
 
-sub stop_name {
+sub stop {
 	my ($self) = @_;
+	if ( $self->{stop} ) {
+		return $self->{stop};
+	}
 
-	return $self->{response}{dm}{points}{point}{name};
-}
+	my $point = $self->{response}{dm}{points}{point};
+	my $place = $point->{ref}{place};
 
-sub stop_id {
-	my ($self) = @_;
+	$self->{stop} = Travel::Status::DE::EFA::Stop->new(
+		place     => $place,
+		full_name => $point->{name},
+		name      => $point->{name} =~ s{\Q$place\E,? ?}{}r,
+		id        => $point->{stateless},
+	);
 
-	return $self->{response}{dm}{points}{point}{stateless};
+	return $self->{stop};
 }
 
 sub stops {
