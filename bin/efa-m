@@ -464,7 +464,7 @@ sub show_results {
 	if ( $edata{info} ) {
 		for my $info ( $efa->infos ) {
 			say q{};
-			if ( $info->subject ) {
+			if ( $info->subject and $info->subtitle ne $info->subject ) {
 				printf( "# %s\n%s\n", $info->subtitle, $info->subject );
 			}
 			else {
