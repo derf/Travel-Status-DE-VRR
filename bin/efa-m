@@ -123,6 +123,7 @@ for my $efield (@edata_pre) {
 	elsif ( $efield eq 'b' ) { $edata{route_before} = 1; $full_routes = 1 }
 	elsif ( $efield eq 'f' ) { $edata{fullroute}    = 1; $full_routes = 1 }
 	elsif ( $efield eq 'r' ) { $edata{route}        = 1; $full_routes = 1 }
+	elsif ( $efield eq 'i' ) { $edata{info}         = 1 }
 	elsif ( $efield eq 'm' ) { $edata{messages}     = 1 }
 	else                     { $edata{$efield}      = 1 }
 }
@@ -460,6 +461,18 @@ sub show_results {
 
 	display_result(@output);
 
+	if ( $edata{info} ) {
+		for my $info ( $efa->infos ) {
+			say q{};
+			if ( $info->subject ) {
+				printf( "# %s\n%s\n", $info->subtitle, $info->subject );
+			}
+			else {
+				printf( "# %s\n", $info->subtitle );
+			}
+		}
+	}
+
 	return;
 }
 
@@ -658,6 +671,12 @@ requested station.
 
 Show each departure's full route (timestamps and stop names) before and
 after the requested station.
+
+=item i / info
+
+Show station-specific information messages. These typically relate to
+construction work, broken elevators or escalators, or special announcements
+for large-scale events.
 
 =item r / route
 

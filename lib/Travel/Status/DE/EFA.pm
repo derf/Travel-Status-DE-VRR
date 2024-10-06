@@ -13,6 +13,7 @@ use DateTime::Format::Strptime;
 use Encode qw(encode);
 use JSON;
 use Travel::Status::DE::EFA::Departure;
+use Travel::Status::DE::EFA::Info;
 use Travel::Status::DE::EFA::Line;
 use Travel::Status::DE::EFA::Services;
 use Travel::Status::DE::EFA::Stop;
@@ -435,6 +436,23 @@ sub stops {
 
 	$self->{stops} = \@stops;
 	return @stops;
+}
+
+sub infos {
+	my ($self) = @_;
+
+	if ( $self->{infos} ) {
+		return @{ $self->{infos} };
+	}
+
+	for my $info ( @{ $self->{response}{dm}{points}{point}{infos} // [] } ) {
+		push(
+			@{ $self->{infos} },
+			Travel::Status::DE::EFA::Info->new( json => $info )
+		);
+	}
+
+	return @{ $self->{infos} // [] };
 }
 
 sub lines {
