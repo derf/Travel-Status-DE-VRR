@@ -45,9 +45,16 @@ __END__
 
 =head1 NAME
 
-Travel::Status::DE::EFA::Info - Information about a station
+Travel::Status::DE::EFA::Info - Information about a public transit stop
 
 =head1 SYNOPSIS
+
+    if ( $info->subject and $info->subtitle ne $info->subject ) {
+        printf( "# %s\n%s\n", $info->subtitle, $info->subject );
+    }
+    else {
+        printf( "# %s\n", $info->subtitle );
+    }
 
 =head1 VERSION
 
@@ -55,14 +62,40 @@ version 3.01
 
 =head1 DESCRIPTION
 
-Travel::Status::DE::EFA::Info describes a tram/bus/train line departing at the
-stop requested by Travel::Status::DE::EFA. Note that it only covers one
-direction, so in most cases, you get two Travel::Status::DE::EFA::Info objects
-per actual line.
+Travel::Status::DE::EFA::Info holds a single information message related to
+a specific public transit stop.
 
-=head1 METHODS
+=head1 ACCESSORS
 
-=head2 ACCESSORS
+All accessors may return undef.
+Individual accessors may return identical strings.
+Strings may contain HTML elements.
+
+=over
+
+=item $info->additional_text
+
+=item $info->content
+
+=item $info->link_url
+
+URL to a site related to this information message.
+The site may or may not hold additional data.
+
+=item $info->link_text
+
+Text for linking to link_url.
+
+=item $info->param
+
+Hashref of parameters, e.g. C<< incidentDateTime >> (string describing the
+date/time range during which this message is valid).
+
+=item $info->subject
+
+=item $info->subtitle
+
+=back
 
 =head1 DIAGNOSTICS
 
@@ -75,10 +108,6 @@ None.
 =item Class::Accessor(3pm)
 
 =back
-
-=head1 BUGS AND LIMITATIONS
-
-The B<route> accessor returns a simple string, an array might be better suited.
 
 =head1 SEE ALSO
 
