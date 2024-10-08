@@ -150,9 +150,11 @@ sub parse_route {
 		push(
 			@ret,
 			Travel::Status::DE::EFA::Stop->new(
-				arr       => $arr,
-				dep       => $dep,
-				id        => $stop->{ref}{id},
+				sched_arr => $arr,
+				sched_dep => $dep,
+				arr_delay => $ref->{arrValid} ? $ref->{arrDelay} : undef,
+				dep_delay => $ref->{depValid} ? $ref->{depDelay} : undef,
+				id        => $ref->{id},
 				full_name => $stop->{name},
 				place     => $stop->{place},
 				name      => $stop->{nameWO},
