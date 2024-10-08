@@ -21,16 +21,32 @@ sub new {
 
 	my $ref = \%conf;
 
+	if ( $ref->{sched_arr} and $ref->{arr_delay} and not $ref->{rt_arr} ) {
+		$ref->{rt_arr}
+		  = $ref->{sched_arr}->clone->add( minutes => $ref->{arr_delay} );
+	}
+
+	if ( $ref->{sched_dep} and $ref->{dep_delay} and not $ref->{rt_dep} ) {
+		$ref->{rt_dep}
+		  = $ref->{sched_dep}->clone->add( minutes => $ref->{dep_delay} );
+	}
+
 	$ref->{arr} //= $ref->{rt_arr} // $ref->{sched_arr};
 	$ref->{dep} //= $ref->{rt_dep} // $ref->{sched_dep};
 
-	if ( $ref->{rt_arr} and $ref->{sched_arr} ) {
+	if (    $ref->{rt_arr}
+		and $ref->{sched_arr}
+		and not defined $ref->{arr_delay} )
+	{
 		$ref->{arr_delay}
 		  = $ref->{rt_arr}->subtract_datetime( $ref->{sched_arr} )
 		  ->in_units('minutes');
 	}
 
-	if ( $ref->{rt_dep} and $ref->{sched_dep} ) {
+	if (    $ref->{rt_dep}
+		and $ref->{sched_dep}
+		and not defined $ref->{dep_delay} )
+	{
 		$ref->{dep_delay}
 		  = $ref->{rt_dep}->subtract_datetime( $ref->{sched_dep} )
 		  ->in_units('minutes');
