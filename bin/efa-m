@@ -215,40 +215,47 @@ sub format_route {
 		}
 		my $occupancy
 		  = $stop->occupancy ? format_occupancy( $stop->occupancy ) : q{ };
+		my $delay = q{     };
+		if ( $stop->delay ) {
+			$delay = sprintf( '(%+3d)', $stop->delay );
+		}
 		if ( defined $stop->arr and defined $stop->dep ) {
 			if ( $stop->arr->epoch == $stop->dep->epoch ) {
 				$output .= sprintf(
-					"    %5s      %s %40s %s\n",
+					"    %5s      %s %s %35s %s\n",
 					$stop->arr->strftime('%H:%M'),
-					$occupancy, $stop->full_name, $stop->platform,
+					$delay, $occupancy, $stop->full_name, $stop->platform,
 				);
 			}
 			else {
 				$output .= sprintf(
-					"%5s → %5s  %s %40s %s\n",
+					"%5s → %5s  %s %s %35s %s\n",
 					$stop->arr->strftime('%H:%M'),
 					$stop->dep->strftime('%H:%M'),
-					$occupancy, $stop->full_name, $stop->platform,
+					$delay,
+					$occupancy,
+					$stop->full_name,
+					$stop->platform,
 				);
 			}
 		}
 		elsif ( defined $stop->arr ) {
 			$output .= sprintf(
-				"%5s          %s %40s %s\n",
+				"%5s          %s %s %35s %s\n",
 				$stop->arr->strftime('%H:%M'),
-				$occupancy, $stop->full_name, $stop->platform,
+				$delay, $occupancy, $stop->full_name, $stop->platform,
 			);
 		}
 		elsif ( defined $stop->dep ) {
 			$output .= sprintf(
-				"        %5s  %s %40s %s\n",
+				"        %5s  %s %s %35s %s\n",
 				$stop->dep->strftime('%H:%M'),
-				$occupancy, $stop->full_name, $stop->platform,
+				$delay, $occupancy, $stop->full_name, $stop->platform,
 			);
 		}
 		elsif ( $stop->full_name ) {
-			$output .= sprintf( "               %s %40s %s\n",
-				$occupancy, $stop->full_name, $stop->platform, );
+			$output .= sprintf( "               %s %s %35s %s\n",
+				$delay, $occupancy, $stop->full_name, $stop->platform, );
 		}
 		else {
 			$output .= "?\n";
