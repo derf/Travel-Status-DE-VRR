@@ -599,6 +599,8 @@ B<efa-m> [B<-jLr>] [B<-d> I<dd.mm.yyyy>] [B<-t> I<hh:mm>]
 [B<-l> I<lines>] [B<-p> I<platforms>] [B<-s> I<service>]
 [I<city>] [I<type>B<:>]I<name>
 
+B<efa-m> [B<-s> I<service>] B<?>I<query>|I<lat>B<:>I<lon>
+
 B<efa-m> [B<-s> I<service>] I<tripid>
 
 =head1 VERSION
@@ -607,14 +609,20 @@ version 3.01
 
 =head1 DESCRIPTION
 
-B<efa-m> lists scheduled departures at location I<name> or details about the
-trip <tripid>.
+B<efa-m> is an interface to EFA public transport services.
 
-In departure monitor mode, for each departure, it shows
+It can serve as a departure monitor, request details about a specific
+trip/journey, and look up public transport stops by name or geolocation.
+The operating mode depends on the contents of its mandatory argument.
+
+=head2 Departure Monitor (I<name>)
+
+Shows departures it I<name> or I<city> I<name>. For each departure,
+B<efa-m> shows
 
 =over
 
-=item * scheduled departure time,
+=item * estimated departure time (including delay, if available),
 
 =item * delay in minutes,
 
@@ -636,14 +644,25 @@ but C<< efa "E Hbf" >> does not.
 By default, I<name> refers to a stop, this can be changed by specifying
 I<type>.  Supported types are B<address> and B<poi> (point of interest).
 
-In trip details mode, it prints trip information and lists arrival and
-departure time, name, and platform of each stop on the trip's route.
+=head2 Location Search (B<?>I<query>|I<lat>B<:>I<lon>)
+
+List stops that match I<query> or that are located in the vicinity of
+I<lat>B<:>I<lon> geocoordinates.
+
+=head2 Trip Details (I<JourneyID>)
+
+List trip information as well as arrival and departure time, name, and platform
+of each stop on the trip's route.
 
 =head1 OPTIONS
 
+Values in brackets indicate options that only apply to the corresponding
+operating mode(s).
+
+
 =over
 
-=item B<-A>, B<--auto-url>, B<--discover-and-print>
+=item B<-A>, B<--auto-url>, B<--discover-and-print> (monitor)
 
 Probe all known EFA entry points for the specified stop. Print the first
 result which was not an error.
@@ -652,19 +671,21 @@ Note that this may take a while and will not necessarily return the best
 result.  Also, using thi option by default is not recommended, as it puts EFA
 services under considerable additional load.
 
-=item B<-d>, B<--date> I<dd.mm.yyyy>
+=item B<-d>, B<--date> I<dd.mm.yyyy> (monitor)
 
 Show departures for I<date> instead of today.
 May also be specified as I<dd.mm.>
 
-=item B<-D>, B<--discover>
+=item B<-D>, B<--discover> (monitor)
 
 Probe all known EFA entry points for the specified stop. Print the URLs and
 names of all entry points which did not return an error.
 
-=item B<-j>, B<--with-jid>
+=item B<-j>, B<--with-jid> (monitor)
 
-Show journey IDs for each
+Show journey ID for each departure.
+The ID can be used to query details with a subsequent B<efa-m> invocation
+(trip details mode).
 
 =item B<--json>
 
@@ -672,14 +693,14 @@ Print result(s) as JSON and exit. This is a dump of internal data structures
 and not guaranteed to remain stable between minor versions. Please use the
 Travel::Status::DE::EFA(3pm) module if you need a proper API.
 
-=item B<-L>, B<--linelist>
+=item B<-L>, B<--linelist> (monitor)
 
 Do not show departures. Instead, list all lines serving the specified place.
 Note that this information may be incomplete -- only lines which are in
 service either at the time of the B<efa-m> call or at the time specifed
 using B<--date> and B<--time> are guaranteed to be included.
 
-=item B<-l>, B<--line> I<lines>
+=item B<-l>, B<--line> I<lines> (monitor)
 
 Only show departures of I<lines> (comma-separatad list, option may be
 repeated)
@@ -689,7 +710,7 @@ repeated)
 List supported EFA services with their URLs (see B<-u>) and abbreviations (see
 B<-s>).
 
-=item B<-m>, B<--mot> I<motlist>
+=item B<-m>, B<--mot> I<motlist> (monitor)
 
 Only show departures whose type appears in I<motlist> (comma-separated list,
 this option may be repeated).
@@ -698,11 +719,11 @@ The following departure types ("modes of transport") are supported:
 zug, s-bahn, u-bahn, stadtbahn, tram, stadtbus, regionalbus, schnellbus,
 seilbahn, schiff, ast, sonstige
 
-=item B<-o>, B<--offset> I<minutes>
+=item B<-o>, B<--offset> I<minutes> (monitor)
 
 Ignore departures which are less than I<minutes> from now.
 
-=item B<-O>, B<--output> I<outputtypes>
+=item B<-O>, B<--output> I<outputtypes> (monitor)
 
 For each result, show additional information as specified by I<outputtypes>.
 I<outputtypes> is a comma-separated list, the B<-O>/B<--output> option may
@@ -748,12 +769,12 @@ availability, delay reasons, and more.
 
 =back
 
-=item B<-p>, B<--platform> I<platforms>
+=item B<-p>, B<--platform> I<platforms> (monitor)
 
 Only show departures at I<platforms> (comma-separated list, option may be
 repeated).  Note that the C<< Bstg. >> / C<< Gleis >> prefix must be omitted.
 
-=item B<-r>, B<--relative>
+=item B<-r>, B<--relative> (monitor)
 
 Show relative departure times in minutes (i.e. the time difference between
 the departure and the time of the request).  In this case, realtime data is
@@ -764,7 +785,7 @@ already included.
 Short name of the EFA entry point. See Travel::Status::DE::EFA(3pm) and the
 B<--list> option for a list of services.
 
-=item B<-t>, B<--time> I<hh:mm>
+=item B<-t>, B<--time> I<hh:mm> (monitor)
 
 Show departures starting at I<time> instead of now.
 
@@ -773,7 +794,7 @@ Show departures starting at I<time> instead of now.
 Set timeout for HTTP requests. Default: 10 seconds. Set to 0 or a negative
 value to disable it.
 
-=item B<-v>, B<--via> I<station>
+=item B<-v>, B<--via> I<station> (monitor)
 
 Only show trains serving I<station> after the requseted stop, and show the
 arrival time at I<station> after the departure time at the current stop.
