@@ -192,7 +192,7 @@ sub new {
 		$self->{post} = {
 			locationServerActive => 1,
 			type_sf              => 'any',
-			name                 => $opt{stopfinder}{name},
+			name_sf              => $opt{stopfinder}{name},
 			anyObjFilter_sf      => 2,
 			coordOutputFormat    => 'WGS84[DD.DDDDD]',
 			outputFormat         => 'JSON',
@@ -536,6 +536,9 @@ sub results {
 	if ( $self->{post}{coord} ) {
 		return $self->results_coord;
 	}
+	elsif ( $self->{post}{name_sf} ) {
+		return $self->results_stopfinder;
+	}
 	else {
 		return $self->results_dm;
 	}
@@ -555,6 +558,29 @@ sub results_coord {
 				distance_m => $stop->{properties}{distance},
 				name       => $stop->{name},
 				id         => $stop->{id},
+			)
+		);
+	}
+
+	$self->{results} = \@results;
+
+	return @results;
+}
+
+sub results_stopfinder {
+	my ($self) = @_;
+	my $json = $self->{response};
+
+	my @results;
+	for my $stop ( @{ $json->{stopFinder}{points} // [] } ) {
+		push(
+			@results,
+			Travel::Status::DE::EFA::Stop->new(
+				place     => $stop->{ref}{place},
+				full_name => $stop->{name},
+				name      => $stop->{object},
+				id        => $stop->{stateless},
+				stop_id   => $stop->{ref}{gid},
 			)
 		);
 	}

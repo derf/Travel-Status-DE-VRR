@@ -325,6 +325,13 @@ sub show_coord {
 	}
 }
 
+sub show_stopfinder {
+	my $max_len = max map { length( $_->full_name ) } $efa->results;
+	for my $stop ( $efa->results ) {
+		printf( "%-${max_len}s  %s\n", $stop->full_name, $stop->id );
+	}
+}
+
 sub show_stopseq {
 	my $trip = $efa->result;
 
