@@ -11,7 +11,7 @@ our $VERSION = '3.01';
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
 	qw(sched_arr rt_arr arr arr_delay
 	  sched_dep rt_dep dep dep_delay
-	  occupancy delay
+	  occupancy delay distance_m
 	  place name full_name id stop_id latlon
 	  platform niveau)
 );
@@ -116,6 +116,11 @@ first scheduled stop.
 
 DateTime(3pm) object holding departure date and time. undef if this is the
 final scheduled stop.
+
+=item $stop->distance_m
+
+Distance from request coordinates in meters. undef if the object has not
+been obtained by means of a coord request.
 
 =item $stop->id
 

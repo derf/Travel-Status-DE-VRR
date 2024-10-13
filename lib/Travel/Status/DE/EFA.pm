@@ -71,7 +71,14 @@ sub new {
 		delete $opt{timeout};
 	}
 
-	if ( not( $opt{name} or $opt{stopseq} or $opt{from_json} ) ) {
+	if (
+		not(   $opt{coord}
+			or $opt{name}
+			or $opt{stopfinder}
+			or $opt{stopseq}
+			or $opt{from_json} )
+	  )
+	{
 		confess('You must specify a name');
 	}
 	if ( $opt{type}
@@ -85,7 +92,13 @@ sub new {
 			= Travel::Status::DE::EFA::Services::get_service( $opt{service} ) )
 		{
 			$opt{efa_url} = $service->{url};
-			if ( $opt{stopseq} ) {
+			if ( $opt{coord} ) {
+				$opt{efa_url} .= '/XML_COORD_REQUEST';
+			}
+			elsif ( $opt{stopfinder} ) {
+				$opt{efa_url} .= '/XML_STOPFINDER_REQUEST';
+			}
+			elsif ( $opt{stopseq} ) {
 				$opt{efa_url} .= '/XML_STOPSEQCOORD_REQUEST';
 			}
 			else {
@@ -159,7 +172,33 @@ sub new {
 		json => JSON->new->utf8,
 	};
 
-	if ( $opt{stopseq} ) {
+	if ( $opt{coord} ) {
+
+		# outputFormat => 'JSON' returns invalid JSON
+		$self->{post} = {
+			coord => sprintf( '%.7f:%.7f:%s',
+				$opt{coord}{lon}, $opt{coord}{lat}, 'WGS84[DD.ddddd]' ),
+			radius_1              => 1320,
+			type_1                => 'STOP',
+			coordListOutputFormat => 'list',
+			max                   => 30,
+			inclFilter            => 1,
+			outputFormat          => 'rapidJson',
+		};
+	}
+	elsif ( $opt{stopfinder} ) {
+
+		# filter: 2 (stop) | 4 (street) | 8 (address) | 16 (crossing) | 32 (poi) | 64 (postcod)
+		$self->{post} = {
+			locationServerActive => 1,
+			type_sf              => 'any',
+			name                 => $opt{stopfinder}{name},
+			anyObjFilter_sf      => 2,
+			coordOutputFormat    => 'WGS84[DD.DDDDD]',
+			outputFormat         => 'JSON',
+		};
+	}
+	elsif ( $opt{stopseq} ) {
 
 		# outputFormat => 'JSON' also works; leads to different output
 		$self->{post} = {
@@ -489,14 +528,47 @@ sub parse_line {
 
 sub results {
 	my ($self) = @_;
-	my @results;
 
 	if ( $self->{results} ) {
 		return @{ $self->{results} };
 	}
 
+	if ( $self->{post}{coord} ) {
+		return $self->results_coord;
+	}
+	else {
+		return $self->results_dm;
+	}
+}
+
+sub results_coord {
+	my ($self) = @_;
 	my $json = $self->{response};
 
+	my @results;
+	for my $stop ( @{ $json->{locations} // [] } ) {
+		push(
+			@results,
+			Travel::Status::DE::EFA::Stop->new(
+				place      => $stop->{parent}{name},
+				full_name  => $stop->{properties}{STOP_NAME_WITH_PLACE},
+				distance_m => $stop->{properties}{distance},
+				name       => $stop->{name},
+				id         => $stop->{id},
+			)
+		);
+	}
+
+	$self->{results} = \@results;
+
+	return @results;
+}
+
+sub results_dm {
+	my ($self) = @_;
+	my $json = $self->{response};
+
+	my @results;
 	for my $departure ( @{ $json->{departureList} // [] } ) {
 		push(
 			@results,
