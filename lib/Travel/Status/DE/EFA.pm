@@ -665,7 +665,9 @@ version 3.01
 Travel::Status::DE::EFA is an unofficial interface to EFA-based departure
 monitors.
 
-It reports all upcoming tram/bus/train departures at a given place.
+It can serve as a departure monitor, request details about a specific
+trip/journey, and look up public transport stops by name or geolocation.
+The operating mode depends on its constructor arguments.
 
 =head1 METHODS
 
@@ -673,9 +675,9 @@ It reports all upcoming tram/bus/train departures at a given place.
 
 =item my $status = Travel::Status::DE::EFA->new(I<%opt>)
 
-Requests the departures as specified by I<opts> and returns a new
-Travel::Status::DE::EFA object.  B<service> and B<name> are
-mandatory.  Dies if the wrong I<opts> were passed.
+Requests data as specified by I<opts> and returns a new Travel::Status::DE::EFA
+object. B<service> and exactly one of B<coord>, B<stopfinder>, B<stopseq> or
+B<name> are mandatory.  Dies if the wrong I<opts> were passed.
 
 Arguments:
 
@@ -687,6 +689,25 @@ EFA service. See C<< efa-m --list >> for known services.
 If you found a service not listed there, please notify
 E<lt>derf+efa@finalrewind.orgE<gt>.
 
+=item B<coord> => I<hashref>
+
+Look up stops in the vicinity of the given coordinates.  I<hashref> must
+contain a B<lon> and a B<lat> element providing WGS84 longitude/latitude.
+
+=item B<stopfinder> => { B<name> => I<name> }
+
+Look up stops matching I<name>.
+
+=item B<stopseq> => I<hashref>
+
+Look up trip details. I<hashref> must provide B<stateless> (line ID),
+B<stop_id> (stop ID used as start for the reported route), B<key> (line trip
+number), and B<date> (departure date as YYYYMMDD string).
+
+=item B<name> => I<name>
+
+List departure for address / point of interest / stop I<name>.
+
 =item B<place> => I<place>
 
 Name of the place/city
@@ -695,10 +716,6 @@ Name of the place/city
 
 Type of the following I<name>.  B<poi> means "point of interest".  Defaults to
 B<stop> (stop/station name).
-
-=item B<name> => I<name>
-
-address / poi / stop name to list departures for.
 
 =item B<datetime> => I<DateTime object>
 
@@ -782,8 +799,16 @@ instances describing each of them. Returns an empty list otherwise.
 
 =item $status->results
 
-Returns a list of Travel::Status::DE::EFA::Departure(3pm) objects, each one describing
-one departure.
+In departure monitor mode: returns a list of
+Travel::Status::DE::EFA::Departure(3pm) objects, each one describing one
+departure.
+
+In coord or stopfinder mode: returns a list of
+Travel::Status::DE::EFA::Stop(3pm) objects.
+
+=item $status->result
+
+In stopseq mode: Returns a Travel::Status::DE::EFA::Trip(3pm) object.
 
 =item Travel::Status::DE::EFA::get_service_ids()
 
