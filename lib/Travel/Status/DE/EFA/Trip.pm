@@ -18,7 +18,7 @@ Travel::Status::DE::EFA::Trip->mk_ro_accessors(
 sub new {
 	my ( $obj, %conf ) = @_;
 
-	my $json = $conf{json}{transportation};
+	my $json = $conf{json}{transportation} // $conf{json}{leg}{transportation};
 
 	my $ref = {
 		operator      => $json->{operator}{name},
@@ -32,7 +32,8 @@ sub new {
 		id        => $json->{id},
 		dest_name => $json->{destination}{name},
 		dest_id   => $json->{destination}{id},
-		route_raw => $json->{locationSequence},
+		route_raw => $json->{locationSequence}
+		  // $conf{json}{leg}{stopSequence},
 		strptime_obj => DateTime::Format::Strptime->new(
 			pattern   => '%Y-%m-%dT%H:%M:%SZ',
 			time_zone => 'UTC'
