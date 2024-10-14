@@ -629,7 +629,6 @@ sub get_service_ids {
 sub get_services {
 	my @services;
 	for my $service ( Travel::Status::DE::EFA::Services::get_service_ids() ) {
-		say $service;
 		my %desc
 		  = %{ Travel::Status::DE::EFA::Services::get_service($service) };
 		$desc{shortname} = $service;
