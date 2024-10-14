@@ -626,6 +626,18 @@ sub get_service_ids {
 	return Travel::Status::DE::EFA::Services::get_service_ids(@_);
 }
 
+sub get_services {
+	my @services;
+	for my $service ( Travel::Status::DE::EFA::Services::get_service_ids() ) {
+		say $service;
+		my %desc
+		  = %{ Travel::Status::DE::EFA::Services::get_service($service) };
+		$desc{shortname} = $service;
+		push( @services, \%desc );
+	}
+	return @services;
+}
+
 # static
 sub get_service {
 	return Travel::Status::DE::EFA::Services::get_service(@_);
@@ -844,6 +856,11 @@ hashref contains two optional keys: B<area> (GeoJSON) and B<regions> (list of
 strings, e.g. "DE" or "CH-BE").
 
 =back
+
+=item Travel::Status::DE::EFA::get_services()
+
+Returns a list of hashrefs describing all supported services. In addition
+to the keys listed above, each service contains a B<shortname> (service ID).
 
 =back
 
