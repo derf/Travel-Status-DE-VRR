@@ -105,17 +105,47 @@ delays or changed platforms are not taken into account.
 
 =head2 ACCESSORS
 
+Most accessors return undef if the corresponding data is not available.
+
 =over
+
+=item $stop->sched_arr
+
+DateTime(3pm) object holding scheduled arrival date and time.
+
+=item $stop->rt_arr
+
+DateTime(3pm) object holding estimated (real-time) arrival date and time.
 
 =item $stop->arr
 
-DateTime(3pm) object holding arrival date and time. undef if this is the
-first scheduled stop.
+DateTime(3pm) object holding arrival date and time. Real-time data if
+available, schedule data otherwise.
+
+=item $stop->arr_delay
+
+Arrival delay in minutes.
+
+=item $stop->sched_dep
+
+DateTime(3pm) object holding scheduled departure date and time.
+
+=item $stop->rt_dep
+
+DateTime(3pm) object holding estimated (real-time) departure date and time.
 
 =item $stop->dep
 
-DateTime(3pm) object holding departure date and time. undef if this is the
-final scheduled stop.
+DateTime(3pm) object holding departure date and time. Real-time data if
+available, schedule data otherwise.
+
+=item $stop->dep_delay
+
+Departure delay in minutes.
+
+=item $stop->delay
+
+Delay in minutes. Departure delya if available, arrival delay otherwise.
 
 =item $stop->distance_m
 
@@ -126,18 +156,27 @@ been obtained by means of a coord request.
 
 Stop ID.
 
+=item $stop->stop_id
+
+The other kind of stop ID.
+Yes, EFA has two.
+
 =item $stop->place
 
-City name, for instance "Essen".
+Place or city name, for instance "Essen".
 
 =item $stop->full_name
 
-stop name with city prefix ("I<City> I<Stop>", for instance
+stop name with place or city prefix ("I<City> I<Stop>", for instance
 "Essen RE<uuml>ttenscheider Stern").
 
 =item $stop->name
 
-stop name without city prefix, for instance "RE<uuml>ttenscheider Stern".
+stop name without place or city prefix, for instance "RE<uuml>ttenscheider Stern".
+
+=item $stop->latlon
+
+Arrayref describing the stop's latitude and longitude in WGS84 coordinates.
 
 =item $stop->platform
 
