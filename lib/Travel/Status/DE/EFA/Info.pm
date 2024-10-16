@@ -109,6 +109,11 @@ None.
 
 =back
 
+=head1 BUGS AND LIMITATIONS
+
+This module is a Work in Progress.
+Its API may change between minor versions.
+
 =head1 SEE ALSO
 
 Travel::Status::DE::EFA(3pm).

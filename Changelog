@@ -7,6 +7,8 @@ git HEAD
     * efa-m: Add -j / --with-jid option
     * efa-m -Oa, -Ob, -Of: Show delays
     * EFA, efa-m: Add stopfinder ("?foo") and stop search ("lat:lon") modes
+    * Info, Stop, Trip: Note that the API of these modules is not yet final
+      and may change between minor versions
 
 Travel::Status::DE::VRR 3.01 - Thu Oct 03 2024
 

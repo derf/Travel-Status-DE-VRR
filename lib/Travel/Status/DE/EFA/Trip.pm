@@ -242,7 +242,8 @@ None.
 
 =head1 BUGS AND LIMITATIONS
 
-This is a Work in Progress.
+This module is a Work in Progress.
+Its API may change between minor versions.
 
 =head1 SEE ALSO
 

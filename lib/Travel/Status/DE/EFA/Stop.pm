@@ -213,7 +213,8 @@ None.
 
 =head1 BUGS AND LIMITATIONS
 
-None known.
+This module is a Work in Progress.
+Its API may change between minor versions.
 
 =head1 SEE ALSO
 
