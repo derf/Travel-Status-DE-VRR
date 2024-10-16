@@ -126,3 +126,132 @@ sub TO_JSON {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Travel::Status::DE::EFA::Trip - Information about an individual public transit
+trip
+
+=head1 SYNOPSIS
+
+    printf( "%s %s -> %s\n", $trip->type, $trip->line // q{}, $trip->dest_name );
+    for my $stop ( $trip->route ) {
+        ...;
+    }
+
+=head1 VERSION
+
+version 3.01
+
+=head1 DESCRIPTION
+
+Travel::Status::DE::EFA::Trip describes a single trip / journey of a public
+transport line.
+
+=head1 METHODS
+
+=head2 ACCESSORS
+
+Most accessors return undef if the corresponding data is not available.
+
+=over
+
+=item $trip->operator
+
+Operator name.
+
+=item $trip->product
+
+Product name.
+
+=item $trip->product_class
+
+Product class.
+
+=item $trip->name
+
+Trip or line name.
+
+=item $trip->line
+
+Line identifier. Note that this is not necessarily numeric.
+
+=item $trip->number
+
+Trip/journey number.
+
+=item $trip->type
+
+Transport / vehicle type, e.g. "RE" or "Bus".
+
+=item $trip->id
+
+Unique(?) trip ID
+
+=item $trip->dest_name
+
+Name of the trip's destination stop
+
+=item $trip->dest_id
+
+ID of the trip's destination stop
+
+=item $trip->route
+
+List of Travel::Status::DE::EFA::Stop(3pm) objects describing the route of this
+trip.
+
+Note: The EFA API requires a stop to be specified when requesting trip details.
+The stops returned by this accessor appear to be limited to stops after the
+requested stop; earlier ones may be missing.
+
+=back
+
+=head2 INTERNAL
+
+=over
+
+=item $trip = Travel::Status::DE::EFA::Trip->new(I<%data>)
+
+Returns a new Travel::Status::DE::EFA::Trip object.  You should not need to
+call this.
+
+=item $trip->TO_JSON
+
+Allows the object data to be serialized to JSON.
+
+=back
+
+=head1 DIAGNOSTICS
+
+None.
+
+=head1 DEPENDENCIES
+
+=over
+
+=item Class::Accessor(3pm)
+
+=item DateTime::Format::Strptime(3pm)
+
+=item Travel::Status::DE::EFA::Stop(3pm)
+
+=back
+
+=head1 BUGS AND LIMITATIONS
+
+This is a Work in Progress.
+
+=head1 SEE ALSO
+
+Travel::Status::DE::EFA(3pm).
+
+=head1 AUTHOR
+
+Copyright (C) 2024 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
+
+=head1 LICENSE
+
+This module is licensed under the same terms as Perl itself.
