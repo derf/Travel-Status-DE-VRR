@@ -237,7 +237,8 @@ sub format_route {
 				$output .= sprintf(
 					"    %5s      %s %s %35s %s\n",
 					$stop->arr->strftime('%H:%M'),
-					$delay, $occupancy, $stop->full_name, $stop->platform,
+					$delay, $occupancy, $stop->full_name,
+					$stop->platform // q{},
 				);
 			}
 			else {
@@ -248,7 +249,7 @@ sub format_route {
 					$delay,
 					$occupancy,
 					$stop->full_name,
-					$stop->platform,
+					$stop->platform // q{},
 				);
 			}
 		}
