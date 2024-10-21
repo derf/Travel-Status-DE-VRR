@@ -46,7 +46,11 @@ sub new {
 }
 
 sub polyline {
-	my ($self) = @_;
+	my ( $self, %opt ) = @_;
+
+	if ( $opt{fallback} and not @{ $self->{polyline} // [] } ) {
+		return map { $_->{latlon} } $self->route;
+	}
 
 	return @{ $self->{polyline} // [] };
 }
