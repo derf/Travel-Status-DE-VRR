@@ -55,6 +55,10 @@ my %efa_instance = (
 		url  => 'https://www.efa-bw.de/nvbw',
 		name => 'Nahverkehrsgesellschaft Baden-Württemberg',
 	},
+	NWL => {
+		url  => 'https://westfalenfahrplan.de/nwl-efa',
+		name => 'Nahverkehr Westfalen-Lippe',
+	},
 	VAG => {
 		url  => 'https://efa.vagfr.de/vagfr3',
 		name => 'Freiburger Verkehrs AG',
