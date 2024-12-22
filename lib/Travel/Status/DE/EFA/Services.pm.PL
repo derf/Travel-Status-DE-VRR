@@ -34,6 +34,7 @@ sub load_instance {
 # GVH: 403
 # Rolph: 404
 # VRT: Encoding issues
+# VVSt: NXDOMAIN
 my %efa_instance = (
 	BSVG => {
 		url  => 'https://bsvg.efa.de/bsvagstd',
