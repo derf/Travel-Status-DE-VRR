@@ -572,6 +572,15 @@ sub results_stopfinder {
 	my $json = $self->{response};
 
 	my @results;
+
+	# Edge case: there is just a single result.
+	# Oh EFA, you so silly.
+	if ( ref( $json->{stopFinder}{points} ) eq 'HASH'
+		and exists $json->{stopFinder}{points}{point} )
+	{
+		$json->{stopFinder}{points} = [ $json->{stopFinder}{points}{point} ];
+	}
+
 	for my $stop ( @{ $json->{stopFinder}{points} // [] } ) {
 		push(
 			@results,
