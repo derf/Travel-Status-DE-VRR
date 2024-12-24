@@ -340,7 +340,7 @@ sub show_stopseq {
 
 	printf(
 		"Fahrt %s am %s\n",
-		$trip->number || $stopseq,
+		$trip->number || $stopseq->{stateless},
 		( $trip->route )[0]->sched_dep->strftime('%d.%m.%Y'),
 	);
 	say q{};
