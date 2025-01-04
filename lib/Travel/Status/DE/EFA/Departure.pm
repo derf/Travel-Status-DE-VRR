@@ -167,6 +167,20 @@ sub parse_route {
 	return \@ret;
 }
 
+sub id {
+	my ($self) = @_;
+
+	if ( $self->{id} ) {
+		return $self->{id};
+	}
+
+	return $self->{id} = sprintf( '%s@%d(%s)%d',
+		$self->stateless =~ s{ }{}gr,
+		scalar $self->route_pre ? ( $self->route_pre )[0]->id : $self->stop_id,
+		$self->sched_datetime->strftime('%Y%m%d'),
+		$self->key );
+}
+
 sub hints {
 	my ($self) = @_;
 
@@ -323,6 +337,13 @@ Destination name.
 Additional information related to the departure (list of strings). If
 departures for an address were requested, this is the stop name, otherwise it
 may be recent news related to the line's schedule.
+
+=item $departure->id
+
+Stringified unique(?) identifier of this departure; suitable for passing to
+Travel::Status::DE::EFA->new(stopseq) after decomposing it again.
+The returned string combines B<stateless>, B<stop_id> (or the ID of the first
+stop in B<route_pre>, if present), B<sched_datetime>, and B<key>.
 
 =item $departure->is_cancelled
 

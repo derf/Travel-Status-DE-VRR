@@ -483,11 +483,7 @@ sub show_results {
 		@output_line = ( $dtime, $platform, $line, q{}, $d->destination, $d );
 
 		if ($show_jid) {
-			$output_line[2] .= sprintf( '  %s@%d(%s)%d',
-				$d->stateless =~ s{ }{}gr,
-				scalar $d->route_pre ? ( $d->route_pre )[0]->id : $d->stop_id,
-				$d->sched_datetime->strftime('%Y%m%d'),
-				$d->key );
+			$output_line[2] .= '  ' . $d->id;
 		}
 
 		if ( $edata{route} ) {
