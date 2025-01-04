@@ -49,6 +49,7 @@ sub polyline {
 	my ( $self, %opt ) = @_;
 
 	if ( $opt{fallback} and not @{ $self->{polyline} // [] } ) {
+
 		# TODO add $_->{id} as well?
 		return map { $_->{latlon} } $self->route;
 	}
@@ -77,7 +78,7 @@ sub route {
 
 	for my $stop ( @{ $self->{route_raw} // [] } ) {
 		my $chain = $stop;
-		my ( $platform, $place, $name, $name_full, $stop_id );
+		my ( $platform, $place, $name, $name_full, $id_num, $id_code );
 		while ( $chain->{type} ) {
 			if ( $chain->{type} eq 'platform' ) {
 				$platform = $chain->{properties}{platformName}
@@ -86,7 +87,8 @@ sub route {
 			elsif ( $chain->{type} eq 'stop' ) {
 				$name      = $chain->{disassembledName};
 				$name_full = $chain->{name};
-				$stop_id   = $chain->{properties}{stopId};
+				$id_code   = $chain->{id};
+				$id_num    = $chain->{properties}{stopId};
 			}
 			elsif ( $chain->{type} eq 'locality' ) {
 				$place = $chain->{name};
@@ -106,8 +108,8 @@ sub route {
 				place     => $place,
 				niveau    => $stop->{niveau},
 				platform  => $platform,
-				id        => $stop->{id},
-				stop_id   => $stop_id,
+				id_code   => $id_code,
+				id_num    => $id_num,
 			)
 		);
 	}

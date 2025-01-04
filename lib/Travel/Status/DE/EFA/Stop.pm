@@ -12,7 +12,7 @@ Travel::Status::DE::EFA::Stop->mk_ro_accessors(
 	qw(sched_arr rt_arr arr arr_delay
 	  sched_dep rt_dep dep dep_delay
 	  occupancy delay distance_m
-	  place name full_name id stop_id latlon
+	  place name full_name id_num id_code latlon
 	  platform niveau)
 );
 
@@ -152,14 +152,13 @@ Delay in minutes. Departure delya if available, arrival delay otherwise.
 Distance from request coordinates in meters. undef if the object has not
 been obtained by means of a coord request.
 
-=item $stop->id
+=item $stop->id_num
 
-Stop ID.
+Stop ID (numeric).
 
-=item $stop->stop_id
+=item $stop->id_code
 
-The other kind of stop ID.
-Yes, EFA has two.
+Stop ID (code).
 
 =item $stop->place
 

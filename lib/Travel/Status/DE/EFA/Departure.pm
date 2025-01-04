@@ -15,7 +15,7 @@ our $VERSION = '3.05';
 Travel::Status::DE::EFA::Departure->mk_ro_accessors(
 	qw(countdown datetime delay destination is_cancelled key line lineref mot
 	  occupancy operator origin platform platform_db platform_name rt_datetime
-	  sched_datetime stateless stop_id train_type train_name train_no type)
+	  sched_datetime stateless stop_id_num train_type train_name train_no type)
 );
 
 my @mot_mapping = qw{
@@ -69,7 +69,7 @@ sub new {
 		platform_type  => $departure->{pointType},
 		key            => $departure->{servingLine}{key},
 		stateless      => $departure->{servingLine}{stateless},
-		stop_id        => $departure->{stopID},
+		stop_id_num    => $departure->{stopID},
 		line           => $departure->{servingLine}{symbol},
 		train_type     => $departure->{servingLine}{trainType},
 		train_name     => $departure->{servingLine}{trainName},
@@ -154,7 +154,8 @@ sub parse_route {
 				sched_dep => $dep,
 				arr_delay => $ref->{arrValid} ? $ref->{arrDelay} : undef,
 				dep_delay => $ref->{depValid} ? $ref->{depDelay} : undef,
-				id        => $ref->{id},
+				id_num    => $ref->{id},
+				id_code   => $ref->{gid},
 				full_name => $stop->{name},
 				place     => $stop->{place},
 				name      => $stop->{nameWO},
@@ -176,7 +177,9 @@ sub id {
 
 	return $self->{id} = sprintf( '%s@%d(%s)%d',
 		$self->stateless =~ s{ }{}gr,
-		scalar $self->route_pre ? ( $self->route_pre )[0]->id : $self->stop_id,
+		scalar $self->route_pre
+		? ( $self->route_pre )[0]->id
+		: $self->stop_id_num,
 		$self->sched_datetime->strftime('%Y%m%d'),
 		$self->key );
 }
@@ -342,7 +345,7 @@ may be recent news related to the line's schedule.
 
 Stringified unique(?) identifier of this departure; suitable for passing to
 Travel::Status::DE::EFA->new(stopseq) after decomposing it again.
-The returned string combines B<stateless>, B<stop_id> (or the ID of the first
+The returned string combines B<stateless>, B<stop_id_num> (or the ID of the first
 stop in B<route_pre>, if present), B<sched_datetime>, and B<key>.
 
 =item $departure->is_cancelled

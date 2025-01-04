@@ -441,7 +441,8 @@ sub stop {
 		place     => $place,
 		full_name => $point->{name},
 		name      => $point->{name} =~ s{\Q$place\E,? ?}{}r,
-		id        => $point->{stateless},
+		id_num    => $point->{ref}{id},
+		id_code   => $point->{ref}{gid},
 	);
 
 	return $self->{stop};
@@ -468,7 +469,8 @@ sub stops {
 				place     => $stop->{place},
 				name      => $stop->{name},
 				full_name => $stop->{nameWithPlace},
-				id        => $stop->{stopID},
+				id_num    => $stop->{stopID},
+				id_code   => $stop->{gid},
 			)
 		);
 	}
@@ -588,8 +590,8 @@ sub results_stopfinder {
 				place     => $stop->{ref}{place},
 				full_name => $stop->{name},
 				name      => $stop->{object},
-				id        => $stop->{stateless},
-				stop_id   => $stop->{ref}{gid},
+				id_num    => $stop->{ref}{id},
+				id_code   => $stop->{ref}{gid},
 			)
 		);
 	}
