@@ -559,7 +559,7 @@ sub results_coord {
 				full_name  => $stop->{properties}{STOP_NAME_WITH_PLACE},
 				distance_m => $stop->{properties}{distance},
 				name       => $stop->{name},
-				id         => $stop->{id},
+				id_code    => $stop->{id},
 			)
 		);
 	}

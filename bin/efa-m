@@ -322,7 +322,7 @@ sub show_coord {
 		printf(
 			"%5.1f km  %-${max_len}s  %s\n",
 			$stop->distance_m * 1e-3,
-			$stop->full_name, $stop->id
+			$stop->full_name, $stop->id_code
 		);
 	}
 }
