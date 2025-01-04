@@ -265,6 +265,9 @@ sub route_interesting {
 sub TO_JSON {
 	my ($self) = @_;
 
+	# compute on-demand keys
+	$self->id;
+
 	my $ret = { %{$self} };
 
 	delete $ret->{strp_stopseq};
