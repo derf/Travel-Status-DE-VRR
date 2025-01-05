@@ -221,7 +221,7 @@ Travel::Status::DE::EFA(3pm).
 
 =head1 AUTHOR
 
-Copyright (C) 2015-2023 by Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
+Copyright (C) 2015-2025 Birte Kristina Friesel E<lt>derf@finalrewind.orgE<gt>
 
 =head1 LICENSE
 
