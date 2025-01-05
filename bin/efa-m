@@ -622,8 +622,8 @@ The operating mode depends on the contents of its mandatory argument.
 
 =head2 Departure Monitor (I<name>)
 
-Shows departures at I<name> or I<city> I<name>. For each departure,
-B<efa-m> shows
+Shows departures at I<name> or I<city> I<name>; I<name> may also be a stop ID
+number or code. For each departure, B<efa-m> shows
 
 =over
 
@@ -652,18 +652,19 @@ I<type>.  Supported types are B<address> and B<poi> (point of interest).
 =head2 Location Search (B<?>I<query>|I<lat>B<:>I<lon>)
 
 List stops that match I<query> or that are located in the vicinity of
-I<lat>B<:>I<lon> geocoordinates.
+I<lat>B<:>I<lon> geocoordinates. In addition to stop names, the output also
+includes stop ID codes (both modes) and numbers (only available in I<query>
+mode).
 
 =head2 Trip Details (I<JourneyID>)
 
-List trip information as well as arrival and departure time, name, and platform
+List trip information including arrival and departure time, name, and platform
 of each stop on the trip's route.
 
 =head1 OPTIONS
 
 Values in brackets indicate options that only apply to the corresponding
 operating mode(s).
-
 
 =over
 
