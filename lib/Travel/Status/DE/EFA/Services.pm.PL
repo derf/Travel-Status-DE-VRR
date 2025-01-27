@@ -32,7 +32,6 @@ sub load_instance {
 }
 
 # GVH: 403
-# Rolph: 404
 # VRT: Encoding issues
 # VVSt: NXDOMAIN
 my %efa_instance = (
@@ -60,6 +59,7 @@ my %efa_instance = (
 		url  => 'https://westfalenfahrplan.de/nwl-efa',
 		name => 'Nahverkehr Westfalen-Lippe',
 	},
+	Rolph => { load_instance('de/rolph') },
 	VAG => {
 		url  => 'https://efa.vagfr.de/vagfr3',
 		name => 'Freiburger Verkehrs AG',
