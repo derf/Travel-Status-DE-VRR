@@ -54,18 +54,17 @@ sub polyline {
 		return @{ $self->{polyline} };
 	}
 
-	if ( $opt{fallback} and not @{ $self->{polyline_raw} // [] } ) {
-
-		# TODO add $_->{id} as well?
-		return map {
-			{
-				lat     => $_->{latlon}[0],
-				lon     => $_->{latlon}[1],
-				name    => $_->name,
-				id_num  => $_->id_num,
-				id_code => $_->id_code
-			}
-		} $self->route;
+	if ( not @{ $self->{polyline_raw} // [] } ) {
+		if ( $opt{fallback} ) {
+			return map {
+				{
+					lat  => $_->{latlon}[0],
+					lon  => $_->{latlon}[1],
+					stop => $_,
+				}
+			} $self->route;
+		}
+		return;
 	}
 
 	$self->{polyline} = [ map { { lat => $_->[0], lon => $_->[1] } }
@@ -99,12 +98,8 @@ sub polyline {
 		}
 		for my $stop ( $self->route ) {
 			if ( $min_dist{ $stop->{id_code} } ) {
-				$self->{polyline}[ $min_dist{ $stop->{id_code} }{index} ]{name}
-				  = $stop->{name};
-				$self->{polyline}[ $min_dist{ $stop->{id_code} }{index} ]
-				  {id_num} = $stop->{id_num};
-				$self->{polyline}[ $min_dist{ $stop->{id_code} }{index} ]
-				  {id_code} = $stop->{id_code};
+				$self->{polyline}[ $min_dist{ $stop->{id_code} }{index} ]{stop}
+				  = $stop;
 			}
 		}
 	}
@@ -271,6 +266,28 @@ trip.
 Note: The EFA API requires a stop to be specified when requesting trip details.
 The stops returned by this accessor appear to be limited to stops after the
 requested stop; earlier ones may be missing.
+
+=item $journey->polyline(I<%opt>)
+
+List of geocoordinates that describe the trips's route.
+Each list entry is a hash with the following keys.
+
+=over
+
+=item * lon (longitude)
+
+=item * lat (latitude)
+
+=item * stop (Stop object for this location, if any. undef otherwise)
+
+=back
+
+Note that stop is not provided by the backend and instead inferred by this
+module.
+
+If the backend does not provide geocoordinates and this accessor was called
+with B< fallback > set to a true value, it returns the list of stop coordinates
+instead. Otherwise, it returns an empty list.
 
 =back
 
