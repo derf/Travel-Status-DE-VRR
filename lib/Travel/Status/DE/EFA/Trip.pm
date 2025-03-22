@@ -136,6 +136,9 @@ sub TO_JSON {
 	# lazy loading
 	$self->route;
 
+	# lazy loading
+	$self->polyline;
+
 	my $ret = { %{$self} };
 
 	delete $ret->{strptime_obj};
