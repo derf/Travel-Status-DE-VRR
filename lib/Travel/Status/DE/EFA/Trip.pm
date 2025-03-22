@@ -24,7 +24,7 @@ sub new {
 		operator      => $json->{operator}{name},
 		product       => $json->{product}{name},
 		product_class => $json->{product}{class},
-		polyline      => $json->{coords},
+		polyline_raw  => $conf{json}{leg}{coords},
 		name          => $json->{name},
 		line          => $json->{disassembledName},
 		number        => $json->{properties}{trainNumber},
@@ -39,8 +39,10 @@ sub new {
 			time_zone => 'UTC'
 		),
 	};
-	if ( ref( $ref->{polyline} ) eq 'ARRAY' and @{ $ref->{polyline} } == 1 ) {
-		$ref->{polyline} = $ref->{polyline}[0];
+	if ( ref( $ref->{polyline_raw} ) eq 'ARRAY'
+		and @{ $ref->{polyline_raw} } == 1 )
+	{
+		$ref->{polyline_raw} = $ref->{polyline_raw}[0];
 	}
 	return bless( $ref, $obj );
 }
@@ -48,13 +50,22 @@ sub new {
 sub polyline {
 	my ( $self, %opt ) = @_;
 
-	if ( $opt{fallback} and not @{ $self->{polyline} // [] } ) {
-
-		# TODO add $_->{id} as well?
-		return map { $_->{latlon} } $self->route;
+	if ( $self->{polyline} ) {
+		return @{ $self->{polyline} };
 	}
 
-	return @{ $self->{polyline} // [] };
+	if ( $opt{fallback} and not @{ $self->{polyline_raw} // [] } ) {
+
+		# TODO add $_->{id} as well?
+		return
+		  map { { lat => $_->{latlon}[0], lon => $_->{latlon}[1] } }
+		  $self->route;
+	}
+
+	$self->{polyline} = [ map { { lat => $_->[0], lon => $_->[1] } }
+		  @{ $self->{polyline_raw} } ];
+
+	return @{ $self->{polyline} };
 }
 
 sub parse_dt {
