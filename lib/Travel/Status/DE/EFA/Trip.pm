@@ -57,13 +57,57 @@ sub polyline {
 	if ( $opt{fallback} and not @{ $self->{polyline_raw} // [] } ) {
 
 		# TODO add $_->{id} as well?
-		return
-		  map { { lat => $_->{latlon}[0], lon => $_->{latlon}[1] } }
-		  $self->route;
+		return map {
+			{
+				lat     => $_->{latlon}[0],
+				lon     => $_->{latlon}[1],
+				name    => $_->name,
+				id_num  => $_->id_num,
+				id_code => $_->id_code
+			}
+		} $self->route;
 	}
 
 	$self->{polyline} = [ map { { lat => $_->[0], lon => $_->[1] } }
 		  @{ $self->{polyline_raw} } ];
+	my $distance;
+
+	eval {
+		require GIS::Distance;
+		$distance = GIS::Distance->new;
+	};
+
+	if ($distance) {
+		my %min_dist;
+		for my $stop ( $self->route ) {
+			for my $polyline_index ( 0 .. $#{ $self->{polyline} } ) {
+				my $pl   = $self->{polyline}[$polyline_index];
+				my $dist = $distance->distance_metal(
+					$stop->{latlon}[0],
+					$stop->{latlon}[1],
+					$pl->{lat}, $pl->{lon}
+				);
+				if ( not $min_dist{ $stop->{id_code} }
+					or $min_dist{ $stop->{id_code} }{dist} > $dist )
+				{
+					$min_dist{ $stop->{id_code} } = {
+						dist  => $dist,
+						index => $polyline_index,
+					};
+				}
+			}
+		}
+		for my $stop ( $self->route ) {
+			if ( $min_dist{ $stop->{id_code} } ) {
+				$self->{polyline}[ $min_dist{ $stop->{id_code} }{index} ]{name}
+				  = $stop->{name};
+				$self->{polyline}[ $min_dist{ $stop->{id_code} }{index} ]
+				  {id_num} = $stop->{id_num};
+				$self->{polyline}[ $min_dist{ $stop->{id_code} }{index} ]
+				  {id_code} = $stop->{id_code};
+			}
+		}
+	}
 
 	return @{ $self->{polyline} };
 }
