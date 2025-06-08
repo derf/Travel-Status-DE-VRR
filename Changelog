@@ -1,3 +1,9 @@
+git HEAD
+
+    * Breaking change: $efa->name_candidates and $efa->place_candidates now
+      return lists of Travel::Status::DE::EFA::Stop objects rather than
+      just strings.
+
 Travel::Status::DE::VRR 3.09 - Sun Mar 23 2025
 
     * Trip: Add polyline accessor

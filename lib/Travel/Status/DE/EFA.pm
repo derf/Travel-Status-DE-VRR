@@ -412,15 +412,37 @@ sub check_for_ambiguous {
 
 	for my $m ( @{ $json->{dm}{message} // [] } ) {
 		if ( $m->{name} eq 'error' and $m->{value} eq 'name list' ) {
-			$self->{errstr} = "ambiguous name parameter";
-			$self->{name_candidates}
-			  = [ map { $_->{name} } @{ $json->{dm}{points} // [] } ];
+			$self->{errstr}          = "ambiguous name parameter";
+			$self->{name_candidates} = [];
+			for my $point ( @{ $json->{dm}{points} // [] } ) {
+				my $place = $point->{ref}{place};
+				push(
+					@{ $self->{name_candidates} },
+					Travel::Status::DE::EFA::Stop->new(
+						place     => $place,
+						full_name => $point->{name},
+						name      => $point->{name} =~ s{\Q$place\E,? ?}{}r,
+						id_num    => $point->{ref}{id},
+					)
+				);
+			}
 			return;
 		}
 		if ( $m->{name} eq 'error' and $m->{value} eq 'place list' ) {
-			$self->{errstr} = "ambiguous name parameter";
-			$self->{place_candidates}
-			  = [ map { $_->{name} } @{ $json->{dm}{points} // [] } ];
+			$self->{errstr}           = "ambiguous name parameter";
+			$self->{place_candidates} = [];
+			for my $point ( @{ $json->{dm}{points} // [] } ) {
+				my $place = $point->{ref}{place};
+				push(
+					@{ $self->{place_candidates} },
+					Travel::Status::DE::EFA::Stop->new(
+						place     => $place,
+						full_name => $point->{name},
+						name      => $point->{name} =~ s{\Q$place\E,? ?}{}r,
+						id_num    => $point->{ref}{id},
+					)
+				);
+			}
 			return;
 		}
 	}

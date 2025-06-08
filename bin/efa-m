@@ -555,11 +555,15 @@ if ( my $err = $efa->errstr ) {
 
 	if ( $efa->place_candidates ) {
 		say 'You might want to try one of the following places:';
-		say join( "\n", $efa->place_candidates );
+		for my $candidate ( $efa->place_candidates ) {
+			printf( "%d  %s\n", $candidate->id_num, $candidate->name );
+		}
 	}
 	elsif ( $efa->name_candidates ) {
 		say 'You might want to try one of the following names:';
-		say join( "\n", $efa->name_candidates );
+		for my $candidate ( $efa->name_candidates ) {
+			printf( "%d  %s\n", $candidate->id_num, $candidate->name );
+		}
 	}
 
 	exit 2;
