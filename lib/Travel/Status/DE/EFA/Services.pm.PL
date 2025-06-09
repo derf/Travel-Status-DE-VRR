@@ -60,6 +60,10 @@ my %efa_instance = (
 		name => 'Nahverkehr Westfalen-Lippe',
 	},
 	Rolph => { load_instance('de/rolph') },
+	RVV => {
+		url  => 'https://efa.rvv.de/efa',
+		name => 'Regensburger Verkehrsverbund',
+	},
 	VAG => {
 		url  => 'https://efa.vagfr.de/vagfr3',
 		name => 'Freiburger Verkehrs AG',
