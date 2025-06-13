@@ -35,6 +35,10 @@ sub load_instance {
 # VRT: Encoding issues
 # VVSt: NXDOMAIN
 my %efa_instance = (
+	BEG => {
+		url  => 'https://bahnland-bayern.de/efa',
+		name => 'Bayerische Eisenbahngesellschaft',
+	},
 	BSVG => {
 		url  => 'https://bsvg.efa.de/bsvagstd',
 		name => 'Braunschweiger Verkehrs-GmbH',
@@ -60,7 +64,7 @@ my %efa_instance = (
 		name => 'Nahverkehr Westfalen-Lippe',
 	},
 	Rolph => { load_instance('de/rolph') },
-	RVV => {
+	RVV   => {
 		url  => 'https://efa.rvv.de/efa',
 		name => 'Regensburger Verkehrsverbund',
 	},
