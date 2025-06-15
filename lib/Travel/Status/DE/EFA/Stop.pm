@@ -11,7 +11,7 @@ our $VERSION = '3.09';
 Travel::Status::DE::EFA::Stop->mk_ro_accessors(
 	qw(sched_arr rt_arr arr arr_delay
 	  sched_dep rt_dep dep dep_delay
-	  occupancy delay distance_m
+	  occupancy delay distance_m is_cancelled
 	  place name full_name id_num id_code latlon
 	  platform niveau)
 );
