@@ -152,6 +152,7 @@ sub route {
 				sched_dep => $self->parse_dt( $stop->{departureTimePlanned} ),
 				rt_arr    => $self->parse_dt( $stop->{arrivalTimeEstimated} ),
 				rt_dep    => $self->parse_dt( $stop->{departureTimeEstimated} ),
+				occupancy => $stop->{properties}{occupancy},
 				is_cancelled => $stop->{isCancelled},
 				latlon       => $stop->{coord},
 				full_name    => $name_full,
