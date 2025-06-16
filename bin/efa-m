@@ -367,7 +367,7 @@ sub show_stopseq {
 
 	for my $stop ( $trip->route ) {
 		printf(
-			"%s → %s%${delay_len}s  %s (%s) %s\n",
+			"%s → %s%${delay_len}s  %s %s (%s) %s\n",
 			$stop->arr ? $stop->arr->strftime('%H:%M')
 			: q{     },
 			$stop->dep ? $stop->dep->strftime('%H:%M')
@@ -378,6 +378,7 @@ sub show_stopseq {
 				? sprintf( " (%+${inner_delay_len}d)", $stop->delay )
 				: q{}
 			),
+			$stop->occupancy ? format_occupancy( $stop->occupancy ) : q{ },
 			$stop->full_name,
 			$stop->niveau,
 			$stop->platform
