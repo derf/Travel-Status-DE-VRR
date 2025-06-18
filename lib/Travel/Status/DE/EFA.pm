@@ -54,7 +54,7 @@ sub new_p {
 		}
 	)->catch(
 		sub {
-			my ($err) = @_;
+			my ( $err, $self ) = @_;
 			$promise->reject($err);
 			return;
 		}
