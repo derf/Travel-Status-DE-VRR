@@ -206,6 +206,7 @@ sub new {
 			stop              => $opt{stopseq}{stop_id},
 			tripCode          => $opt{stopseq}{key},
 			date              => $opt{stopseq}{date},
+			time              => $opt{stopseq}{time},
 			coordOutputFormat => 'WGS84[DD.DDDDD]',
 			outputFormat      => 'rapidJson',
 			useRealtime       => '1',

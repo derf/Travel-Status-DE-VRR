@@ -177,10 +177,11 @@ sub id {
 
 	return $self->{id} = sprintf( '%s@%d(%s)%d',
 		$self->stateless =~ s{ }{}gr,
-		scalar $self->route_pre
-		? ( $self->route_pre )[0]->id_num
+		scalar $self->route_pre ? ( $self->route_pre )[0]->id_num
 		: $self->stop_id_num,
-		$self->sched_datetime->strftime('%Y%m%d'),
+		( scalar $self->route_pre and ( $self->route_pre )[0]->sched_dep )
+		? ( $self->route_pre )[0]->sched_dep->strftime('%Y%m%dT%H:%M')
+		: $self->sched_datetime->strftime('%Y%m%dT%H:%M'),
 		$self->key );
 }
 

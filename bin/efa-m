@@ -99,12 +99,15 @@ if ($use_cache) {
 my ( $place, $input, $coord, $stopseq, $stopfinder );
 
 if ( @ARGV == 1 ) {
-	if ( $ARGV[0] =~ m{ ^ ([^@]*) @ ([^@]*) [(] ([^)]*) [)] (.*)  $ }x ) {
+	if ( $ARGV[0]
+		=~ m{ ^ ([^@]*) @ ([^@]*) [(] ([^T]*) T ([^)]*) [)] (.*)  $ }x )
+	{
 		$stopseq = {
 			stateless => $1,
 			stop_id   => $2,
 			date      => $3,
-			key       => $4
+			time      => $4,
+			key       => $5
 		};
 	}
 	elsif ( $ARGV[0] =~ m{ ^ [?] (?<name> .*) $ }x ) {
