@@ -1,3 +1,10 @@
+Travel::Status::DE::VRR 3.12 - Wed Jun 18 2025
+
+    * Departure->id: Include the scheduled departure time. This fixes cases
+      where the trip details (stopseq) endpoint would randomly return
+      yesterday's details or no usable data at all.
+    * efa-m: Trip detail mode now only accepts trip IDs obtained from v3.12+
+
 Travel::Status::DE::VRR 3.11 - Mon Jun 16 2025
 
     * efa-m: Show occupancy in trip details
