@@ -10,7 +10,7 @@ use Travel::Status::DE::EFA::Stop;
 
 use parent 'Class::Accessor';
 
-our $VERSION = '3.12';
+our $VERSION = '3.13';
 
 Travel::Status::DE::EFA::Departure->mk_ro_accessors(
 	qw(countdown datetime delay destination is_cancelled key line lineref mot
@@ -304,7 +304,7 @@ departure received by Travel::Status::DE::EFA
 
 =head1 VERSION
 
-version 3.12
+version 3.13
 
 =head1 DESCRIPTION
 

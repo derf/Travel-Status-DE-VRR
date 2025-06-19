@@ -1,3 +1,9 @@
+Travel::Status::DE::VRR 3.13 - Thu Jun 19 2025
+
+    * EFA->new_p: Return $self in case of error so that clients can access
+      place_candidates and name_candidates. This behaviour was already
+      documented, but not implemented.
+
 Travel::Status::DE::VRR 3.12 - Wed Jun 18 2025
 
     * Departure->id: Include the scheduled departure time. This fixes cases

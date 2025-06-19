@@ -5,7 +5,7 @@ use warnings;
 use 5.010;
 use utf8;
 
-our $VERSION = '3.12';
+our $VERSION = '3.13';
 
 use Carp qw(confess cluck);
 use DateTime;
@@ -703,7 +703,7 @@ Travel::Status::DE::EFA - unofficial EFA departure monitor
 
 =head1 VERSION
 
-version 3.12
+version 3.13
 
 =head1 DESCRIPTION
 
