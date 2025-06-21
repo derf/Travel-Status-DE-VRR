@@ -628,6 +628,11 @@ sub results_dm {
 	my ($self) = @_;
 	my $json = $self->{response};
 
+	# Oh EFA, you so silly
+	if ( $json->{departureList} and ref( $json->{departureList} ) eq 'HASH' ) {
+		$json->{departureList} = [ $json->{departureList}{departure} ];
+	}
+
 	my @results;
 	for my $departure ( @{ $json->{departureList} // [] } ) {
 		push(
