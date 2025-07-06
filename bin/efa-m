@@ -387,8 +387,8 @@ sub show_stopseq {
 			),
 			$stop->occupancy ? format_occupancy( $stop->occupancy ) : q{},
 			$stop->full_name,
-			$stop->niveau,
-			$stop->platform
+			$stop->niveau   // q{?},
+			$stop->platform // q{}
 		);
 	}
 }
