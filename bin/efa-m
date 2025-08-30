@@ -593,14 +593,14 @@ if ( my $err = $efa->errstr ) {
 
 if ($json_output) {
 	if ($stopseq) {
-		say JSON->new->convert_blessed->encode( $efa->result );
+		say JSON->new->canonical->convert_blessed->encode( $efa->result );
 	}
 	else {
-		say JSON->new->convert_blessed->encode( [ $efa->results ] );
+		say JSON->new->canonical->convert_blessed->encode( [ $efa->results ] );
 	}
 }
 elsif ($raw_json_output) {
-	say JSON->new->convert_blessed->encode( $efa->{response} );
+	say JSON->new->canonical->convert_blessed->encode( $efa->{response} );
 }
 elsif ($coord) {
 	show_coord();
