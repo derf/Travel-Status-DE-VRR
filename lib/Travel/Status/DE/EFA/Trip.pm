@@ -117,15 +117,18 @@ sub polyline {
 			if ( $min_dist{$key} ) {
 				if ( defined $self->{polyline}[ $min_dist{$key}{index} ]{stop} )
 				{
-					# XXX experimental and untested
-					# one polyline entry maps to multiple stops → duplicate it; insert $stop after the already-present entry
-					$min_dist{$key}{index} += 1;
-					splice(
-						@{ $self->{polyline} },
-						$min_dist{$key}{index},
-						0, { %{ $self->{polyline}[ $min_dist{$key}{index} ] } }
+					warn(
+"$key: overwriting stop ref at $min_dist{$key}{index} with $key"
 					);
 
+					# XXX experimental and untested
+					# one polyline entry maps to multiple stops → duplicate it; insert $stop after the already-present entry
+					#$min_dist{$key}{index} += 1;
+					#splice(
+					#	@{ $self->{polyline} },
+					#	$min_dist{$key}{index},
+					#	0, { %{ $self->{polyline}[ $min_dist{$key}{index} ] } }
+					#);
 				}
 				$self->{polyline}[ $min_dist{$key}{index} ]{stop}
 				  = $stop;
