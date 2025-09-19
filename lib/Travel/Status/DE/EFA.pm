@@ -11,6 +11,7 @@ use Carp qw(confess cluck);
 use DateTime;
 use DateTime::Format::Strptime;
 use Encode qw(encode);
+use IO::Socket::SSL;
 use JSON;
 use Travel::Status::DE::EFA::Departure;
 use Travel::Status::DE::EFA::Info;
@@ -66,6 +67,7 @@ sub new_p {
 sub new {
 	my ( $class, %opt ) = @_;
 
+	my $tls_insecure = 0;
 	$opt{timeout} //= 10;
 	if ( $opt{timeout} <= 0 ) {
 		delete $opt{timeout};
@@ -105,6 +107,9 @@ sub new {
 				$opt{efa_url} .= '/XML_DM_REQUEST';
 			}
 			$opt{time_zone} //= $service->{time_zone};
+			if ( not $service->{tls_verify} ) {
+				$tls_insecure = 1;
+			}
 		}
 	}
 
@@ -248,6 +253,12 @@ sub new {
 	}
 	else {
 		my %lwp_options = %{ $opt{lwp_options} // { timeout => 10 } };
+		if ($tls_insecure) {
+			$lwp_options{ssl_opts}{SSL_verify_mode}
+			  = IO::Socket::SSL::SSL_VERIFY_NONE;
+			$lwp_options{ssl_opts}{verify_hostname} = 0;
+		}
+
 		$self->{ua} = LWP::UserAgent->new(%lwp_options);
 		$self->{ua}->env_proxy;
 	}
