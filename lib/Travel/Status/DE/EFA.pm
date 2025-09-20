@@ -165,6 +165,7 @@ sub new {
 		developer_mode => $opt{developer_mode},
 		efa_url        => $opt{efa_url},
 		service        => $opt{service},
+		tls_insecure   => $tls_insecure,
 		strp_stopseq   => DateTime::Format::Strptime->new(
 			pattern   => '%Y%m%d %H:%M',
 			time_zone => $opt{time_zone},
@@ -361,6 +362,10 @@ sub post_with_cache_p {
 
 	if ( $self->{developer_mode} ) {
 		say '  cache miss';
+	}
+
+	if ( $self->{tls_insecure} ) {
+		$self->{ua}->insecure(1);
 	}
 
 	$self->{ua}->post_p( $url, form => $self->{post} )->then(
