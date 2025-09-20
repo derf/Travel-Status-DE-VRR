@@ -70,7 +70,8 @@ sub new {
 		key            => $departure->{servingLine}{key},
 		stateless      => $departure->{servingLine}{stateless},
 		stop_id_num    => $departure->{stopID},
-		line           => $departure->{servingLine}{symbol},
+		line           => $departure->{servingLine}{symbol}
+		  || $departure->{servingLine}{number},
 		train_type     => $departure->{servingLine}{trainType},
 		train_name     => $departure->{servingLine}{trainName},
 		train_no       => $departure->{servingLine}{trainNum},

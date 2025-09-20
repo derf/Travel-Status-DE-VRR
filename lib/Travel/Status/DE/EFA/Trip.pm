@@ -28,7 +28,7 @@ sub new {
 		product_class => $json->{product}{class},
 		polyline_raw  => $conf{json}{leg}{coords},
 		name          => $json->{name},
-		line          => $json->{disassembledName},
+		line          => $json->{disassembledName} // $json->{number},
 		number        => $json->{properties}{trainNumber},
 		type      => $json->{properties}{trainType} // $json->{product}{name},
 		id        => $json->{id},
