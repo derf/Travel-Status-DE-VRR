@@ -56,9 +56,8 @@ my %efa_instance = (
 	},
 	KVV    => { load_instance('de/kvv') },
 	LinzAG => {
-		url      => 'https://www.linzag.at/static',
-		name     => 'Linz AG',
-		encoding => 'iso-8859-15',
+		url  => 'https://www.linzag.at/static',
+		name => 'Linz AG',
 	},
 	MVV  => { load_instance('de/mvv') },
 	NVBW => {
