@@ -788,12 +788,6 @@ B<stop> (stop/station name).
 Request departures for the date/time specified by I<DateTime object>.
 Default: now.
 
-=item B<efa_encoding> => I<encoding>
-
-Some EFA servers do not correctly specify their response encoding. If you
-observe encoding issues, you can manually specify it here. Example:
-iso-8859-15.
-
 =item B<full_routes> => B<0>|B<1>
 
 If true: Request full routes for all departures from the backend. This
