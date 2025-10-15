@@ -94,9 +94,8 @@ my %efa_instance = (
 	VRR2 => { load_instance('de/vrr') },
 	VRR3 => { load_instance( 'de/vrr', url => 'https://efa.vrr.de/rbgstd3' ) },
 	VVO  => {
-		url      => 'https://efa.vvo-online.de/VMSSL3',
-		name     => 'Verkehrsverbund Oberelbe',
-		encoding => 'iso-8859-15',
+		url  => 'https://efa.vvo-online.de/VMSSL3',
+		name => 'Verkehrsverbund Oberelbe',
 	},
 	VVS => { load_instance('de/vvs') },
 
