@@ -43,7 +43,8 @@ sub new_p {
 				say $self->{json}->pretty->encode( $self->{response} );
 			}
 
-			$self->check_for_ambiguous();
+			$self->check_for_ambiguous;
+			$self->check_for_error;
 
 			if ( $self->{errstr} ) {
 				$promise->reject( $self->{errstr}, $self );
@@ -297,7 +298,8 @@ sub new {
 		say $self->{json}->pretty->encode( $self->{response} );
 	}
 
-	$self->check_for_ambiguous();
+	$self->check_for_ambiguous;
+	$self->check_for_error;
 
 	return $self;
 }
@@ -415,6 +417,23 @@ sub place_candidates {
 	if ( $self->{place_candidates} ) {
 		return @{ $self->{place_candidates} };
 	}
+	return;
+}
+
+sub check_for_error {
+	my ($self) = @_;
+
+	my $json = $self->{response};
+
+	my %kv;
+	for my $m ( @{ $json->{dm}{message} // [] } ) {
+		$kv{ $m->{name} } = $m->{value};
+	}
+
+	if ( $kv{error} ) {
+		$self->{errstr} = "Backend error: $kv{error}";
+	}
+
 	return;
 }
 
